@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title,
     description,
-    icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
+    icons: { icon: "/sol-symbol-blue-crop.png", shortcut: "/sol-symbol-blue-crop.png" },
     openGraph: {
       title,
       description,

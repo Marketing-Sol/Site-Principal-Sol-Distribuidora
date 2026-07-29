@@ -12,3 +12,46 @@ footer{background:#10143f;color:#fff;padding:70px max(6vw,24px) 25px}.footer-top
 @media(max-width:1100px){.nav{gap:20px}.hero{grid-template-columns:1fr}.hero-visual{min-height:610px}.hero-copy{padding-bottom:0}.product-grid{grid-template-columns:repeat(3,1fr)}.detail{grid-template-columns:1fr}.solution-card{min-height:500px}.contact{grid-template-columns:1fr}.product-hero{grid-template-columns:1fr}.product-stage{min-height:520px}}
 @media(max-width:780px){.section{padding:76px 22px}.header{height:72px}.menu-button{display:block}.nav{position:absolute;top:72px;left:0;right:0;background:var(--off);padding:26px;display:none;flex-direction:column;align-items:stretch;box-shadow:0 18px 35px rgba(30,35,80,.15)}.nav.open{display:flex}.hero{min-height:auto}.hero-copy{padding:75px 22px 35px}.hero h1{font-size:54px}.hero-actions{align-items:flex-start;flex-direction:column}.hero-proof{gap:22px;margin-top:50px}.hero-visual{min-height:470px;transform:scale(.8);margin:-50px -60px}.trust-strip{flex-wrap:wrap;justify-content:flex-start}.solution-grid,.values,.numbers,.structure-grid{grid-template-columns:1fr}.solution-card{min-height:470px}.partnership,.story{grid-template-columns:1fr}.partnership-art{min-height:420px}.numbers div{border-right:0;border-bottom:1px solid rgba(41,51,155,.3)}.page-hero{padding:80px 22px;min-height:440px}.page-hero h1{font-size:54px}.catalog-tools{align-items:stretch;flex-direction:column}.product-grid{grid-template-columns:repeat(2,1fr)}.detail-cards{grid-template-columns:1fr}.footer-top{grid-template-columns:1fr;gap:45px}.footer-bottom{flex-direction:column;gap:12px}.contact-form{padding:25px}.contact-form>div{grid-template-columns:1fr}.product-hero{padding:75px 22px 30px}.stage-product{transform:scale(.78)}}
 @media(max-width:500px){.hero h1,.page-hero h1{font-size:46px}.hero-proof{display:grid;grid-template-columns:1fr 1fr}.hero-visual{margin:-70px -115px}.solution-grid,.product-grid{grid-template-columns:1fr}.product-card{min-height:365px}.product-art{width:85%;align-self:center}.section-title h2,.story h2,.partnership h2,.contact h2,.detail h2{font-size:40px}.cta h2{font-size:48px}.product-hero h1{font-size:62px}.product-stage{min-height:390px}.stage-product{transform:scale(.7)}.whatsapp{right:14px;bottom:14px}.footer-top{grid-template-columns:1fr}}
+
+/* Official Sol identity and image library */
+.brand{width:205px;height:58px;overflow:visible}
+.brand img{display:block;width:100%;height:100%;object-fit:contain}
+.footer-top .brand{width:220px;height:62px}
+.hero-product{position:absolute;background:#fff;border:1px solid rgba(255,255,255,.28);border-radius:14px;box-shadow:0 30px 65px rgba(5,9,41,.36);overflow:hidden;z-index:2}
+.hero-product img{display:block;width:100%;height:100%;object-fit:contain}
+.hero-product-a{width:330px;height:205px;left:0;top:25%;transform:rotate(-5deg)}
+.hero-product-b{width:300px;height:190px;right:1%;bottom:13%;transform:rotate(5deg)}
+.hero-product-c{width:245px;height:245px;left:39%;top:35%;background:linear-gradient(145deg,#eef0f6,#fff);padding:12px}
+.hero-product-c img{filter:drop-shadow(0 20px 18px rgba(0,0,0,.22))}
+.hero-symbol{position:absolute;width:270px;right:2%;top:8%;opacity:.1;filter:grayscale(1);z-index:1}
+.product-image img{max-width:100%;max-height:220px;filter:none;object-fit:contain}
+.partnership-art>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.partnership-art:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(12,17,63,.82),transparent 55%)}
+.photo-caption{position:absolute;left:30px;right:30px;bottom:28px;z-index:2;display:flex;align-items:center;gap:15px;color:#fff;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.09em}
+.photo-caption img{width:92px;height:auto}
+.product-art.real{background:linear-gradient(145deg,#eef0f5,#fff);box-shadow:none;width:82%;align-self:center}
+.product-art.real:before,.product-art.real:after{display:none}
+.product-art.real img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 16px 16px rgba(19,25,65,.18))}
+.stage-real-product{position:relative;z-index:2;width:min(440px,90%);height:auto;filter:drop-shadow(0 35px 30px rgba(0,0,0,.4))}
+.about-hero{background:linear-gradient(90deg,rgba(16,21,68,.96) 0%,rgba(30,39,128,.86) 52%,rgba(30,39,128,.28) 100%),url("/sol-drive-01.jpg") center 58%/cover}
+.structure-grid div{padding:0 0 34px;overflow:hidden}
+.structure-grid img{width:100%;height:220px;object-fit:cover;margin-bottom:28px}
+.structure-grid b,.structure-grid span{margin-left:28px;margin-right:28px}
+.sustainability-story img{display:block;width:100%;max-width:580px;margin-top:35px;background:#fff}
+
+@media(max-width:1100px){
+  .hero-product-a{left:8%}.hero-product-b{right:7%}.hero-product-c{left:40%}
+}
+@media(max-width:780px){
+  .brand{width:165px;height:48px}
+  .hero-product-a{width:290px;height:180px;left:2%}
+  .hero-product-b{width:260px;height:165px;right:2%}
+  .hero-product-c{width:205px;height:205px;left:39%}
+  .hero-symbol{width:220px}
+}
+@media(max-width:500px){
+  .hero-product-a{width:250px;height:155px;left:8%}
+  .hero-product-b{width:225px;height:145px;right:7%}
+  .hero-product-c{width:180px;height:180px;left:40%}
+  .photo-caption{left:20px;right:20px}
+}

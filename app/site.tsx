@@ -11,8 +11,8 @@ function Icon({ name }: { name: "arrow"|"check"|"phone"|"pin"|"mail"|"leaf"|"shi
   return <span className={`icon icon-${name}`} aria-hidden="true">{symbols[name]}</span>;
 }
 
-function Brand() {
-  return <Link href="/" className="brand" aria-label="Sol Distribuidora — página inicial"><span className="sunmark"><i/><i/><i/></span><span><b>SOL</b><small>DISTRIBUIDORA</small></span></Link>;
+function Brand({ variant = "blue" }: { variant?: "blue" | "white" }) {
+  return <Link href="/" className="brand" aria-label="Sol Distribuidora — página inicial"><img src={`/sol-logo-${variant}-crop.png`} alt="Sol Distribuidora"/></Link>;
 }
 
 function Header() {
@@ -35,7 +35,7 @@ function Header() {
 function Footer() {
   return <footer>
     <div className="footer-top">
-      <div><Brand/><p>Energia para quem não pode parar.</p></div>
+      <div><Brand variant="white"/><p>Energia para quem não pode parar.</p></div>
       <div><b>Navegue</b><Link href="/produtos">Soluções</Link><Link href="/sobre-nos">A Sol</Link><Link href="/sustentabilidade">Sustentabilidade</Link></div>
       <div><b>Fale com a Sol</b><a href="tel:+554132775080">(41) 3277-5080</a><a href="mailto:atendimento@distribuidorasol.com.br">atendimento@distribuidorasol.com.br</a><span>Curitiba · PR</span></div>
     </div>
@@ -63,9 +63,10 @@ function Home() {
       </div>
       <div className="hero-visual" aria-label="Representação de soluções de energia">
         <div className="energy-orbit orbit-one"/><div className="energy-orbit orbit-two"/>
-        <div className="battery battery-a"><span/><b>ESTACIONÁRIA</b><i>ENERGIA CONTÍNUA</i></div>
-        <div className="battery battery-b"><span/><b>AUTOMOTIVA</b><i>ALTA PERFORMANCE</i></div>
-        <div className="power-station"><i/><b>POWER</b><span>98%</span><small>ENERGIA PORTÁTIL</small></div>
+        <div className="hero-product hero-product-a"><img src="/linha-estacionaria.png" alt="Baterias estacionárias Freedom"/></div>
+        <div className="hero-product hero-product-b"><img src="/linha-automotiva.png" alt="Baterias automotivas Heliar"/></div>
+        <div className="hero-product hero-product-c"><img src="/bluetti-elite100-01.webp" alt="Estação de energia Bluetti Elite 100 v2"/></div>
+        <img className="hero-symbol" src="/sol-symbol-white-crop.png" alt=""/>
         <div className="visual-label"><i/> Soluções para revendas e empresas</div>
       </div>
     </section>
@@ -75,14 +76,14 @@ function Home() {
     <section className="solutions section">
       <SectionTitle eyebrow="Soluções" title={<>Um portfólio que <em>move negócios.</em></>} text="Produtos de alta confiabilidade, selecionados para atender diferentes demandas do mercado profissional."/>
       <div className="solution-grid">
-        <SolutionCard number="01" href="/baterias-estacionarias" title="Baterias estacionárias" text="Energia segura e contínua para telecom, nobreaks, sistemas solares e aplicações críticas." image="/baterias-estacionarias.png"/>
-        <SolutionCard number="02" href="/baterias-automotivas" title="Baterias automotivas" text="Linhas completas para veículos leves e pesados, com marcas reconhecidas pelo mercado." image="/baterias-automotivas.png"/>
-        <SolutionCard number="03" href="/bluetti-estacoes-de-energia" title="Estações de energia" text="Armazenamento portátil e versátil para novas demandas de energia, dentro e fora da rede." image="/estacoes-de-energia.webp"/>
+        <SolutionCard number="01" href="/baterias-estacionarias" title="Baterias estacionárias" text="Energia segura e contínua para telecom, nobreaks, sistemas solares e aplicações críticas." image="/linha-estacionaria.png"/>
+        <SolutionCard number="02" href="/baterias-automotivas" title="Baterias automotivas" text="Linhas completas para veículos leves e pesados, com marcas reconhecidas pelo mercado." image="/linha-automotiva.png"/>
+        <SolutionCard number="03" href="/bluetti-estacoes-de-energia" title="Estações de energia" text="Armazenamento portátil e versátil para novas demandas de energia, dentro e fora da rede." image="/linha-bluetti.webp"/>
       </div>
     </section>
 
     <section className="partnership section">
-      <div className="partnership-art"><div className="warehouse"><i/><i/><i/><span>SOL</span></div><div className="route route-a"/><div className="route route-b"/></div>
+      <div className="partnership-art"><img src="/sol-drive-02.jpg" alt="Fachada da Sol Distribuidora e frota própria"/><div className="photo-caption"><img src="/sol-symbol-white-crop.png" alt=""/><span>Estrutura e logística próprias</span></div></div>
       <div className="partnership-copy"><SectionTitle eyebrow="Parceria de verdade" title={<>Mais do que distribuir.<br/><em>Impulsionamos resultados.</em></>}/>
         <p>Da escolha do produto ao pós-venda, nossa equipe está ao lado da sua empresa com conhecimento técnico, agilidade e transparência.</p>
         <ul><li><Icon name="check"/> Consultoria comercial especializada</li><li><Icon name="check"/> Suporte antes, durante e depois da venda</li><li><Icon name="check"/> Estrutura logística para atender todo o Brasil</li></ul>
@@ -123,7 +124,8 @@ function Catalog({ title="Nosso portfólio", intro="Encontre a solução certa p
 }
 
 function ProductCard({product}:{product:Product}) {
-  return <Link href={`/${product.slug}`} className="product-card"><span className="product-brand">{product.brand}</span><div className={`product-art ${product.segment}`}><i/><i/><b>{product.model.slice(0,8)}</b></div><h3>{product.model}</h3><p>{segmentLabel(product.segment)}</p><span className="card-link">Ver solução <Icon name="arrow"/></span></Link>;
+  const image = product.slug === "bluetti-elite-100-v2" ? "/bluetti-elite100-01.webp" : null;
+  return <Link href={`/${product.slug}`} className="product-card"><span className="product-brand">{product.brand}</span>{image ? <div className="product-art real"><img src={image} alt={product.model}/></div> : <div className={`product-art ${product.segment}`}><i/><i/><b>{product.model.slice(0,8)}</b></div>}<h3>{product.model}</h3><p>{segmentLabel(product.segment)}</p><span className="card-link">Ver solução <Icon name="arrow"/></span></Link>;
 }
 
 function segmentLabel(segment: Product["segment"]) {
@@ -131,10 +133,11 @@ function segmentLabel(segment: Product["segment"]) {
 }
 
 function ProductDetail({ product }: { product: Product }) {
+  const realImage = product.slug === "bluetti-elite-100-v2" ? "/bluetti-elite100-01.webp" : null;
   return <Shell>
     <section className="product-hero">
       <div><span className="eyebrow light">{product.brand} · {segmentLabel(product.segment)}</span><h1>{product.model}</h1><p>Uma solução para compor um portfólio profissional, com o atendimento, suporte e pós-venda da Sol.</p><a className="button yellow" href={WHATSAPP} target="_blank" rel="noreferrer">Solicite uma cotação <Icon name="arrow"/></a></div>
-      <div className={`product-stage ${product.segment}`}><div className="stage-glow"/><div className="stage-product"><i/><i/><b>{product.model}</b><span>{product.brand}</span></div></div>
+      <div className={`product-stage ${product.segment}`}><div className="stage-glow"/>{realImage ? <img className="stage-real-product" src={realImage} alt={`${product.brand} ${product.model}`}/> : <div className="stage-product"><i/><i/><b>{product.model}</b><span>{product.brand}</span></div>}</div>
     </section>
     <section className="detail section">
       <div><span className="eyebrow">Visão geral</span><h2>Escolha técnica com <em>apoio comercial.</em></h2><p>Nossa equipe ajuda sua empresa a confirmar aplicação, disponibilidade e especificações antes da compra. Assim, você indica a solução correta e negocia com mais segurança.</p></div>
@@ -150,7 +153,7 @@ function About() {
     <section className="page-hero about-hero"><span className="eyebrow light">A Sol Distribuidora</span><h1>Experiência que gera<br/><em>confiança e movimento.</em></h1><p>Desde 1999, construímos relações duradouras oferecendo soluções em armazenamento e geração de energia para todo o Brasil.</p></section>
     <section className="story section"><div><span className="eyebrow">Nossa história</span><h2>Estrutura, pessoas<br/>e <em>experiência.</em></h2></div><div><p>A Sol nasceu em Curitiba para fornecer baterias com rapidez e eficiência. Cresceu ao lado de seus clientes e hoje combina capacidade logística, conhecimento técnico e atendimento próximo.</p><p>Mais do que uma fornecedora, somos uma parceira comercial preparada para apoiar decisões e construir resultados consistentes.</p></div></section>
     <section className="values section"><Value icon="truck" title="Logística nacional" text="Frota própria e parceria com transportadoras para atender todo o Brasil."/><Value icon="people" title="Equipe especializada" text="Atendimento próximo, consultivo e preparado para cada etapa da venda."/><Value icon="shield" title="Pós-venda presente" text="Suporte que continua depois da comercialização do produto."/></section>
-    <section className="structure section"><SectionTitle eyebrow="Nossa estrutura" title={<>Capacidade para <em>ir mais longe.</em></>}/><div className="structure-grid"><div><b>Curitiba · CD 1</b><span>Escritório comercial, testes de garantia e capacidade para mais de 60 mil baterias.</span></div><div><b>Curitiba · CD 2</b><span>Centro de distribuição com capacidade para mais de 50 mil baterias.</span></div><div><b>São Paulo</b><span>Centro estratégico com capacidade para mais de 150 mil baterias e envios rápidos.</span></div></div></section>
+    <section className="structure section"><SectionTitle eyebrow="Nossa estrutura" title={<>Capacidade para <em>ir mais longe.</em></>}/><div className="structure-grid"><div><img src="/cd-curitiba-1.png" alt="Centro de distribuição da Sol em Curitiba"/><b>Curitiba · CD 1</b><span>Escritório comercial, testes de garantia e capacidade para mais de 60 mil baterias.</span></div><div><img src="/cd-curitiba-2.png" alt="Segundo centro de distribuição da Sol em Curitiba"/><b>Curitiba · CD 2</b><span>Centro de distribuição com capacidade para mais de 50 mil baterias.</span></div><div><img src="/cd-sao-paulo.png" alt="Centro de distribuição da Sol em São Paulo"/><b>São Paulo</b><span>Centro estratégico com capacidade para mais de 150 mil baterias e envios rápidos.</span></div></div></section>
     <Cta/>
   </Shell>;
 }
@@ -160,7 +163,7 @@ function Value({icon,title,text}:{icon:"truck"|"people"|"shield";title:string;te
 function Sustainability() {
   return <Shell>
     <section className="page-hero sustainability-hero"><span className="eyebrow light">Responsabilidade ambiental</span><h1>Energia com propósito.<br/><em>Futuro com responsabilidade.</em></h1><p>Eficiência, descarte correto e escolhas responsáveis fazem parte da forma como a Sol conduz seus negócios.</p></section>
-    <section className="story section"><div><span className="eyebrow">Compromisso</span><h2>Desenvolvimento que<br/><em>respeita o amanhã.</em></h2></div><div><p>Trabalhamos para ampliar o acesso a soluções energéticas mais eficientes e apoiar práticas responsáveis em toda a cadeia.</p><p>A sustentabilidade é um compromisso contínuo: da logística ao pós-venda, da orientação ao cliente à destinação adequada de baterias.</p></div></section>
+    <section className="story sustainability-story section"><div><span className="eyebrow">Compromisso</span><h2>Desenvolvimento que<br/><em>respeita o amanhã.</em></h2><img src="/sustentabilidade-oficial.png" alt="Ciclo de reciclagem e logística reversa de baterias"/></div><div><p>Trabalhamos para ampliar o acesso a soluções energéticas mais eficientes e apoiar práticas responsáveis em toda a cadeia.</p><p>A sustentabilidade é um compromisso contínuo: da logística ao pós-venda, da orientação ao cliente à destinação adequada de baterias.</p></div></section>
     <section className="values green section"><Value icon="leaf" title="Logística reversa" text="Orientação e responsabilidade na destinação de baterias ao fim da vida útil."/><Value icon="energy" title="Eficiência energética" text="Soluções que ajudam empresas a usar e armazenar energia de forma mais inteligente."/><Value icon="shield" title="Cadeia responsável" text="Parcerias e processos guiados por segurança, integridade e conformidade."/></section>
     <Cta/>
   </Shell>;
