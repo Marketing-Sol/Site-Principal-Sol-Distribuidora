@@ -6,6 +6,31 @@ import { CATEGORY_META, PAGE_IDS, PRODUCTS, type Product } from "./data";
 
 const WHATSAPP = "https://api.whatsapp.com/send?phone=5541998220358&text=Ol%C3%A1%2C%20quero%20falar%20com%20um%20especialista%20da%20Sol.";
 
+const PRODUCT_IMAGES: Record<string, string> = {
+  "elementor-601": "/freedom-df300.png",
+  "freedom-df500": "/freedom-df500.png",
+  "freedom-df700": "/freedom-df700.png",
+  "freedom-df1000": "/freedom-df1000.png",
+  "freedom-df1500": "/freedom-df1500.png",
+  "freedom-df1000-copy": "/freedom-df2000.png",
+  "freedom-df2500": "/freedom-df2500.png",
+  "freedom-df3000": "/freedom-df3000.png",
+  "freedom-df4100": "/freedom-df4100.png",
+  "freedom-df4000": "/freedom-df4000.png",
+  "bluetti-estacoes-base": "/bluetti-ac2a.webp",
+  "bluetti-elite-30-v2": "/bluetti-elite-30-v2.webp",
+  "bluetti-premium-30-v2": "/bluetti-premium-30-v2.webp",
+  "bluetti-ac50": "/bluetti-ac50.webp",
+  "bluetti-ac50p": "/bluetti-ac50p.webp",
+  "bluetti-ac70p": "/bluetti-ac70p.webp",
+  "bluetti-elite-100-v2": "/bluetti-elite100-01.webp",
+  "bluetti-ac180p": "/bluetti-ac180p.webp",
+  "bluetti-premium-100-v2": "/bluetti-premium-100-v2.webp",
+  "bluetti-ac200pl": "/bluetti-ac200pl.webp",
+  "bluetti-elite-200-v2": "/bluetti-elite-200-v2.webp",
+  "bluetti-apex-300": "/bluetti-apex-300.webp",
+};
+
 function Icon({ name }: { name: "arrow"|"check"|"phone"|"pin"|"mail"|"leaf"|"shield"|"truck"|"people"|"energy" }) {
   const symbols = {arrow:"↗",check:"✓",phone:"☎",pin:"●",mail:"@",leaf:"◆",shield:"◈",truck:"▰",people:"●●",energy:"ϟ"};
   return <span className={`icon icon-${name}`} aria-hidden="true">{symbols[name]}</span>;
@@ -124,7 +149,7 @@ function Catalog({ title="Nosso portfólio", intro="Encontre a solução certa p
 }
 
 function ProductCard({product}:{product:Product}) {
-  const image = product.slug === "bluetti-elite-100-v2" ? "/bluetti-elite100-01.webp" : null;
+  const image = PRODUCT_IMAGES[product.slug];
   return <Link href={`/${product.slug}`} className="product-card"><span className="product-brand">{product.brand}</span>{image ? <div className="product-art real"><img src={image} alt={product.model}/></div> : <div className={`product-art ${product.segment}`}><i/><i/><b>{product.model.slice(0,8)}</b></div>}<h3>{product.model}</h3><p>{segmentLabel(product.segment)}</p><span className="card-link">Ver solução <Icon name="arrow"/></span></Link>;
 }
 
@@ -133,7 +158,7 @@ function segmentLabel(segment: Product["segment"]) {
 }
 
 function ProductDetail({ product }: { product: Product }) {
-  const realImage = product.slug === "bluetti-elite-100-v2" ? "/bluetti-elite100-01.webp" : null;
+  const realImage = PRODUCT_IMAGES[product.slug];
   return <Shell>
     <section className="product-hero">
       <div><span className="eyebrow light">{product.brand} · {segmentLabel(product.segment)}</span><h1>{product.model}</h1><p>Uma solução para compor um portfólio profissional, com o atendimento, suporte e pós-venda da Sol.</p><a className="button yellow" href={WHATSAPP} target="_blank" rel="noreferrer">Solicite uma cotação <Icon name="arrow"/></a></div>
