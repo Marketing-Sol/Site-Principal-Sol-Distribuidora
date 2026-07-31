@@ -3,7 +3,7 @@ export type Product = {
   slug: string;
   brand: "Freedom" | "Heliar" | "eCON" | "eCON VRLA" | "Bluetti";
   model: string;
-  segment: "estacionaria" | "automotiva" | "moto" | "energia";
+  segment: "estacionaria" | "automotiva" | "moto" | "energia" | "solar";
 };
 
 const products: Product[] = [
@@ -81,18 +81,21 @@ const products: Product[] = [
   [1611,"secpower-sp12-12","eCON VRLA","EP12-9","estacionaria"],
   [1616,"secpower-sp12-18","eCON VRLA","EP12-12","estacionaria"],
   [4124,"econ-vrla-ep12-18","eCON VRLA","EP12-18","estacionaria"],
-  [4781,"bluetti-estacoes-base","Bluetti","AC2A","energia"],
-  [4838,"bluetti-elite-30-v2","Bluetti","Elite 30 v2","energia"],
   [4848,"bluetti-premium-30-v2","Bluetti","Premium 30 v2","energia"],
   [4860,"bluetti-ac50","Bluetti","AC50","energia"],
   [4871,"bluetti-ac50p","Bluetti","AC50P","energia"],
   [4887,"bluetti-ac70p","Bluetti","AC70P","energia"],
-  [4902,"bluetti-elite-100-v2","Bluetti","Elite 100 v2","energia"],
   [4918,"bluetti-ac180p","Bluetti","AC180P","energia"],
   [4920,"bluetti-premium-100-v2","Bluetti","Premium 100 v2","energia"],
   [4943,"bluetti-ac200pl","Bluetti","AC200PL","energia"],
   [4958,"bluetti-elite-200-v2","Bluetti","Elite 200 v2","energia"],
+  [4964,"bluetti-premium-200-v2","Bluetti","Premium 200 v2","energia"],
+  [4969,"bluetti-elite-300","Bluetti","Elite 300","energia"],
   [4976,"bluetti-apex-300","Bluetti","Apex 300","energia"],
+  [4982,"bluetti-sora-60","Bluetti","Sora 60","solar"],
+  [4983,"bluetti-pv100","Bluetti","PV100","solar"],
+  [4984,"bluetti-sora-130","Bluetti","Sora 130","solar"],
+  [4985,"bluetti-sora-220","Bluetti","Sora 220","solar"],
 ].map(([id,slug,brand,model,segment]) => ({id,slug,brand,model,segment})) as Product[];
 
 export const PRODUCTS = products;
@@ -111,7 +114,7 @@ export const CATEGORY_META = {
   "baterias-automotivas": ["Baterias automotivas","Partida confiável para diferentes perfis de frota e revenda.","automotiva"],
   "baterias-estacionarias": ["Baterias estacionárias","Energia contínua para aplicações críticas e operações que não podem parar.","estacionaria"],
   "heliar-baterias-de-motos": ["Baterias para motos","Soluções para duas rodas com atendimento especializado para revendas.","moto"],
-  "bluetti-estacoes-de-energia": ["Estações de energia","Energia portátil e armazenamento para novas oportunidades de negócio.","energia"],
+  "bluetti-estacoes-de-energia": ["Bluetti","Estações de energia e painéis solares para novas oportunidades de negócio.","Bluetti"],
   "freedom-baterias-estacionarias": ["Freedom","Portfólio de baterias estacionárias para aplicações profissionais.","Freedom"],
   "heliar-baterias-automotivas": ["Heliar","Linha automotiva para uma oferta completa e confiável.","Heliar"],
   "econ-baterias-automotivas": ["eCON","Soluções automotivas para ampliar o portfólio da sua revenda.","eCON"],

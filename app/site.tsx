@@ -22,18 +22,21 @@ const PRODUCT_IMAGES: Record<string, string> = {
   "secpower-sp12-12": "/econ-vrla-ep12-9.webp",
   "secpower-sp12-18": "/econ-vrla-ep12-12.webp",
   "econ-vrla-ep12-18": "/econ-vrla-ep12-18.webp",
-  "bluetti-estacoes-base": "/bluetti-ac2a.webp",
-  "bluetti-elite-30-v2": "/bluetti-elite-30-v2.webp",
   "bluetti-premium-30-v2": "/bluetti-premium-30-v2.webp",
   "bluetti-ac50": "/bluetti-ac50.webp",
   "bluetti-ac50p": "/bluetti-ac50p.webp",
   "bluetti-ac70p": "/bluetti-ac70p.webp",
-  "bluetti-elite-100-v2": "/bluetti-elite100-01.webp",
   "bluetti-ac180p": "/bluetti-ac180p.webp",
   "bluetti-premium-100-v2": "/bluetti-premium-100-v2.webp",
   "bluetti-ac200pl": "/bluetti-ac200pl.webp",
   "bluetti-elite-200-v2": "/bluetti-elite-200-v2.webp",
+  "bluetti-premium-200-v2": "/bluetti-premium-200-v2.webp",
+  "bluetti-elite-300": "/bluetti-elite-300.webp",
   "bluetti-apex-300": "/bluetti-apex-300.webp",
+  "bluetti-sora-60": "/bluetti-sora-60.webp",
+  "bluetti-pv100": "/bluetti-pv100.webp",
+  "bluetti-sora-130": "/bluetti-sora-130.webp",
+  "bluetti-sora-220": "/bluetti-sora-220.webp",
 };
 
 function Icon({ name }: { name: "arrow"|"check"|"phone"|"pin"|"mail"|"leaf"|"shield"|"truck"|"people"|"energy" }) {
@@ -95,7 +98,7 @@ function Home() {
         <div className="energy-orbit orbit-one"/><div className="energy-orbit orbit-two"/>
         <div className="hero-product hero-product-a"><img src="/linha-estacionaria.png" alt="Baterias estacionárias Freedom"/></div>
         <div className="hero-product hero-product-b"><img src="/linha-automotiva.png" alt="Baterias automotivas Heliar"/></div>
-        <div className="hero-product hero-product-c"><img src="/bluetti-elite100-01.webp" alt="Estação de energia Bluetti Elite 100 v2"/></div>
+        <div className="hero-product hero-product-c"><img src="/bluetti-premium-100-v2.webp" alt="Estação de energia Bluetti Premium 100 v2"/></div>
         <img className="hero-symbol" src="/sol-symbol-white-crop.png" alt=""/>
         <div className="visual-label"><i/> Soluções para revendas e empresas</div>
       </div>
@@ -108,7 +111,7 @@ function Home() {
       <div className="solution-grid">
         <SolutionCard number="01" href="/baterias-estacionarias" title="Baterias estacionárias" text="Energia segura e contínua para telecom, nobreaks, sistemas solares e aplicações críticas." image="/linha-estacionaria.png"/>
         <SolutionCard number="02" href="/baterias-automotivas" title="Baterias automotivas" text="Linhas completas para veículos leves e pesados, com marcas reconhecidas pelo mercado." image="/linha-automotiva.png"/>
-        <SolutionCard number="03" href="/bluetti-estacoes-de-energia" title="Estações de energia" text="Armazenamento portátil e versátil para novas demandas de energia, dentro e fora da rede." image="/linha-bluetti.webp"/>
+        <SolutionCard number="03" href="/bluetti-estacoes-de-energia" title="Energia portátil e solar" text="Estações de energia e painéis solares para novas demandas, dentro e fora da rede." image="/linha-bluetti.webp"/>
       </div>
     </section>
 
@@ -171,13 +174,32 @@ function StationaryCatalog() {
   </Shell>;
 }
 
+function BluettiCatalog() {
+  const [search,setSearch] = useState("");
+  const matchesSearch = (product: Product) => clean(`${product.brand} ${product.model}`).includes(clean(search));
+  const stations = useMemo(() => PRODUCTS.filter((p) => p.brand === "Bluetti" && p.segment === "energia" && matchesSearch(p)), [search]);
+  const panels = useMemo(() => PRODUCTS.filter((p) => p.brand === "Bluetti" && p.segment === "solar" && matchesSearch(p)), [search]);
+  const total = stations.length + panels.length;
+  return <Shell>
+    <section className="page-hero compact"><span className="eyebrow light">Portfólio Bluetti</span><h1>Energia portátil e solar</h1><p>Estações de energia e painéis solares para autonomia, mobilidade e novas oportunidades de negócio.</p></section>
+    <section className="stationary-catalog section">
+      <div className="catalog-tools"><div><strong>{total}</strong><span> soluções encontradas</span></div><label><span>Buscar por modelo</span><input value={search} onChange={(e)=>setSearch(e.target.value)} placeholder="Ex.: AC70P, Elite 300, Sora 130…"/></label></div>
+      {!!stations.length && <div className="catalog-group"><div className="catalog-group-heading"><span className="eyebrow">Energia portátil</span><h2>Estações de energia</h2><p>Soluções Bluetti para backup, mobilidade e operações dentro e fora da rede.</p></div><div className="product-grid">{stations.map((p) => <ProductCard key={p.id} product={p}/>)}</div></div>}
+      {!!panels.length && <div className="catalog-group bluetti-solar-group"><div className="catalog-group-heading"><span className="eyebrow">Geração solar</span><h2>Painéis solares</h2><p>Painéis portáteis para captar energia solar e ampliar a autonomia das estações Bluetti.</p></div><div className="product-grid">{panels.map((p) => <ProductCard key={p.id} product={p}/>)}</div></div>}
+      {!total && <div className="empty">Nenhum produto encontrado. Tente outro termo.</div>}
+    </section>
+    <Cta/>
+  </Shell>;
+}
+
 function ProductCard({product}:{product:Product}) {
   const image = PRODUCT_IMAGES[product.slug];
-  return <Link href={`/${product.slug}`} className="product-card"><span className="product-brand">{product.brand}</span>{image ? <div className="product-art real"><img src={image} alt={product.model}/></div> : <div className={`product-art ${product.segment}`}><i/><i/><b>{product.model.slice(0,8)}</b></div>}<h3>{product.model}</h3><p>{segmentLabel(product.segment)}</p><span className="card-link">Ver solução <Icon name="arrow"/></span></Link>;
+  const imageClass = product.slug === "bluetti-elite-300" ? "elite-300-card" : undefined;
+  return <Link href={`/${product.slug}`} className="product-card"><span className="product-brand">{product.brand}</span>{image ? <div className="product-art real"><img className={imageClass} src={image} alt={product.model}/></div> : <div className={`product-art ${product.segment}`}><i/><i/><b>{product.model.slice(0,8)}</b></div>}<h3>{product.model}</h3><p>{segmentLabel(product.segment)}</p><span className="card-link">Ver solução <Icon name="arrow"/></span></Link>;
 }
 
 function segmentLabel(segment: Product["segment"]) {
-  return {estacionaria:"Bateria estacionária",automotiva:"Bateria automotiva",moto:"Bateria para motocicleta",energia:"Estação de energia"}[segment];
+  return {estacionaria:"Bateria estacionária",automotiva:"Bateria automotiva",moto:"Bateria para motocicleta",energia:"Estação de energia",solar:"Painel solar"}[segment];
 }
 
 function ProductDetail({ product }: { product: Product }) {
@@ -243,6 +265,7 @@ export function SitePage({ slug }: { slug: string }) {
   if (resolved === "contato") return <Contact/>;
   if (resolved === "politica-de-privacidade") return <Privacy/>;
   if (resolved === "baterias-estacionarias") return <StationaryCatalog/>;
+  if (resolved === "bluetti-estacoes-de-energia") return <BluettiCatalog/>;
   const meta = CATEGORY_META[resolved as keyof typeof CATEGORY_META];
   if (meta) return <Catalog title={meta[0]} intro={meta[1]} filter={meta[2]}/>;
   const product = PRODUCTS.find((p) => p.slug === resolved);
