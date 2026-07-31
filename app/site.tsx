@@ -16,7 +16,12 @@ const PRODUCT_IMAGES: Record<string, string> = {
   "freedom-df2500": "/freedom-df2500.png",
   "freedom-df3000": "/freedom-df3000.png",
   "freedom-df4100": "/freedom-df4100.png",
-  "freedom-df4000": "/freedom-df4000.png",
+  "secpower-sp12-5": "/econ-vrla-ep12-5.webp",
+  "secpower-sp12-7s": "/econ-vrla-ep12-7w.webp",
+  "secpower-sp12-9": "/econ-vrla-ep12-7.webp",
+  "secpower-sp12-12": "/econ-vrla-ep12-9.webp",
+  "secpower-sp12-18": "/econ-vrla-ep12-12.webp",
+  "econ-vrla-ep12-18": "/econ-vrla-ep12-18.webp",
   "bluetti-estacoes-base": "/bluetti-ac2a.webp",
   "bluetti-elite-30-v2": "/bluetti-elite-30-v2.webp",
   "bluetti-premium-30-v2": "/bluetti-premium-30-v2.webp",
@@ -148,6 +153,24 @@ function Catalog({ title="Nosso portfólio", intro="Encontre a solução certa p
   </Shell>;
 }
 
+function StationaryCatalog() {
+  const [search,setSearch] = useState("");
+  const matchesSearch = (product: Product) => clean(`${product.brand} ${product.model}`).includes(clean(search));
+  const freedom = useMemo(() => PRODUCTS.filter((p) => p.brand === "Freedom" && matchesSearch(p)), [search]);
+  const econ = useMemo(() => PRODUCTS.filter((p) => p.brand === "eCON VRLA" && matchesSearch(p)), [search]);
+  const total = freedom.length + econ.length;
+  return <Shell>
+    <section className="page-hero compact"><span className="eyebrow light">Portfólio Sol</span><h1>Baterias estacionárias</h1><p>Linhas profissionais organizadas por tecnologia e aplicação para facilitar a escolha da solução ideal.</p></section>
+    <section className="stationary-catalog section">
+      <div className="catalog-tools"><div><strong>{total}</strong><span> soluções encontradas</span></div><label><span>Buscar por marca ou modelo</span><input value={search} onChange={(e)=>setSearch(e.target.value)} placeholder="Ex.: Freedom, EP12-18…"/></label></div>
+      {!!freedom.length && <div className="catalog-group"><div className="catalog-group-heading"><span className="eyebrow">Baterias estacionárias</span><h2>Freedom</h2><p>Baterias de ciclo profundo para telecom, energia solar, nobreaks e aplicações profissionais que exigem autonomia e durabilidade.</p></div><div className="product-grid">{freedom.map((p) => <ProductCard key={p.id} product={p}/>)}</div></div>}
+      {!!econ.length && <div className="catalog-group econ-group"><div className="catalog-group-heading"><span className="eyebrow">Baterias seladas VRLA</span><h2>eCON VRLA</h2><p>Soluções compactas e livres de manutenção para sistemas de segurança, iluminação de emergência, telecom e energia de reserva.</p></div><div className="product-grid">{econ.map((p) => <ProductCard key={p.id} product={p}/>)}</div></div>}
+      {!total && <div className="empty">Nenhum produto encontrado. Tente outro termo.</div>}
+    </section>
+    <Cta/>
+  </Shell>;
+}
+
 function ProductCard({product}:{product:Product}) {
   const image = PRODUCT_IMAGES[product.slug];
   return <Link href={`/${product.slug}`} className="product-card"><span className="product-brand">{product.brand}</span>{image ? <div className="product-art real"><img src={image} alt={product.model}/></div> : <div className={`product-art ${product.segment}`}><i/><i/><b>{product.model.slice(0,8)}</b></div>}<h3>{product.model}</h3><p>{segmentLabel(product.segment)}</p><span className="card-link">Ver solução <Icon name="arrow"/></span></Link>;
@@ -219,6 +242,7 @@ export function SitePage({ slug }: { slug: string }) {
   if (resolved === "sustentabilidade") return <Sustainability/>;
   if (resolved === "contato") return <Contact/>;
   if (resolved === "politica-de-privacidade") return <Privacy/>;
+  if (resolved === "baterias-estacionarias") return <StationaryCatalog/>;
   const meta = CATEGORY_META[resolved as keyof typeof CATEGORY_META];
   if (meta) return <Catalog title={meta[0]} intro={meta[1]} filter={meta[2]}/>;
   const product = PRODUCTS.find((p) => p.slug === resolved);

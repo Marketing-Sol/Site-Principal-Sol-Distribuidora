@@ -16,7 +16,6 @@ const products: Product[] = [
   [942,"freedom-df2500","Freedom","DF2500","estacionaria"],
   [947,"freedom-df3000","Freedom","DF3000","estacionaria"],
   [956,"freedom-df4100","Freedom","DF4100","estacionaria"],
-  [3189,"freedom-df4000","Freedom","DF4000","estacionaria"],
   [979,"heliar-h38jd","Heliar","H38JD","automotiva"],
   [987,"heliar-h40fd","Heliar","H40FD","automotiva"],
   [992,"heliar-h45be","Heliar","H45BE","automotiva"],
