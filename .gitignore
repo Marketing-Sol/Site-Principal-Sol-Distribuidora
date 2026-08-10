@@ -42,4 +42,5 @@ next-env.d.ts
 /work/
 
 # Windows e Google Drive
-desktop.initsconfig.tsbuildinfo
+desktop.ini
+*.tsbuildinfo
