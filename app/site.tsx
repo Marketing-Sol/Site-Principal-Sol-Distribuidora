@@ -6,6 +6,7 @@ import { CATEGORY_META, PAGE_IDS, PRODUCTS, type Product } from "./data";
 
 const WHATSAPP = "https://api.whatsapp.com/send?phone=5541998220358&text=Ol%C3%A1%2C%20quero%20falar%20com%20um%20especialista%20da%20Sol.";
 const HOME_SCROLL_FRAME_COUNT = 97;
+const HOME_SCROLL_VIDEO_END = 6 / 11;
 
 const PRODUCT_IMAGES: Record<string, string> = {
   "elementor-601": "/freedom-df300.png",
@@ -237,6 +238,15 @@ function HeroVisual({ className = "" }: { className?: string }) {
   </div>;
 }
 
+function HeroPhoto({ className = "" }: { className?: string }) {
+  return <div className={`hero-photo ${className}`.trim()}>
+    <picture>
+      <source media="(max-width: 780px)" srcSet="/sol-hero-mobile.webp" />
+      <img src="/sol-hero.webp" alt="Fachada da Sol Distribuidora" />
+    </picture>
+  </div>;
+}
+
 function TrustStrip() {
   const stripRef = useRef<HTMLElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -326,8 +336,9 @@ function HomeScrollVideo() {
         const start = section.offsetTop;
         const distance = Math.max(section.offsetHeight - window.innerHeight, 1);
         const progress = Math.min(1, Math.max(0, (window.scrollY - start) / distance));
-        section.classList.toggle("is-copy-visible", progress >= 0.5);
-        targetFrame = Math.round(progress * (HOME_SCROLL_FRAME_COUNT - 1));
+        const videoProgress = Math.min(1, progress / HOME_SCROLL_VIDEO_END);
+        section.classList.toggle("is-copy-visible", videoProgress >= 0.5);
+        targetFrame = Math.round(videoProgress * (HOME_SCROLL_FRAME_COUNT - 1));
         window.cancelAnimationFrame(animationFrame);
         animationFrame = window.requestAnimationFrame(() => drawFrame(targetFrame));
       };
@@ -427,14 +438,13 @@ function Home() {
     <section className="hero">
       <div className="hero-copy">
         <span className="eyebrow light">Distribuição B2B · Desde 1999</span>
-        <HeroVisual className="hero-visual-mobile" />
         <h1>Energia para o presente.<br /><em>Soluções para o futuro.</em></h1>
         <p>Baterias, estações de energia e suporte especializado para fortalecer o seu negócio.</p>
         <div className="hero-actions"><a className="button yellow" href={WHATSAPP} target="_blank" rel="noreferrer">Seja um parceiro Sol <Icon name="arrow" /></a><Link className="text-link light" href="/produtos">Conheça o portfólio <Icon name="arrow" /></Link></div>
         <div className="hero-proof-label"><i /> Soluções para revendas e empresas</div>
         <div className="hero-proof"><div><strong>+27</strong><span>anos de mercado</span></div><div><strong>2</strong><span>centros de distribuição</span></div><div><strong>Brasil</strong><span>atendimento nacional</span></div></div>
       </div>
-      <HeroVisual className="hero-visual-desktop" />
+      <HeroPhoto className="hero-photo-background" />
     </section>
 
     <TrustStrip />
@@ -443,9 +453,9 @@ function Home() {
     <section className="solutions section">
       <SectionTitle eyebrow="Soluções" title={<>Um portfólio que <em>move negócios.</em></>} text="Produtos de alta confiabilidade, selecionados para atender diferentes demandas do mercado profissional." />
       <div className="solution-grid">
-        <SolutionCard href="/baterias-estacionarias" title="Baterias estacionárias" text="Energia segura e contínua para telecom, nobreaks, sistemas solares e aplicações críticas." image="/linha-estacionarias copiar.webp" featuredImage revealDelay={0} />
-        <SolutionCard href="/baterias-automotivas" title="Baterias automotivas" text="Linhas completas para veículos leves e pesados, com marcas reconhecidas pelo mercado." image="/linha-automotiva copiar.webp" featuredImage revealDelay={0.2} />
-        <SolutionCard href="/bluetti-estacoes-de-energia" title="Energia portátil e solar" text="Estações de energia e painéis solares para novas demandas, dentro e fora da rede." image="/linha-bluetti copiar.webp" featuredImage revealDelay={0.4} />
+        <SolutionCard href="/baterias-automotivas" title="Baterias automotivas" text="Linhas completas para veículos leves e pesados, com marcas reconhecidas pelo mercado." image="/linha-automotiva copiar.webp" featuredImage revealDelay={0} />
+        <SolutionCard href="/bluetti-estacoes-de-energia" title="Energia portátil e solar" text="Estações de energia e painéis solares para novas demandas, dentro e fora da rede." image="/linha-bluetti copiar.webp" featuredImage revealDelay={0.2} />
+        <SolutionCard href="/baterias-estacionarias" title="Baterias estacionárias" text="Energia segura e contínua para telecom, nobreaks, sistemas solares e aplicações críticas." image="/linha-estacionarias copiar.webp" featuredImage revealDelay={0.4} />
       </div>
     </section>
 
