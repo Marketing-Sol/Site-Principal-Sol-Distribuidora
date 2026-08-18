@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { CATEGORY_META, PAGE_IDS, PRODUCTS, type Product } from "./data";
+import { PRODUCT_SPECS, productSpecKey } from "./product-specs";
 
 const WHATSAPP = "https://api.whatsapp.com/send?phone=5541998220358&text=Ol%C3%A1%2C%20quero%20falar%20com%20um%20especialista%20da%20Sol.";
 const CONTACT_LEADS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwN1U6lRr3ZYtpF8mlgUeQGr7FpC9YculkBb67sDmMdF9bMgMDCPtmNd9e_iDBwLXmr/exec";
@@ -98,6 +99,20 @@ export const PRODUCT_IMAGES: Record<string, string> = {
   "bluetti-sora-220": "/bluetti-sora-220.webp",
 };
 
+const BLUETTI_GALLERY_COUNTS: Record<string, number> = {
+  "bluetti-premium-30-v2": 6, "bluetti-ac50": 4, "bluetti-ac50p": 10, "bluetti-ac70p": 10,
+  "bluetti-ac180p": 7, "bluetti-premium-100-v2": 6, "bluetti-ac200pl": 10, "bluetti-elite-200-v2": 9,
+  "bluetti-premium-200-v2": 13, "bluetti-elite-300": 2, "bluetti-apex-300": 6, "bluetti-sora-60": 7,
+  "bluetti-pv100": 5, "bluetti-sora-130": 7, "bluetti-sora-220": 9,
+};
+
+const BLUETTI_GALLERIES = Object.fromEntries(
+  Object.entries(BLUETTI_GALLERY_COUNTS).map(([slug, count]) => [
+    slug,
+    Array.from({ length: count }, (_, index) => `/bluetti-gallery/${slug}-${String(index + 1).padStart(2, "0")}.webp`),
+  ]),
+) as Record<string, string[]>;
+
 const HELIAR_IMAGE_SCALES: Record<string, number> = {
   "heliar-h40jd": 1.03,
   "heliar-h40jd-jis": 1.75,
@@ -157,8 +172,8 @@ function Header() {
   return <header className="header">
     <div className="nav-wrap">
       <Brand />
-      <button className="menu-button" onClick={() => setOpen(!open)} aria-expanded={open} aria-label="Abrir menu"><span /><span /></button>
-      <nav className={open ? "nav open" : "nav"} aria-label="Navegação principal">
+      <button className="menu-button" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="primary-navigation" aria-label={open ? "Fechar menu" : "Abrir menu"}><span /><span /></button>
+      <nav id="primary-navigation" className={open ? "nav open" : "nav"} aria-label="Navegação principal">
         <Link href="/produtos" onClick={() => setOpen(false)}>Soluções</Link>
         <Link href="/sobre-nos" onClick={() => setOpen(false)}>A Sol</Link>
         <Link href="/sustentabilidade" onClick={() => setOpen(false)}>Sustentabilidade</Link>
@@ -587,14 +602,14 @@ function ProductCarousels({ products }: { products: Product[] }) {
   return <div className="product-carousels">{BRAND_ORDER.map((brand) => <BrandCarousel key={brand} brand={brand} products={products.filter((product) => product.brand === brand)} />)}</div>;
 }
 
-function Catalog({ title = "Nosso portfólio", intro = "Encontre a solução certa para o seu negócio.", filter }: { title?: string; intro?: string; filter?: string }) {
+function Catalog({ title = "Nosso portfólio", intro = "Encontre a solução certa para o seu negócio.", filter, heroVideo = false }: { title?: string; intro?: string; filter?: string; heroVideo?: boolean }) {
   const [search, setSearch] = useState("");
   const list = useMemo(() => PRODUCTS.filter((product) => {
     const matchesFilter = !filter || product.segment === filter || product.brand === filter;
     return matchesFilter && clean(`${product.brand} ${product.model}`).includes(clean(search));
   }), [search, filter]);
   return <Shell>
-    <section className="page-hero compact"><span className="eyebrow light">Portfólio Sol</span><h1>{title}</h1><p>{intro}</p></section>
+    <section className={`page-hero compact${heroVideo ? " solutions-hero" : ""}`}>{heroVideo && <video className="solutions-hero-video" autoPlay muted playsInline preload="auto" aria-hidden="true"><source src="/hero-solucoes.mp4" type="video/mp4" /></video>}<span className="eyebrow light">Portfólio Sol</span><h1>{title}</h1><p>{intro}</p></section>
     <section className="catalog section">
       <div className="catalog-tools"><div><strong>{list.length}</strong><span> soluções encontradas</span></div><label><span>Buscar por marca ou modelo</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Ex.: Heliar, DF1500, Bluetti…" /></label></div>
       <ProductCarousels products={list} />
@@ -625,9 +640,17 @@ function BluettiCatalog() {
   </Shell>;
 }
 
+function scrollToProductPageTop() {
+  const root = document.documentElement;
+  const previousScrollBehavior = root.style.scrollBehavior;
+  root.style.scrollBehavior = "auto";
+  window.scrollTo(0, 0);
+  window.requestAnimationFrame(() => { root.style.scrollBehavior = previousScrollBehavior; });
+}
+
 function ProductCard({ product }: { product: Product }) {
   const image = PRODUCT_IMAGES[product.slug];
-  return <Link href={`/${product.slug}`} className="product-card"><span className="product-brand">{product.brand}</span>{image ? <div className={`product-art real${product.brand === "Heliar" ? " heliar-product-art" : ""}`} style={heliarImageStyle(product)}><img src={image} alt={product.model} /></div> : <div className={`product-art ${product.segment}`}><i /><i /><b>{product.model.slice(0, 8)}</b></div>}<h3>{product.model}</h3><p>{segmentLabel(product.segment)}</p><span className="card-link">Ver solução <Icon name="arrow" /></span></Link>;
+  return <Link href={`/${product.slug}`} className="product-card" onClick={scrollToProductPageTop}><span className="product-brand">{product.brand}</span>{image ? <div className={`product-art real${product.brand === "Heliar" ? " heliar-product-art" : ""}`} style={heliarImageStyle(product)}><img src={image} alt={product.model} /></div> : <div className={`product-art ${product.segment}`}><i /><i /><b>{product.model.slice(0, 8)}</b></div>}<h3>{product.model}</h3><p>{segmentLabel(product.segment)}</p><span className="card-link">Ver solução <Icon name="arrow" /></span></Link>;
 }
 
 function segmentLabel(segment: Product["segment"]) {
@@ -705,11 +728,36 @@ const BLUETTI_CONTENT: Partial<Record<string, BluettiContent>> = {
   "bluetti-sora-220": { datasheet: [["Potência máxima", "220 W."], ["Eficiência", "até 25%."], ["Potência / capacidade", "220 W; Vmp 21,6 V; Imp 10,2 A; Voc 25,9 V; Isc 11 A."], ["Entradas e recarga", "Converte luz solar em energia CC; não possui entrada de recarga própria."], ["Saídas / compatibilidade", "Conector MC4 com cabo de extensão de 1,5 m; compatível com estações e sistemas que aceitam seus parâmetros elétricos."], ["Tecnologia e segurança", "Painel monocristalino N-Type/TOPCon com acabamento ETFE, eficiência de até 25%, IP67 e operação de -25°C a 65°C."], ["Dimensões e peso", "Aberto: 1.723 x 838 x 3 mm. Fechado: 415 x 302 x 87 mm. Peso: 5,9 kg."], ["Garantia", "12 meses."]], intro: "O SORA 220 fornece 220 W com até 25% de eficiência em um conjunto dobrável de 5,9 kg, indicado para camping, barcos, quintais, RVs e recarga mais rápida de estações portáteis.", advantages: [["Alta potência por peso", "entrega 220 W mantendo transporte e armazenamento simples."], ["Tecnologia N-Type/TOPCon", "favorece maior conversão e menor degradação do painel."], ["Proteção IP67", "suporta poeira e respingos em uso externo, com conectores mantidos fora d'água."], ["Suporte ajustável", "ângulos entre 30° e 45° ajudam a melhorar a captação solar."], ["MC4 universal", "facilita a conexão com diferentes estações e sistemas de armazenamento."]], summary: "É uma solução de maior potência para quem busca recarga solar eficiente, portátil e resistente sem carregar um painel tradicional pesado." },
 };
 
+function ProductGallery({ product, images }: { product: Product; images: string[] }) {
+  const [activeImage, setActiveImage] = useState(0);
+
+  useEffect(() => {
+    setActiveImage(0);
+  }, [product.slug]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setActiveImage((current) => (current + 1) % images.length), 5000);
+    return () => window.clearTimeout(timer);
+  }, [activeImage, images.length]);
+
+  const showImage = (direction: 1 | -1) => {
+    setActiveImage((current) => (current + direction + images.length) % images.length);
+  };
+
+  return <div className="product-gallery" aria-roledescription="carrossel" aria-label={`Galeria da ${product.brand} ${product.model}`}>
+    <img className="product-gallery-image" src={images[activeImage]} alt={`${product.brand} ${product.model} — imagem ${activeImage + 1} de ${images.length}`} />
+    {images.length > 1 && <><button className="gallery-arrow gallery-arrow-prev" type="button" onClick={() => showImage(-1)} aria-label="Imagem anterior"><span aria-hidden="true">{"\u2190"}</span></button><button className="gallery-arrow gallery-arrow-next" type="button" onClick={() => showImage(1)} aria-label="Próxima imagem"><span aria-hidden="true">{"\u2192"}</span></button><span className="gallery-count" aria-live="polite">{activeImage + 1} / {images.length}</span></>}
+  </div>;
+}
+
 function ProductDetail({ product }: { product: Product }) {
   const realImage = PRODUCT_IMAGES[product.slug];
   const isPremium30 = product.slug === "bluetti-premium-30-v2";
   const bluettiContent = BLUETTI_CONTENT[product.slug];
+  const bluettiGallery = BLUETTI_GALLERIES[product.slug];
+  const productSpec = PRODUCT_SPECS[productSpecKey(product.brand, product.model)];
   const [relatedSearch, setRelatedSearch] = useState("");
+  useEffect(() => { setRelatedSearch(""); }, [product.slug]);
   const brandProducts = PRODUCTS.filter((item) => item.brand === product.brand);
   const productIndex = brandProducts.findIndex((item) => item.id === product.id);
   const suggestedProducts = [
@@ -723,7 +771,7 @@ function ProductDetail({ product }: { product: Product }) {
   return <Shell>
     <section className="product-hero">
       <div><span className="eyebrow light product-hero-label">{product.brand} · {segmentLabel(product.segment)}</span><h1>{product.model}</h1><p>Uma solução para compor um portfólio profissional, com o atendimento, suporte e pós-venda da Sol.</p><a className="button yellow" href={WHATSAPP} target="_blank" rel="noreferrer">Solicite uma cotação <Icon name="arrow" /></a></div>
-      <div className={`product-stage ${product.segment}`}><span className="eyebrow light product-stage-label">{product.brand} · {segmentLabel(product.segment)}</span>{realImage ? <div className={product.brand === "Heliar" ? "heliar-product-stage" : undefined} style={heliarImageStyle(product)}><div className="stage-glow" /><img className="stage-real-product" src={realImage} alt={`${product.brand} ${product.model}`} /></div> : <><div className="stage-glow" /><div className="stage-product"><i /><i /><b>{product.model}</b><span>{product.brand}</span></div></>}</div>
+      <div className="product-media-card">{bluettiGallery ? <ProductGallery product={product} images={bluettiGallery} /> : <div className={`product-stage ${product.segment}`}><span className="eyebrow light product-stage-label">{product.brand} · {segmentLabel(product.segment)}</span>{realImage ? <div className={product.brand === "Heliar" ? "heliar-product-stage" : "product-stage-image"} style={heliarImageStyle(product)}><div className="stage-glow" /><img className="stage-real-product" src={realImage} alt={`${product.brand} ${product.model}`} /></div> : <><div className="stage-glow" /><div className="stage-product"><i /><i /><b>{product.model}</b><span>{product.brand}</span></div></>}</div>}</div>
     </section>
     {isPremium30 ? <section className="detail section premium-30-overview">
       <div className="premium-30-datasheet"><span className="eyebrow">Visão geral</span><h2>Premium 30 V2 <em>em detalhes.</em></h2><span className="detail-label">Datasheet</span><p><strong>Saída contínua:</strong> 600 W, com modo de elevação de potência de até 1.500 W.</p><p><strong>Capacidade:</strong> 320 Wh.</p><p><strong>Entradas e recarga:</strong> entrada CA de até 380 W; bypass CA de até 980 W; solar ou Charger 1 de até 200 W. A página informa 80% em cerca de 50 minutos no TurboBoost e aproximadamente 2,2 h por solar/Charger 1.</p><p><strong>Saídas e compatibilidade:</strong> 8 saídas: 1 veicular de 12 V/10 A; 2 DC5521 de 12 V/5 A cada, 8 A no total; 2 USB-A de 5 V/3 A e até 15 W cada; 1 USB-C de até 100 W; 1 USB-C de até 140 W; e 1 saída CA de 600 W.</p><p><strong>Tecnologia e segurança:</strong> bateria LiFePO4, mais de 3.000 ciclos até 80%, vida projetada de 10 anos, UPS em até 10 ms, UltraCell, gerenciamento térmico e operação abaixo de 30 dB em baixa carga.</p><p><strong>Dimensões e peso:</strong> 250 x 178 x 167,5 mm; 4,3 kg.</p><p className="premium-30-warranty"><strong>Garantia:</strong> 5 anos.</p></div>
@@ -731,6 +779,9 @@ function ProductDetail({ product }: { product: Product }) {
     </section> : bluettiContent ? <section className="detail section premium-30-overview">
       <div className="premium-30-datasheet"><span className="eyebrow">Visão geral</span><h2>{product.model} <em>em detalhes.</em></h2><span className="detail-label">Datasheet</span>{bluettiContent.datasheet.map(([label, text]) => <p key={label} className={label === "Garantia" ? "premium-30-warranty" : undefined}><strong>{label}:</strong> {text}</p>)}</div>
       <div className="premium-30-advantages"><span className="eyebrow">Principais vantagens</span><h2>Principais <em>vantagens.</em></h2><p>{bluettiContent.intro}</p><ul>{bluettiContent.advantages.map(([title, text]) => <li key={title}><strong>{title}:</strong> {text}</li>)}</ul><p className="premium-30-summary">{bluettiContent.summary}</p></div>
+    </section> : productSpec ? <section className="detail section premium-30-overview">
+      <div className="premium-30-datasheet"><span className="eyebrow">Especificações</span><h2>{product.model} <em>em detalhes.</em></h2><span className="detail-label">Ficha técnica</span><p><strong>Tecnologia:</strong> {productSpec.technology}</p><p><strong>Tensão:</strong> {productSpec.voltage}</p><p><strong>Capacidade:</strong> {productSpec.capacity}</p>{productSpec.cca !== "-" && <p><strong>CCA:</strong> {productSpec.cca}</p>}<p><strong>Dimensões:</strong> {productSpec.dimensions}</p><p><strong>Peso:</strong> {productSpec.weight}</p><p className="premium-30-warranty"><strong>Garantia:</strong> {productSpec.warranty}</p></div>
+      <div className="premium-30-advantages"><span className="eyebrow">Sobre o produto</span><h2>Escolha com <em>confiança.</em></h2><p>{productSpec.description}</p><p className="premium-30-summary">Nossa equipe ajuda a confirmar aplicação, disponibilidade e especificações para a solução ideal.</p></div>
     </section> : <section className="detail section">
       <div><span className="eyebrow">Visão geral</span><h2>Escolha técnica com <em>apoio comercial.</em></h2><p>Nossa equipe ajuda sua empresa a confirmar aplicação, disponibilidade e especificações antes da compra. Assim, você indica a solução correta e negocia com mais segurança.</p></div>
       <div className="detail-cards"><div><Icon name="shield" /><b>Procedência</b><span>Produto comercializado por uma distribuidora com mais de 27 anos.</span></div><div><Icon name="people" /><b>Atendimento B2B</b><span>Orientação para revendas, integradores e empresas.</span></div><div><Icon name="energy" /><b>Ficha sob consulta</b><span>Confirme dados técnicos e disponibilidade com um especialista.</span></div></div>
@@ -810,9 +861,18 @@ function Value({ icon, title, text }: { icon: "truck" | "people" | "shield" | "l
 function Sustainability() {
   return <Shell>
     <section className="page-hero sustainability-hero"><span className="eyebrow light">Responsabilidade ambiental</span><h1>Energia com propósito.<br /><em>Futuro com responsabilidade.</em></h1><p>Eficiência, descarte correto e escolhas responsáveis fazem parte da forma como a Sol conduz seus negócios.</p></section>
-    <section className="story sustainability-story section"><div><span className="eyebrow">Compromisso</span><h2>Desenvolvimento que<br /><em>respeita o amanhã.</em></h2><img src="/sustentabilidade-oficial.png" alt="Ciclo de reciclagem e logística reversa de baterias" /></div><div><p>Trabalhamos para ampliar o acesso a soluções energéticas mais eficientes e apoiar práticas responsáveis em toda a cadeia.</p><p>A sustentabilidade é um compromisso contínuo: da logística ao pós-venda, da orientação ao cliente à destinação adequada de baterias.</p></div></section>
-    <section className="values green section"><Value icon="leaf" title="Logística reversa" text="Orientação e responsabilidade na destinação de baterias ao fim da vida útil." /><Value icon="energy" title="Eficiência energética" text="Soluções que ajudam empresas a usar e armazenar energia de forma mais inteligente." /><Value icon="shield" title="Cadeia responsável" text="Parcerias e processos guiados por segurança, integridade e conformidade." /></section>
-    <Cta />
+    <section className="circular-economy section">
+      <div className="circular-economy-heading"><span className="eyebrow">Economia circular em ação</span><h2>Baterias que voltam a<br /><em>gerar valor.</em></h2></div>
+      <div className="circular-economy-copy"><p>Na Sol Distribuidora, sustentabilidade também faz parte do caminho da energia. Por meio do Programa Mundial Ecosteps®, contribuímos para o descarte correto de baterias automotivas e para a reciclagem de até 99% de seus componentes.</p><p>A logística reversa permite que materiais como chumbo, plástico e ácido sejam encaminhados para reaproveitamento, reduzindo o descarte inadequado e ajudando a preservar os recursos naturais.</p><aside><strong>Até 99%</strong><span>dos componentes podem ser reciclados</span><p>O descarte correto ajuda a transformar baterias esgotadas em matéria-prima para novas soluções.</p></aside></div>
+      <div className="circular-economy-image"><img src="/economia-circular-baterias-v1.webp" alt="Economia circular e reaproveitamento de baterias" /></div>
+    </section>
+    <section className="battery-cycle">
+      <div className="battery-cycle-heading"><span className="eyebrow">O ciclo sustentável da bateria</span><h2>Um ciclo que gera<br /><em>impacto positivo.</em></h2><p>O ciclo sustentável começa com o consumidor, que devolve a bateria usada ao adquirir uma nova. A Sol Distribuidora e seus parceiros encaminham esse material aos pontos de coleta e reciclagem, onde seus componentes são reaproveitados na fabricação de novas baterias.</p><p>Esse processo conecta consumidores, distribuidores, revendas e fabricantes em uma cadeia mais responsável, que reduz resíduos e mantém materiais importantes em circulação.</p></div>
+      <figure className="battery-cycle-visual"><img src="/sustentabilidade-oficial.png" alt="Ciclo de logística reversa de baterias" /></figure>
+      <ol className="battery-cycle-steps"><li><b>01</b><strong>Consumidor</strong><span>Compra uma bateria nova e devolve a usada.</span></li><li><b>02</b><strong>Distribuidor ou revenda</strong><span>Recebe e direciona a bateria esgotada.</span></li><li><b>03</b><strong>Coleta</strong><span>As baterias são recolhidas para reciclagem.</span></li><li><b>04</b><strong>Reciclagem</strong><span>Os materiais são separados e reaproveitados.</span></li><li><b>05</b><strong>Fabricação</strong><span>A matéria-prima retorna à produção de novas baterias.</span></li><li><b>06</b><strong>Distribuição</strong><span>Novas baterias chegam novamente ao mercado.</span></li></ol>
+    </section>
+    <section className="clean-energy"><div><span className="eyebrow">Energia para um futuro mais limpo</span><h2>Escolhas que geram<br /><em>impacto positivo.</em></h2><p>Além da logística reversa, a Sol Distribuidora investe em práticas que apoiam uma matriz energética mais limpa. Utilizamos energia solar e contamos com estação de carregamento para carros elétricos, reforçando nosso compromisso com escolhas que geram impacto positivo hoje e no futuro.</p></div><div className="clean-energy-cards"><article><Icon name="energy" /><h3>Energia solar</h3><p>Aproveitamos a energia do sol para tornar nossa operação mais eficiente.</p></article><article><Icon name="energy" /><h3>Mobilidade elétrica</h3><p>Contamos com estação de carregamento para veículos elétricos em nossa estrutura.</p></article></div></section>
+    <section className="sustainability-closing section"><p>Descarte sua bateria corretamente. Juntos, transformamos responsabilidade em energia para o futuro.</p><a className="button blue" href={WHATSAPP} target="_blank" rel="noreferrer">Fale com a Sol <Icon name="arrow" /></a></section>
   </Shell>;
 }
 
@@ -883,7 +943,7 @@ function NotFoundPage() {
 export function SitePage({ slug }: { slug: string }) {
   const resolved = PAGE_IDS[slug] || slug;
   if (resolved === "home" || resolved === "home-nova") return <Home />;
-  if (resolved === "produtos") return <Catalog />;
+  if (resolved === "produtos") return <Catalog heroVideo />;
   if (resolved === "sobre-nos") return <About />;
   if (resolved === "sustentabilidade") return <Sustainability />;
   if (resolved === "contato") return <Contact />;

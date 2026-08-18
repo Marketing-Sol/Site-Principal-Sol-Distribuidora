@@ -10,11 +10,12 @@ const PAGE_METADATA: Record<string, { title: string; description: string; image:
   "politica-de-privacidade": { title: "Política de Privacidade", description: "Entenda como a Sol Distribuidora trata os dados pessoais enviados pelos seus canais digitais.", image: "/og.png" },
 };
 
-function createMetadata(title: string, description: string, image: string): Metadata {
+function createMetadata(title: string, description: string, image: string, canonical: string): Metadata {
   const fullTitle = `${title} | Sol Distribuidora`;
   return {
     title: fullTitle,
     description,
+    alternates: { canonical },
     openGraph: { title: fullTitle, description, type: "website", locale: "pt_BR", siteName: "Sol Distribuidora", images: [{ url: image }] },
     twitter: { card: "summary_large_image", title: fullTitle, description, images: [image] },
   };
@@ -23,19 +24,20 @@ function createMetadata(title: string, description: string, image: string): Meta
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const resolved = PAGE_IDS[slug] || slug;
+  const canonical = resolved === "home" || resolved === "home-nova" ? "/" : `/${resolved}`;
   const product = PRODUCTS.find((item) => item.slug === resolved);
   if (product) {
     const segment = { estacionaria: "baterias estacionárias", automotiva: "baterias automotivas", moto: "baterias para motos", energia: "estações de energia", solar: "painéis solares" }[product.segment];
-    return createMetadata(`${product.brand} ${product.model}`, `Conheça a ${product.model}, da ${product.brand}, e encontre soluções em ${segment} com suporte especializado da Sol Distribuidora.`, PRODUCT_IMAGES[product.slug] ?? "/og.png");
+    return createMetadata(`${product.brand} ${product.model}`, `Conheça a ${product.model}, da ${product.brand}, e encontre soluções em ${segment} com suporte especializado da Sol Distribuidora.`, PRODUCT_IMAGES[product.slug] ?? "/og.png", canonical);
   }
   const category = CATEGORY_META[resolved as keyof typeof CATEGORY_META];
   if (category) {
     const categoryImage = category[2] === "automotiva" || category[2] === "Heliar" || category[2] === "eCON" ? "/linha-automotiva.png" : category[2] === "Bluetti" ? "/linha-bluetti.webp" : "/linha-estacionarias copiar.webp";
-    return createMetadata(category[0], category[1], categoryImage);
+    return createMetadata(category[0], category[1], categoryImage, canonical);
   }
   const page = PAGE_METADATA[resolved];
-  if (page) return createMetadata(page.title, page.description, page.image);
-  return createMetadata("Página não encontrada", "A página solicitada não está disponível na Sol Distribuidora.", "/og.png");
+  if (page) return createMetadata(page.title, page.description, page.image, canonical);
+  return createMetadata("Página não encontrada", "A página solicitada não está disponível na Sol Distribuidora.", "/og.png", canonical);
 }
 
 export default async function DynamicPage({

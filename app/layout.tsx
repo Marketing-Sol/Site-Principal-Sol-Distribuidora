@@ -10,9 +10,11 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = "Sol Distribuidora | Energia para quem não pode parar";
   const description = "Soluções B2B em baterias automotivas e estacionárias, estações de energia e backup, com suporte técnico e pós-venda.";
   return {
+    metadataBase: new URL(origin),
     title,
     description,
-    icons: { icon: "/sol-symbol-blue-crop.png", shortcut: "/sol-symbol-blue-crop.png" },
+    alternates: { canonical: "/" },
+    icons: { icon: "/Sol-Icon-favicon.webp", shortcut: "/Sol-Icon-favicon.webp" },
     openGraph: {
       title,
       description,

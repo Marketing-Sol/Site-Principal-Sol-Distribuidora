@@ -711,5 +711,45 @@ export const PRODUCT_SPECS: Record<string, ProductSpec> = {
                               "weight":  "5 kg",
                               "warranty":  "12 meses",
                               "description":  "Uma solução compacta de 18 Ah para reposição e montagem de sistemas de energia de emergência em 12 V. O EP12-18 agrega praticidade por ser selado e de manutenção reduzida, além de 12 meses de garantia, o que simplifica a argumentação para clientes de segurança, nobreak e telecomunicações."
-                          }
+                          },
+    "Heliar|H40JD": {
+      "technology": "SLI / chumbo-ácida convencional",
+      "voltage": "12 V",
+      "capacity": "40 Ah (C20)",
+      "cca": "320 A",
+      "dimensions": "187 x 127 x 225 mm",
+      "weight": "Não informado na ficha oficial consultada",
+      "warranty": "24 meses",
+      "description": "Bateria Heliar de 40 Ah para reposição em veículos convencionais compatíveis. Combina 320 A de CCA e garantia de 24 meses, com o respaldo da tecnologia PowerFrame. Uma escolha direta para quem procura confiabilidade na partida e compatibilidade com a aplicação correta."
+    },
+    "Heliar|HE45BE": {
+      "technology": "SLI / chumbo-ácida convencional",
+      "voltage": "12 V",
+      "capacity": "45 Ah (C20)",
+      "cca": "330 A",
+      "dimensions": "210 x 175 x 175 mm",
+      "weight": "Não informado na ficha oficial consultada",
+      "warranty": "24 meses",
+      "description": "Bateria Heliar de 45 Ah indicada para reposição em veículos convencionais compatíveis. Seus 330 A de CCA apoiam partidas consistentes dentro da aplicação prevista, enquanto os 24 meses de garantia e a tecnologia PowerFrame reforçam uma proposta de confiança para o cliente."
+    },
+    "Heliar|H45JE": {
+      "technology": "SLI / chumbo-ácida convencional",
+      "voltage": "12 V",
+      "capacity": "45 Ah (C20)",
+      "cca": "340 A",
+      "dimensions": "238 x 129 x 225 mm",
+      "weight": "Não informado na ficha oficial consultada",
+      "warranty": "24 meses",
+      "description": "Bateria Heliar de 45 Ah para aplicações convencionais compatíveis, com 340 A de CCA e garantia de 24 meses. O formato específico do modelo amplia as opções de reposição para veículos que exigem essa configuração, combinando desempenho de partida e a reconhecida tecnologia PowerFrame."
+    },
+    "Heliar|HS180TE": {
+      "technology": "Chumbo-ácida para frota",
+      "voltage": "12 V",
+      "capacity": "180 Ah (C20)",
+      "cca": "950 A",
+      "dimensions": "510 x 213 x 236 mm",
+      "weight": "Não informado na ficha oficial consultada",
+      "warranty": "15 meses",
+      "description": "Bateria Heliar de 180 Ah para aplicações comerciais compatíveis, com 950 A de CCA e garantia de 15 meses. É uma opção para frotas que precisam de capacidade energética e partida robusta na configuração correta. A tecnologia PowerFrame e a origem de equipamento original fortalecem a argumentação de confiabilidade para a operação."
+    }
 };
