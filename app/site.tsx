@@ -9,7 +9,7 @@ const CONTACT_LEADS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwN1U6lR
 const HOME_SCROLL_FRAME_COUNT = 97;
 const HOME_SCROLL_VIDEO_END = 6 / 11;
 
-const PRODUCT_IMAGES: Record<string, string> = {
+export const PRODUCT_IMAGES: Record<string, string> = {
   "elementor-601": "/freedom-df300.png",
   "freedom-df500": "/freedom-df500.png",
   "freedom-df700": "/freedom-df700.png",
@@ -805,7 +805,7 @@ function StructureExperience() {
   </section>;
 }
 
-function Value({ icon, title, text }: { icon: "truck" | "people" | "shield"; title: string; text: string }) { return <div><Icon name={icon} /><b>{title}</b><p>{text}</p></div>; }
+function Value({ icon, title, text }: { icon: "truck" | "people" | "shield" | "leaf" | "energy"; title: string; text: string }) { return <div><Icon name={icon} /><b>{title}</b><p>{text}</p></div>; }
 
 function Sustainability() {
   return <Shell>
