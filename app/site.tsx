@@ -159,8 +159,19 @@ function heliarImageStyle(product: Product) {
 }
 
 function Icon({ name }: { name: "arrow" | "check" | "phone" | "pin" | "mail" | "leaf" | "shield" | "truck" | "people" | "energy" }) {
-  const symbols = { arrow: "↗", check: "✓", phone: "☎", pin: "●", mail: "@", leaf: "◆", shield: "◈", truck: "▰", people: "●●", energy: "ϟ" };
-  return <span className={`icon icon-${name}`} aria-hidden="true">{symbols[name]}</span>;
+  const glyphs = {
+    arrow: <><path d="M5 19 19 5" /><path d="M9 5h10v10" /></>,
+    check: <path d="m5 12 4.2 4.2L19 6.5" />,
+    phone: <path d="M7.1 3.9 4.8 6.2c-1 1 1.8 7.1 5.8 11.1s10.1 6.8 11.1 5.8l2.3-2.3-4.2-4.2-2.7 2.1c-1.3-.7-2.7-1.7-4-3s-2.3-2.7-3-4l2.1-2.7-4.2-4.1Z" />,
+    pin: <><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></>,
+    mail: <><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m4 7 8 6 8-6" /></>,
+    leaf: <><path d="M20 4C10 4 4 9.6 4 17c0 1.7.5 2.5.5 2.5S13 20.2 17 15c2.3-3 3-7.1 3-11Z" /><path d="M4.5 19.5c3.2-4.1 6.3-6.7 11.5-9.4" /></>,
+    shield: <><path d="M12 3 20 6v5c0 5-3.3 8.8-8 10-4.7-1.2-8-5-8-10V6l8-3Z" /><path d="m8.5 12 2.3 2.3 4.7-4.7" /></>,
+    truck: <><path d="M3 6h11v10H3z" /><path d="M14 10h3l3 3v3h-6z" /><circle cx="7" cy="18" r="2" /><circle cx="17" cy="18" r="2" /></>,
+    people: <><circle cx="9" cy="8" r="3" /><circle cx="17" cy="9" r="2.5" /><path d="M3.5 20c.5-4 2.5-6 5.5-6s5 2 5.5 6" /><path d="M14.5 14.5c3.3-.2 5.4 1.6 6 5.5" /></>,
+    energy: <path d="m13.5 2-8 11h5l-1 9 8-12h-5l1-8Z" />,
+  };
+  return <span className={`icon icon-${name}`} aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{glyphs[name]}</svg></span>;
 }
 
 function Brand({ variant = "blue" }: { variant?: "blue" | "white" }) {

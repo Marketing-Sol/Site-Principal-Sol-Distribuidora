@@ -40,6 +40,8 @@ next-env.d.ts
 /.wrangler/
 /outputs/
 /work/
+/build/sites-package*.tgz
+/build/sites-package-stage*/
 
 # Windows e Google Drive
 desktop.ini
