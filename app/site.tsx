@@ -169,6 +169,10 @@ function Brand({ variant = "blue" }: { variant?: "blue" | "white" }) {
 
 function Header() {
   const [open, setOpen] = useState(false);
+  useEffect(() => {
+    document.body.classList.toggle("menu-open", open);
+    return () => document.body.classList.remove("menu-open");
+  }, [open]);
   return <header className="header">
     <div className="nav-wrap">
       <Brand />
@@ -582,6 +586,7 @@ function productNiche(product: Product) {
 function BrandCarousel({ brand, products }: { brand: Product["brand"]; products: Product[] }) {
   const hasFilter = brand === "Heliar" || brand === "eCON" || brand === "Bluetti";
   const [selectedNiche, setSelectedNiche] = useState("Todos");
+  useEffect(() => { setSelectedNiche("Todos"); }, [products]);
   const niches = [...new Set(products.map(productNiche))];
   const visibleProducts = selectedNiche === "Todos" ? products : products.filter((product) => productNiche(product) === selectedNiche);
   const headingId = `brand-${brand.toLowerCase().replace(/\s+/g, "-")}`;
@@ -595,6 +600,7 @@ function BrandCarousel({ brand, products }: { brand: Product["brand"]; products:
     <div className="product-carousel-track" role="region" aria-label={`Produtos ${brand}`} tabIndex={0}>
       {visibleProducts.map((product) => <ProductCard key={product.id} product={product} />)}
     </div>
+    <p className="carousel-hint">Deslize para ver mais produtos.</p>
   </section>;
 }
 
@@ -650,7 +656,9 @@ function scrollToProductPageTop() {
 
 function ProductCard({ product }: { product: Product }) {
   const image = PRODUCT_IMAGES[product.slug];
-  return <Link href={`/${product.slug}`} className="product-card" onClick={scrollToProductPageTop}><span className="product-brand">{product.brand}</span>{image ? <div className={`product-art real${product.brand === "Heliar" ? " heliar-product-art" : ""}`} style={heliarImageStyle(product)}><img src={image} alt={product.model} /></div> : <div className={`product-art ${product.segment}`}><i /><i /><b>{product.model.slice(0, 8)}</b></div>}<h3>{product.model}</h3><p>{segmentLabel(product.segment)}</p><span className="card-link">Ver solução <Icon name="arrow" /></span></Link>;
+  const isBattery = product.segment !== "energia" && product.segment !== "solar";
+  const cardImage = isBattery ? `/product-card-images/${product.slug}.webp` : image;
+  return <Link href={`/${product.slug}`} className="product-card" onClick={scrollToProductPageTop}><span className="product-brand">{product.brand}</span>{image ? <div className={`product-art real${isBattery ? " battery-product-art" : ""}${product.brand === "Heliar" ? " heliar-product-art" : ""}`} style={heliarImageStyle(product)}><img src={cardImage} alt={product.model} /></div> : <div className={`product-art ${product.segment}`}><i /><i /><b>{product.model.slice(0, 8)}</b></div>}<h3>{product.model}</h3><p>{segmentLabel(product.segment)}</p><span className="card-link">Ver solução <Icon name="arrow" /></span></Link>;
 }
 
 function segmentLabel(segment: Product["segment"]) {
@@ -730,34 +738,40 @@ const BLUETTI_CONTENT: Partial<Record<string, BluettiContent>> = {
 
 function ProductGallery({ product, images }: { product: Product; images: string[] }) {
   const [activeImage, setActiveImage] = useState(0);
+  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     setActiveImage(0);
+    setPaused(false);
   }, [product.slug]);
 
   useEffect(() => {
+    if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const timer = window.setTimeout(() => setActiveImage((current) => (current + 1) % images.length), 5000);
     return () => window.clearTimeout(timer);
-  }, [activeImage, images.length]);
+  }, [activeImage, images.length, paused]);
 
   const showImage = (direction: 1 | -1) => {
     setActiveImage((current) => (current + direction + images.length) % images.length);
   };
 
-  return <div className="product-gallery" aria-roledescription="carrossel" aria-label={`Galeria da ${product.brand} ${product.model}`}>
+  return <div className={`product-gallery product-gallery-${product.segment}`} aria-roledescription="carrossel" aria-label={`Galeria da ${product.brand} ${product.model}`}>
     <img className="product-gallery-image" src={images[activeImage]} alt={`${product.brand} ${product.model} — imagem ${activeImage + 1} de ${images.length}`} />
-    {images.length > 1 && <><button className="gallery-arrow gallery-arrow-prev" type="button" onClick={() => showImage(-1)} aria-label="Imagem anterior"><span aria-hidden="true">{"\u2190"}</span></button><button className="gallery-arrow gallery-arrow-next" type="button" onClick={() => showImage(1)} aria-label="Próxima imagem"><span aria-hidden="true">{"\u2192"}</span></button><span className="gallery-count" aria-live="polite">{activeImage + 1} / {images.length}</span></>}
+    {images.length > 1 && <><button className="gallery-arrow gallery-arrow-prev" type="button" onClick={() => showImage(-1)} aria-label="Imagem anterior"><span aria-hidden="true">{"\u2190"}</span></button><button className="gallery-arrow gallery-arrow-next" type="button" onClick={() => showImage(1)} aria-label="Próxima imagem"><span aria-hidden="true">{"\u2192"}</span></button><span className="gallery-count">{activeImage + 1} / {images.length}</span><button className="gallery-pause" type="button" onClick={() => setPaused((current) => !current)}>{paused ? "Retomar" : "Pausar"}</button></>}
   </div>;
 }
 
 function ProductDetail({ product }: { product: Product }) {
   const realImage = PRODUCT_IMAGES[product.slug];
+  const isBattery = product.segment !== "energia" && product.segment !== "solar";
+  const detailImage = isBattery ? `/product-card-images/${product.slug}.webp` : realImage;
   const isPremium30 = product.slug === "bluetti-premium-30-v2";
   const bluettiContent = BLUETTI_CONTENT[product.slug];
   const bluettiGallery = BLUETTI_GALLERIES[product.slug];
   const productSpec = PRODUCT_SPECS[productSpecKey(product.brand, product.model)];
   const [relatedSearch, setRelatedSearch] = useState("");
-  useEffect(() => { setRelatedSearch(""); }, [product.slug]);
+  const [relatedOpen, setRelatedOpen] = useState(false);
+  useEffect(() => { setRelatedSearch(""); setRelatedOpen(false); }, [product.slug]);
   const brandProducts = PRODUCTS.filter((item) => item.brand === product.brand);
   const productIndex = brandProducts.findIndex((item) => item.id === product.id);
   const suggestedProducts = [
@@ -771,7 +785,7 @@ function ProductDetail({ product }: { product: Product }) {
   return <Shell>
     <section className="product-hero">
       <div><span className="eyebrow light product-hero-label">{product.brand} · {segmentLabel(product.segment)}</span><h1>{product.model}</h1><p>Uma solução para compor um portfólio profissional, com o atendimento, suporte e pós-venda da Sol.</p><a className="button yellow" href={WHATSAPP} target="_blank" rel="noreferrer">Solicite uma cotação <Icon name="arrow" /></a></div>
-      <div className="product-media-card">{bluettiGallery ? <ProductGallery product={product} images={bluettiGallery} /> : <div className={`product-stage ${product.segment}`}><span className="eyebrow light product-stage-label">{product.brand} · {segmentLabel(product.segment)}</span>{realImage ? <div className={product.brand === "Heliar" ? "heliar-product-stage" : "product-stage-image"} style={heliarImageStyle(product)}><div className="stage-glow" /><img className="stage-real-product" src={realImage} alt={`${product.brand} ${product.model}`} /></div> : <><div className="stage-glow" /><div className="stage-product"><i /><i /><b>{product.model}</b><span>{product.brand}</span></div></>}</div>}</div>
+      <div className={`product-media-card${product.segment === "solar" ? " product-media-card-solar" : ""}`}>{bluettiGallery ? <><span className="eyebrow light product-stage-label">{product.brand} · {segmentLabel(product.segment)}</span><ProductGallery product={product} images={bluettiGallery} /></> : <div className={`product-stage ${product.segment}`}><span className="eyebrow light product-stage-label">{product.brand} · {segmentLabel(product.segment)}</span>{realImage ? <div className={product.brand === "Heliar" ? "heliar-product-stage" : "product-stage-image"} style={heliarImageStyle(product)}><div className="stage-glow" /><img className="stage-real-product" src={detailImage} alt={`${product.brand} ${product.model}`} /></div> : <><div className="stage-glow" /><div className="stage-product"><i /><i /><b>{product.model}</b><span>{product.brand}</span></div></>}</div>}</div>
     </section>
     {isPremium30 ? <section className="detail section premium-30-overview">
       <div className="premium-30-datasheet"><span className="eyebrow">Visão geral</span><h2>Premium 30 V2 <em>em detalhes.</em></h2><span className="detail-label">Datasheet</span><p><strong>Saída contínua:</strong> 600 W, com modo de elevação de potência de até 1.500 W.</p><p><strong>Capacidade:</strong> 320 Wh.</p><p><strong>Entradas e recarga:</strong> entrada CA de até 380 W; bypass CA de até 980 W; solar ou Charger 1 de até 200 W. A página informa 80% em cerca de 50 minutos no TurboBoost e aproximadamente 2,2 h por solar/Charger 1.</p><p><strong>Saídas e compatibilidade:</strong> 8 saídas: 1 veicular de 12 V/10 A; 2 DC5521 de 12 V/5 A cada, 8 A no total; 2 USB-A de 5 V/3 A e até 15 W cada; 1 USB-C de até 100 W; 1 USB-C de até 140 W; e 1 saída CA de 600 W.</p><p><strong>Tecnologia e segurança:</strong> bateria LiFePO4, mais de 3.000 ciclos até 80%, vida projetada de 10 anos, UPS em até 10 ms, UltraCell, gerenciamento térmico e operação abaixo de 30 dB em baixa carga.</p><p><strong>Dimensões e peso:</strong> 250 x 178 x 167,5 mm; 4,3 kg.</p><p className="premium-30-warranty"><strong>Garantia:</strong> 5 anos.</p></div>
@@ -786,7 +800,7 @@ function ProductDetail({ product }: { product: Product }) {
       <div><span className="eyebrow">Visão geral</span><h2>Escolha técnica com <em>apoio comercial.</em></h2><p>Nossa equipe ajuda sua empresa a confirmar aplicação, disponibilidade e especificações antes da compra. Assim, você indica a solução correta e negocia com mais segurança.</p></div>
       <div className="detail-cards"><div><Icon name="shield" /><b>Procedência</b><span>Produto comercializado por uma distribuidora com mais de 27 anos.</span></div><div><Icon name="people" /><b>Atendimento B2B</b><span>Orientação para revendas, integradores e empresas.</span></div><div><Icon name="energy" /><b>Ficha sob consulta</b><span>Confirme dados técnicos e disponibilidade com um especialista.</span></div></div>
     </section>}
-    <section className="related section premium-100-related"><div className="related-heading"><SectionTitle eyebrow="Continue explorando" title={<>Outras soluções da <em>mesma linha.</em></>} /><div className="related-search-wrap"><label className="related-search"><span>Buscar em todo o catálogo</span><input value={relatedSearch} onChange={(event) => setRelatedSearch(event.target.value)} placeholder="Buscar marca ou modelo" /></label>{!!relatedSearch.trim() && <div className="related-suggestions" role="list">{searchSuggestions.length ? searchSuggestions.map((item) => <Link href={`/${item.slug}`} key={item.id} role="listitem"><b>{item.model}</b><span>{item.brand}</span></Link>) : <span className="related-no-results">Nenhum produto encontrado.</span>}</div>}</div></div><div className="product-carousel-track" role="region" aria-label={`Produtos ${product.brand} recomendados`} tabIndex={0}>{suggestedProducts.map((item) => <ProductCard product={item} key={item.id} />)}<Link href={brandCatalogHref[product.brand]} className="related-more-card"><span><Icon name="arrow" />Ver mais</span><small>Todos os produtos {product.brand}</small></Link></div></section>
+    <section className="related section premium-100-related"><div className="related-heading"><SectionTitle eyebrow="Continue explorando" title={<>Outras soluções da <em>mesma linha.</em></>} /><div className="related-search-wrap"><label className="related-search"><span>Buscar em todo o catálogo</span><input type="search" value={relatedSearch} onChange={(event) => { setRelatedSearch(event.target.value); setRelatedOpen(true); }} onFocus={() => setRelatedOpen(true)} onBlur={() => window.setTimeout(() => setRelatedOpen(false), 120)} onKeyDown={(event) => { if (event.key === "Escape") setRelatedOpen(false); }} placeholder="Buscar marca ou modelo" aria-autocomplete="list" aria-controls="related-suggestions" aria-expanded={relatedOpen && !!relatedSearch.trim()} /></label>{relatedOpen && !!relatedSearch.trim() && <div id="related-suggestions" className="related-suggestions" role="list">{searchSuggestions.length ? searchSuggestions.map((item) => <Link href={`/${item.slug}`} key={item.id} role="listitem" onClick={() => setRelatedOpen(false)}><b>{item.model}</b><span>{item.brand}</span></Link>) : <span className="related-no-results">Nenhum produto encontrado.</span>}</div>}</div></div><div className="product-carousel-track" role="region" aria-label={`Produtos ${product.brand} recomendados`} tabIndex={0}>{suggestedProducts.map((item) => <ProductCard product={item} key={item.id} />)}<Link href={brandCatalogHref[product.brand]} className="related-more-card"><span><Icon name="arrow" />Ver mais</span><small>Todos os produtos {product.brand}</small></Link></div></section>
     <Cta />
   </Shell>;
 }
