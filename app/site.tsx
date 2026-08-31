@@ -552,6 +552,7 @@ function Home() {
       <TrustStrip />
       <HomeScrollVideo />
 
+      <div className="home-content-after-animation">
       <section className="home-about-mobile section">
         <div className="home-about-mobile-card">
           <span className="eyebrow light">A Distribuidora Sol</span>
@@ -581,6 +582,7 @@ function Home() {
       </section>
 
       <PartnerTestimonials />
+      </div>
     </div>
   </Shell>;
 }
