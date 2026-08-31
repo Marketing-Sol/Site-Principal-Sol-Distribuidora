@@ -187,6 +187,28 @@ function Header() {
     document.body.classList.toggle("menu-open", open);
     return () => document.body.classList.remove("menu-open");
   }, [open]);
+  useEffect(() => {
+    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let previousPosition = window.scrollY;
+    const updateHeader = () => {
+      if (reducedMotionQuery.matches) {
+        document.body.classList.remove("site-header-hidden");
+        previousPosition = window.scrollY;
+        return;
+      }
+      const currentPosition = window.scrollY;
+      const isScrollingDown = currentPosition > previousPosition && currentPosition > 86;
+      document.body.classList.toggle("site-header-hidden", isScrollingDown);
+      previousPosition = currentPosition;
+    };
+    window.addEventListener("scroll", updateHeader, { passive: true });
+    reducedMotionQuery.addEventListener("change", updateHeader);
+    return () => {
+      window.removeEventListener("scroll", updateHeader);
+      reducedMotionQuery.removeEventListener("change", updateHeader);
+      document.body.classList.remove("site-header-hidden");
+    };
+  }, []);
   return <header className="header">
     <div className="nav-wrap">
       <Brand />
@@ -513,29 +535,6 @@ function HomeScrollVideo() {
 }
 
 function Home() {
-  useEffect(() => {
-    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let previousPosition = window.scrollY;
-    const updateHeader = () => {
-      if (reducedMotionQuery.matches) {
-        document.body.classList.remove("home-header-hidden");
-        previousPosition = window.scrollY;
-        return;
-      }
-      const currentPosition = window.scrollY;
-      const isScrollingDown = currentPosition > previousPosition && currentPosition > 86;
-      document.body.classList.toggle("home-header-hidden", isScrollingDown);
-      previousPosition = currentPosition;
-    };
-    window.addEventListener("scroll", updateHeader, { passive: true });
-    reducedMotionQuery.addEventListener("change", updateHeader);
-    return () => {
-      window.removeEventListener("scroll", updateHeader);
-      reducedMotionQuery.removeEventListener("change", updateHeader);
-      document.body.classList.remove("home-header-hidden");
-    };
-  }, []);
-
   return <Shell>
     <div className="home-page">
       <section className="hero">
@@ -898,21 +897,6 @@ function ProductDetail({ product }: { product: Product }) {
 }
 
 function About() {
-  useEffect(() => {
-    let previousPosition = window.scrollY;
-    const updateHeader = () => {
-      const currentPosition = window.scrollY;
-      const isScrollingDown = currentPosition > previousPosition && currentPosition > 86;
-      document.body.classList.toggle("about-header-hidden", isScrollingDown);
-      previousPosition = currentPosition;
-    };
-    window.addEventListener("scroll", updateHeader, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", updateHeader);
-      document.body.classList.remove("about-header-hidden");
-    };
-  }, []);
-
   return <Shell>
     <section className="page-hero about-hero"><span className="eyebrow light">A Sol Distribuidora</span><h1>Experiência que gera<br /><em>confiança e movimento.</em></h1><p>Desde 1999, construímos relações duradouras oferecendo soluções em armazenamento e geração de energia para todo o Brasil.</p></section>
     <section className="story section"><div><span className="eyebrow">Nossa história</span><h2 className="story-title">Há mais de 27 anos oferecendo<br />soluções em armazenamento<br />e <em>geração de energia.</em></h2></div><div className="story-copy"><p>A Distribuidora Sol surgiu em 1999, com sede em Curitiba (PR), para fornecer baterias de qualidade com rapidez e eficiência.</p><p>Com uma equipe capacitada e experiente em processos logísticos, hoje atendemos todo o Brasil em parceria com as principais transportadoras do país, além de trabalhar com frota própria.</p><p>A Sol tem estrutura, pessoas e experiência.</p></div></section>
