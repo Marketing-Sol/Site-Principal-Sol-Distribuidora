@@ -2,13 +2,16 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import NextImage, { getImageProps } from "next/image";
 import { CATEGORY_META, PAGE_IDS, PRODUCTS, type Product } from "./data";
 import { PRODUCT_SPECS, productSpecKey } from "./product-specs";
 
 const WHATSAPP = "https://api.whatsapp.com/send?phone=5541998220358&text=Ol%C3%A1%2C%20quero%20falar%20com%20um%20especialista%20da%20Sol.";
 const CONTACT_LEADS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwN1U6lRr3ZYtpF8mlgUeQGr7FpC9YculkBb67sDmMdF9bMgMDCPtmNd9e_iDBwLXmr/exec";
-const HOME_SCROLL_FRAME_COUNT = 97;
+const HOME_SCROLL_FRAME_COUNT = 61;
 const HOME_SCROLL_VIDEO_END = 6 / 11;
+const HOME_SCROLL_FRAME_VERSION = "kling-3-0-pro-4k-20260831-15fps-1440-q82";
+const HOME_SCROLL_MAX_CONCURRENT_LOADS = 4;
 
 export const PRODUCT_IMAGES: Record<string, string> = {
   "elementor-601": "/freedom-df300.png",
@@ -270,10 +273,31 @@ function HeroVisual({ className = "" }: { className?: string }) {
 }
 
 function HeroPhoto({ className = "" }: { className?: string }) {
+  const alt = "Fachada da Sol Distribuidora";
+  const { props: desktopImageProps } = getImageProps({
+    src: "/sol-hero.webp",
+    alt,
+    width: 2680,
+    height: 1200,
+    sizes: "100vw",
+    priority: true,
+    unoptimized: true,
+  });
+  const { props: mobileImageProps } = getImageProps({
+    src: "/sol-hero-mobile-home.webp",
+    alt,
+    width: 1100,
+    height: 2380,
+    sizes: "100vw",
+    priority: true,
+    unoptimized: true,
+  });
+
   return <div className={`hero-photo ${className}`.trim()}>
     <picture>
-      <source media="(max-width: 780px)" srcSet="/sol-hero-mobile.webp" />
-      <img src="/sol-hero.webp" alt="Fachada da Sol Distribuidora" />
+      <source media="(max-width: 780px)" srcSet={mobileImageProps.src} sizes={mobileImageProps.sizes} />
+      {/* getImageProps preserves art direction and supplies stable image metadata. */}
+      <img {...desktopImageProps} alt={alt} />
     </picture>
   </div>;
 }
@@ -284,6 +308,7 @@ function TrustStrip() {
 
   useEffect(() => {
     const mobileQuery = window.matchMedia("(max-width: 780px)");
+    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     let interval: number | undefined;
 
     const stopRotation = () => {
@@ -291,7 +316,7 @@ function TrustStrip() {
       interval = undefined;
     };
     const startRotation = () => {
-      if (interval || !mobileQuery.matches) return;
+      if (interval || !mobileQuery.matches || reducedMotionQuery.matches) return;
       interval = window.setInterval(() => setActiveIndex((current) => (current + 1) % 4), 2800);
     };
     const observer = new IntersectionObserver(([entry]) => {
@@ -306,10 +331,12 @@ function TrustStrip() {
 
     if (stripRef.current) observer.observe(stripRef.current);
     mobileQuery.addEventListener("change", handleViewportChange);
+    reducedMotionQuery.addEventListener("change", handleViewportChange);
     return () => {
       stopRotation();
       observer.disconnect();
       mobileQuery.removeEventListener("change", handleViewportChange);
+      reducedMotionQuery.removeEventListener("change", handleViewportChange);
     };
   }, []);
 
@@ -317,7 +344,7 @@ function TrustStrip() {
   return <section ref={stripRef} className="trust-strip">{items.map((item, index) => {
     const isActive = index === activeIndex;
     const isPrevious = index === (activeIndex + items.length - 1) % items.length;
-    return <span className={isActive ? "is-active" : isPrevious ? "is-previous" : ""} aria-hidden={!isActive} key={item}>{item}</span>;
+    return <span className={isActive ? "is-active" : isPrevious ? "is-previous" : ""} key={item}>{item}</span>;
   })}</section>;
 }
 
@@ -327,6 +354,7 @@ function HomeScrollVideo() {
 
   useEffect(() => {
     const desktop = window.matchMedia("(min-width: 781px)");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let dispose = () => { };
 
     const initialize = () => {
@@ -341,11 +369,31 @@ function HomeScrollVideo() {
         frame.decoding = "async";
         return frame;
       });
+      const loadedFrames = new Set<number>();
+      const loadingFrames = new Set<number>();
+      const pendingFrames = Array.from({ length: HOME_SCROLL_FRAME_COUNT - 1 }, (_, index) => index + 1);
       let targetFrame = 0;
       let animationFrame = 0;
+      let activeLoads = 0;
+      let queueStarted = false;
+      let disposed = false;
+      const loadObserverRef: { current?: IntersectionObserver } = {};
+
+      const closestLoadedFrame = (index: number) => {
+        if (loadedFrames.has(index)) return index;
+        for (let distance = 1; distance < HOME_SCROLL_FRAME_COUNT; distance += 1) {
+          const before = index - distance;
+          const after = index + distance;
+          if (before >= 0 && loadedFrames.has(before)) return before;
+          if (after < HOME_SCROLL_FRAME_COUNT && loadedFrames.has(after)) return after;
+        }
+        return null;
+      };
 
       const drawFrame = (index: number) => {
-        const frame = frames[index];
+        const drawableIndex = closestLoadedFrame(index);
+        if (drawableIndex === null) return;
+        const frame = frames[drawableIndex];
         if (!frame?.complete || !frame.naturalWidth) return;
         const { width, height } = canvas.getBoundingClientRect();
         const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
@@ -363,6 +411,45 @@ function HomeScrollVideo() {
         context.drawImage(frame, (canvasWidth - drawWidth) / 2, (canvasHeight - drawHeight) / 2 - 9, drawWidth, drawHeight);
       };
 
+      const loadFrame = (index: number, onSettled?: () => void) => {
+        if (disposed || index < 0 || index >= HOME_SCROLL_FRAME_COUNT || loadedFrames.has(index) || loadingFrames.has(index)) {
+          onSettled?.();
+          return;
+        }
+        const frame = frames[index];
+        loadingFrames.add(index);
+        const settle = () => {
+          loadingFrames.delete(index);
+          onSettled?.();
+        };
+        frame.onload = () => {
+          if (disposed) return;
+          loadedFrames.add(index);
+          drawFrame(targetFrame);
+          settle();
+        };
+        frame.onerror = settle;
+        frame.src = `/home-scroll-video/frame-${String(index).padStart(3, "0")}.webp?v=${HOME_SCROLL_FRAME_VERSION}`;
+      };
+
+      const pumpQueue = () => {
+        while (queueStarted && activeLoads < HOME_SCROLL_MAX_CONCURRENT_LOADS && pendingFrames.length) {
+          const index = pendingFrames.shift();
+          if (index === undefined || loadedFrames.has(index) || loadingFrames.has(index)) continue;
+          activeLoads += 1;
+          loadFrame(index, () => {
+            activeLoads -= 1;
+            pumpQueue();
+          });
+        }
+      };
+
+      const startQueue = () => {
+        if (queueStarted || reducedMotion.matches) return;
+        queueStarted = true;
+        pumpQueue();
+      };
+
       const updateFrame = () => {
         const start = section.offsetTop;
         const distance = Math.max(section.offsetHeight - window.innerHeight, 1);
@@ -370,25 +457,42 @@ function HomeScrollVideo() {
         const videoProgress = Math.min(1, progress / HOME_SCROLL_VIDEO_END);
         section.classList.toggle("is-copy-visible", videoProgress >= 0.5);
         targetFrame = Math.round(videoProgress * (HOME_SCROLL_FRAME_COUNT - 1));
+        loadFrame(targetFrame);
         window.cancelAnimationFrame(animationFrame);
         animationFrame = window.requestAnimationFrame(() => drawFrame(targetFrame));
       };
 
-      frames.forEach((frame, index) => {
-        frame.onload = () => {
-          if (index === targetFrame) drawFrame(index);
-        };
-        frame.src = `/home-scroll-video/frame-${String(index).padStart(3, "0")}.webp`;
-      });
-      updateFrame();
-      window.addEventListener("scroll", updateFrame, { passive: true });
-      window.addEventListener("resize", updateFrame);
-      return () => {
+      loadFrame(0);
+
+      const cleanup = () => {
+        disposed = true;
         window.cancelAnimationFrame(animationFrame);
         window.removeEventListener("scroll", updateFrame);
         window.removeEventListener("resize", updateFrame);
+        loadObserverRef.current?.disconnect();
+        frames.forEach((frame) => {
+          frame.onload = null;
+          frame.onerror = null;
+          frame.removeAttribute("src");
+        });
         section.classList.remove("is-copy-visible");
       };
+
+      if (reducedMotion.matches) {
+        section.classList.add("is-copy-visible");
+        return cleanup;
+      }
+
+      loadObserverRef.current = new IntersectionObserver(([entry]) => {
+        if (!entry.isIntersecting) return;
+        startQueue();
+        loadObserverRef.current?.disconnect();
+      }, { threshold: 0.01 });
+      loadObserverRef.current.observe(section);
+      updateFrame();
+      window.addEventListener("scroll", updateFrame, { passive: true });
+      window.addEventListener("resize", updateFrame);
+      return cleanup;
     };
 
     const updateMode = () => {
@@ -397,111 +501,88 @@ function HomeScrollVideo() {
     };
     updateMode();
     desktop.addEventListener("change", updateMode);
+    reducedMotion.addEventListener("change", updateMode);
     return () => {
       dispose();
       desktop.removeEventListener("change", updateMode);
+      reducedMotion.removeEventListener("change", updateMode);
     };
   }, []);
 
   return <section ref={sectionRef} className="home-scroll-video"><div className="home-scroll-video-sticky"><canvas ref={canvasRef} /><div className="home-scroll-video-copy"><h2>A Distribuidora Sol</h2><p>Posicionada para atuar no ramo atacadista de todas as linhas de baterias, a Distribuidora Sol vem, a cada ano, incrementando resultados e crescendo juntamente de nossos clientes e parceiros.</p><p>Graças à filosofia de trabalho de procurar exceder às expectativas de nossos clientes, a Distribuidora Sol hoje é reconhecida no mercado em que atua pela seriedade e competência em oferecer produtos de alta tecnologia que atendam satisfatoriamente às necessidades dos seus clientes, desde pequenas revendas à grandes corporações.</p></div></div></section>;
 }
 
-function NumbersStrip() {
-  const stripRef = useRef<HTMLElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  useEffect(() => {
-    const mobileQuery = window.matchMedia("(max-width: 780px)");
-    let interval: number | undefined;
-
-    const stopRotation = () => {
-      if (interval) window.clearInterval(interval);
-      interval = undefined;
-    };
-    const startRotation = () => {
-      if (interval || !mobileQuery.matches) return;
-      interval = window.setInterval(() => setActiveIndex((current) => (current + 1) % 3), 2800);
-    };
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) startRotation();
-      else stopRotation();
-    }, { threshold: 0.35 });
-    const handleViewportChange = () => {
-      stopRotation();
-      if (mobileQuery.matches && stripRef.current) observer.observe(stripRef.current);
-      else observer.disconnect();
-    };
-
-    if (stripRef.current) observer.observe(stripRef.current);
-    mobileQuery.addEventListener("change", handleViewportChange);
-    return () => {
-      stopRotation();
-      observer.disconnect();
-      mobileQuery.removeEventListener("change", handleViewportChange);
-    };
-  }, []);
-
-  const items = [["+27", "anos construindo confiança"], ["260 mil", "baterias em capacidade de armazenagem"], ["2 CDs", "Curitiba · PR"]];
-  return <section ref={stripRef} className="numbers section">{items.map(([value, label], index) => {
-    const isActive = index === activeIndex;
-    const isPrevious = index === (activeIndex + items.length - 1) % items.length;
-    return <div className={isActive ? "is-active" : isPrevious ? "is-previous" : ""} key={value}><strong>{value}</strong><span>{label}</span></div>;
-  })}</section>;
-}
-
 function Home() {
   useEffect(() => {
+    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     let previousPosition = window.scrollY;
     const updateHeader = () => {
+      if (reducedMotionQuery.matches) {
+        document.body.classList.remove("home-header-hidden");
+        previousPosition = window.scrollY;
+        return;
+      }
       const currentPosition = window.scrollY;
       const isScrollingDown = currentPosition > previousPosition && currentPosition > 86;
       document.body.classList.toggle("home-header-hidden", isScrollingDown);
       previousPosition = currentPosition;
     };
     window.addEventListener("scroll", updateHeader, { passive: true });
+    reducedMotionQuery.addEventListener("change", updateHeader);
     return () => {
       window.removeEventListener("scroll", updateHeader);
+      reducedMotionQuery.removeEventListener("change", updateHeader);
       document.body.classList.remove("home-header-hidden");
     };
   }, []);
 
   return <Shell>
-    <section className="hero">
-      <div className="hero-copy">
-        <span className="eyebrow light">Distribuição B2B · Desde 1999</span>
-        <h1>Energia para o presente.<br /><em>Soluções para o futuro.</em></h1>
-        <p>Baterias, estações de energia e suporte especializado para fortalecer o seu negócio.</p>
-        <div className="hero-actions"><a className="button yellow" href={WHATSAPP} target="_blank" rel="noreferrer">Seja um parceiro Sol <Icon name="arrow" /></a><Link className="text-link light" href="/produtos">Conheça o portfólio <Icon name="arrow" /></Link></div>
-        <div className="hero-proof-label"><i /> Soluções para revendas e empresas</div>
-        <div className="hero-proof"><div><strong>+27</strong><span>anos de mercado</span></div><div><strong>2</strong><span>centros de distribuição</span></div><div><strong>Brasil</strong><span>atendimento nacional</span></div></div>
-      </div>
-      <HeroPhoto className="hero-photo-background" />
-    </section>
+    <div className="home-page">
+      <section className="hero">
+        <div className="hero-copy">
+          <span className="eyebrow light">Distribuição B2B · Desde 1999</span>
+          <h1><span>Energia para o presente.</span><em>Soluções para o futuro.</em></h1>
+          <p>Baterias Automotivas e Estacionárias, estações de energia e suporte especializado para fortalecer o seu negócio.</p>
+          <div className="hero-actions"><a className="button yellow" href={WHATSAPP} target="_blank" rel="noreferrer">Seja um parceiro Sol <Icon name="arrow" /></a><Link className="text-link light" href="/produtos">Conheça o portfólio <Icon name="arrow" /></Link></div>
+          <div className="hero-proof-label"><i /> Soluções para revendas e empresas</div>
+          <div className="hero-proof"><div><strong>+27</strong><span>anos de mercado</span></div><div><strong>Envios</strong><span>para todo o Brasil</span></div><div><strong>+3 milhões</strong><span>de baterias vendidas</span></div></div>
+        </div>
+        <HeroPhoto className="hero-photo-background" />
+      </section>
 
-    <TrustStrip />
-    <HomeScrollVideo />
+      <TrustStrip />
+      <HomeScrollVideo />
 
-    <section className="solutions section">
-      <SectionTitle eyebrow="Soluções" title={<>Um portfólio que <em>move negócios.</em></>} text="Produtos de alta confiabilidade, selecionados para atender diferentes demandas do mercado profissional." />
-      <div className="solution-grid">
-        <SolutionCard href="/baterias-automotivas" title="Baterias automotivas" text="Linhas completas para veículos leves e pesados, com marcas reconhecidas pelo mercado." image="/linha-automotiva copiar.webp" featuredImage revealDelay={0} />
-        <SolutionCard href="/bluetti-estacoes-de-energia" title="Energia portátil e solar" text="Estações de energia e painéis solares para novas demandas, dentro e fora da rede." image="/linha-bluetti copiar.webp" featuredImage revealDelay={0.2} />
-        <SolutionCard href="/baterias-estacionarias" title="Baterias estacionárias" text="Energia segura e contínua para telecom, nobreaks, sistemas solares e aplicações críticas." image="/linha-estacionarias copiar.webp" featuredImage revealDelay={0.4} />
-      </div>
-    </section>
+      <section className="home-about-mobile section">
+        <div className="home-about-mobile-card">
+          <span className="eyebrow light">A Distribuidora Sol</span>
+          <h2>Energia, parceria e crescimento.</h2>
+          <p>Posicionada para atuar no ramo atacadista de todas as linhas de baterias, a Distribuidora Sol vem, a cada ano, incrementando resultados e crescendo juntamente de nossos clientes e parceiros.</p>
+          <p>Graças à filosofia de trabalho de procurar exceder às expectativas de nossos clientes, a Distribuidora Sol hoje é reconhecida no mercado em que atua pela seriedade e competência em oferecer produtos de alta tecnologia que atendam satisfatoriamente às necessidades dos seus clientes, desde pequenas revendas a grandes corporações.</p>
+        </div>
+      </section>
 
-    <section className="partnership section">
-      <span className="partnership-mobile-eyebrow eyebrow">Parceria de verdade</span>
-      <div className="partnership-art"><img src="/sol-drive-02.jpg" alt="Fachada da Sol Distribuidora e frota própria" /><div className="photo-caption"><img src="/sol-symbol-white-crop.png" alt="" /><span>Estrutura e logística próprias</span></div></div>
-      <div className="partnership-copy"><SectionTitle eyebrow="Parceria de verdade" title={<>Mais do que distribuir.<br /><em>Impulsionamos resultados.</em></>} />
-        <p>Da escolha do produto ao pós-venda, nossa equipe está ao lado da sua empresa com conhecimento técnico, agilidade e transparência.</p>
-        <ul><li><Icon name="check" /> Consultoria comercial especializada</li><li><Icon name="check" /> Suporte antes, durante e depois da venda</li><li><Icon name="check" /> Estrutura logística para atender todo o Brasil</li></ul>
-        <Link className="button blue" href="/sobre-nos">Conheça a Sol <Icon name="arrow" /></Link>
-      </div>
-    </section>
+      <section className="solutions section">
+        <SectionTitle eyebrow="Soluções" title={<>Um portfólio que <em>move negócios.</em></>} text="Produtos de alta confiabilidade, selecionados para atender diferentes demandas do mercado profissional." />
+        <div className="solution-grid">
+          <SolutionCard href="/baterias-automotivas" title="Baterias automotivas" text="Linhas completas para veículos leves e pesados, com marcas reconhecidas pelo mercado." image="/linha-automotiva copiar.webp" featuredImage revealDelay={0} />
+          <SolutionCard href="/bluetti-estacoes-de-energia" title="Energia portátil e solar" text="Estações de energia e painéis solares para novas demandas, dentro e fora da rede." image="/linha-bluetti copiar.webp" featuredImage revealDelay={0.2} />
+          <SolutionCard href="/baterias-estacionarias" title="Baterias estacionárias" text="Energia segura e contínua para telecom, nobreaks, sistemas solares e aplicações críticas." image="/linha-estacionarias copiar.webp" featuredImage revealDelay={0.4} />
+        </div>
+      </section>
 
-    <NumbersStrip />
-    <PartnerTestimonials />
+      <section className="partnership section">
+        <span className="partnership-mobile-eyebrow eyebrow">Parceria de verdade</span>
+        <div className="partnership-art"><NextImage src="/sol-drive-02.jpg" alt="Fachada da Sol Distribuidora e frota própria" fill sizes="(max-width: 780px) 100vw, 50vw" unoptimized /><div className="photo-caption"><NextImage src="/sol-symbol-white-crop.png" alt="" width={695} height={166} sizes="92px" unoptimized /><span>Estrutura e Logística Própria</span></div></div>
+        <div className="partnership-copy"><SectionTitle eyebrow="Parceria de verdade" title={<>Mais do que distribuir.<br /><em>Impulsionamos os seus resultados.</em></>} />
+          <p>Da escolha do produto ao pós-venda, nossa equipe está ao lado da sua empresa com conhecimento técnico, agilidade e transparência.</p>
+          <ul><li><Icon name="check" /> Consultoria comercial especializada</li><li><Icon name="check" /> Suporte depois da compra</li><li><Icon name="check" /> Estrutura e Logística Própria</li></ul>
+          <Link className="button blue" href="/sobre-nos">Conheça a Sol <Icon name="arrow" /></Link>
+        </div>
+      </section>
+
+      <PartnerTestimonials />
+    </div>
   </Shell>;
 }
 
@@ -528,7 +609,7 @@ function SolutionCard({ href, title, text, image, featuredImage = false, revealD
     };
   }, [revealDelay]);
 
-  return <Link ref={cardRef} href={href} className={`solution-card solution-card-reveal${featuredImage ? " solution-card-featured" : ""}`}><div className="card-head"><Icon name="arrow" /></div><div className="product-image"><img src={image} alt="" /></div><h3>{title}</h3><p>{text}</p><b>Explorar linha</b></Link>;
+  return <Link ref={cardRef} href={href} className={`solution-card solution-card-reveal${featuredImage ? " solution-card-featured" : ""}`}><div className="card-head"><Icon name="arrow" /></div><div className="product-image"><NextImage src={image} alt="" width={1035} height={553} sizes="(max-width: 780px) 112px, 33vw" unoptimized /></div><h3>{title}</h3><p>{text}</p><b>Explorar linha</b></Link>;
 }
 
 function Cta() {
@@ -571,7 +652,7 @@ function TestimonialCard({ image, index }: { image: string; index: number }) {
     };
   }, [index]);
 
-  return <div ref={cardRef} className="testimonial-card testimonial-card-reveal"><img src={image} alt={`Depoimento de parceiro Sol ${index + 1}`} /></div>;
+  return <div ref={cardRef} className="testimonial-card testimonial-card-reveal"><NextImage src={image} alt={`Depoimento de parceiro Sol ${index + 1}`} width={498} height={322} sizes="(max-width: 780px) 75vw, 25vw" unoptimized /></div>;
 }
 
 const clean = (value: string) => value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
