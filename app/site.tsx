@@ -540,8 +540,8 @@ function Home() {
       <section className="hero">
         <div className="hero-copy">
           <span className="eyebrow light">Distribuição B2B · Desde 1999</span>
-          <h1><span>Energia para o presente.</span><em>Soluções para o futuro.</em></h1>
-          <p>Baterias Automotivas e Estacionárias, estações de energia e suporte especializado para fortalecer o seu negócio.</p>
+          <h1><span>Energia para o presente.</span><em>Soluções para <br className="home-mobile-break" />o futuro.</em></h1>
+          <p>Baterias Automotivas<br className="home-mobile-break" /> e Estacionárias, estações de<br className="home-mobile-break" /> energia e suporte especializado<br className="home-mobile-break" /> para fortalecer o seu negócio.</p>
           <div className="hero-actions"><a className="button yellow" href={WHATSAPP} target="_blank" rel="noreferrer">Seja um parceiro Sol <Icon name="arrow" /></a><Link className="text-link light" href="/produtos">Conheça o portfólio <Icon name="arrow" /></Link></div>
           <div className="hero-proof-label"><i /> Soluções para revendas e empresas</div>
           <div className="hero-proof"><div><strong>+27</strong><span>anos de mercado</span></div><div><strong>Envios</strong><span>para todo o Brasil</span></div><div><strong>+3 milhões</strong><span>de baterias vendidas</span></div></div>
