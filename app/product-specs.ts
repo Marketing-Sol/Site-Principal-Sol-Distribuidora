@@ -13,7 +13,7 @@ export const productSpecKey = (brand: string, model: string) => `${brand}|${mode
 
 export const PRODUCT_SPECS: Record<string, ProductSpec> = {
     "Freedom|DF300":  {
-                          "technology":  "Estacionária chumbo-ácida ventilada",
+                          "technology":  "Estacionária chumbo-ácido ventilada",
                           "voltage":  "12 V",
                           "capacity":  "30 Ah (C100)",
                           "cca":  "-",
@@ -23,7 +23,7 @@ export const PRODUCT_SPECS: Record<string, ProductSpec> = {
                           "description":  "Uma opção de 30 Ah para compor soluções de energia de reserva com a segurança de 24 meses de garantia. O modelo DF300 facilita a montagem de bancos conforme a autonomia desejada e reúne benefícios valorizados pelo cliente: confiabilidade para cargas críticas, resistência térmica e a reputação da linha Freedom em aplicações estacionárias."
                       },
     "Freedom|DF500":  {
-                          "technology":  "Estacionária chumbo-ácida ventilada",
+                          "technology":  "Estacionária chumbo-ácido ventilada",
                           "voltage":  "12 V",
                           "capacity":  "40 Ah (C100)",
                           "cca":  "-",
@@ -33,7 +33,7 @@ export const PRODUCT_SPECS: Record<string, ProductSpec> = {
                           "description":  "Uma opção de 40 Ah para compor soluções de energia de reserva com a segurança de 24 meses de garantia. O modelo DF500 facilita a montagem de bancos conforme a autonomia desejada e reúne benefícios valorizados pelo cliente: confiabilidade para cargas críticas, resistência térmica e a reputação da linha Freedom em aplicações estacionárias."
                       },
     "Freedom|DF700":  {
-                          "technology":  "Estacionária chumbo-ácida ventilada",
+                          "technology":  "Estacionária chumbo-ácido ventilada",
                           "voltage":  "12 V",
                           "capacity":  "50 Ah (C100)",
                           "cca":  "-",
@@ -43,7 +43,7 @@ export const PRODUCT_SPECS: Record<string, ProductSpec> = {
                           "description":  "Uma opção de 50 Ah para compor soluções de energia de reserva com a segurança de 24 meses de garantia. O modelo DF700 facilita a montagem de bancos conforme a autonomia desejada e reúne benefícios valorizados pelo cliente: confiabilidade para cargas críticas, resistência térmica e a reputação da linha Freedom em aplicações estacionárias."
                       },
     "Freedom|DF1000":  {
-                           "technology":  "Estacionária chumbo-ácida ventilada",
+                           "technology":  "Estacionária chumbo-ácido ventilada",
                            "voltage":  "12 V",
                            "capacity":  "70 Ah (C100)",
                            "cca":  "-",
@@ -53,7 +53,7 @@ export const PRODUCT_SPECS: Record<string, ProductSpec> = {
                            "description":  "Uma opção de 70 Ah para compor soluções de energia de reserva com a segurança de 24 meses de garantia. O modelo DF1000 facilita a montagem de bancos conforme a autonomia desejada e reúne benefícios valorizados pelo cliente: confiabilidade para cargas críticas, resistência térmica e a reputação da linha Freedom em aplicações estacionárias."
                        },
     "Freedom|DF1500":  {
-                           "technology":  "Estacionária chumbo-ácida ventilada",
+                           "technology":  "Estacionária chumbo-ácido ventilada",
                            "voltage":  "12 V",
                            "capacity":  "93 Ah (C100)",
                            "cca":  "-",
@@ -63,7 +63,7 @@ export const PRODUCT_SPECS: Record<string, ProductSpec> = {
                            "description":  "Uma opção de 93 Ah para compor soluções de energia de reserva com a segurança de 24 meses de garantia. O modelo DF1500 facilita a montagem de bancos conforme a autonomia desejada e reúne benefícios valorizados pelo cliente: confiabilidade para cargas críticas, resistência térmica e a reputação da linha Freedom em aplicações estacionárias."
                        },
     "Freedom|DF2000":  {
-                           "technology":  "Estacionária chumbo-ácida ventilada",
+                           "technology":  "Estacionária chumbo-ácido ventilada",
                            "voltage":  "12 V",
                            "capacity":  "115 Ah (C100)",
                            "cca":  "-",
@@ -73,7 +73,7 @@ export const PRODUCT_SPECS: Record<string, ProductSpec> = {
                            "description":  "Uma opção de 115 Ah para compor soluções de energia de reserva com a segurança de 24 meses de garantia. O modelo DF2000 facilita a montagem de bancos conforme a autonomia desejada e reúne benefícios valorizados pelo cliente: confiabilidade para cargas críticas, resistência térmica e a reputação da linha Freedom em aplicações estacionárias."
                        },
     "Freedom|DF2500":  {
-                           "technology":  "Estacionária chumbo-ácida ventilada",
+                           "technology":  "Estacionária chumbo-ácido ventilada",
                            "voltage":  "12 V",
                            "capacity":  "165 Ah (C100)",
                            "cca":  "-",
@@ -83,7 +83,7 @@ export const PRODUCT_SPECS: Record<string, ProductSpec> = {
                            "description":  "Uma opção de 165 Ah para compor soluções de energia de reserva com a segurança de 24 meses de garantia. O modelo DF2500 facilita a montagem de bancos conforme a autonomia desejada e reúne benefícios valorizados pelo cliente: confiabilidade para cargas críticas, resistência térmica e a reputação da linha Freedom em aplicações estacionárias."
                        },
     "Freedom|DF3000":  {
-                           "technology":  "Estacionária chumbo-ácida ventilada",
+                           "technology":  "Estacionária chumbo-ácido ventilada",
                            "voltage":  "12 V",
                            "capacity":  "185 Ah (C100)",
                            "cca":  "-",
@@ -93,7 +93,7 @@ export const PRODUCT_SPECS: Record<string, ProductSpec> = {
                            "description":  "Uma opção de 185 Ah para compor soluções de energia de reserva com a segurança de 24 meses de garantia. O modelo DF3000 facilita a montagem de bancos conforme a autonomia desejada e reúne benefícios valorizados pelo cliente: confiabilidade para cargas críticas, resistência térmica e a reputação da linha Freedom em aplicações estacionárias."
                        },
     "Freedom|DF4100":  {
-                           "technology":  "Estacionária chumbo-ácida ventilada",
+                           "technology":  "Estacionária chumbo-ácido ventilada",
                            "voltage":  "12 V",
                            "capacity":  "240 Ah (C100)",
                            "cca":  "-",
@@ -713,7 +713,7 @@ export const PRODUCT_SPECS: Record<string, ProductSpec> = {
                               "description":  "Uma solução compacta de 18 Ah para reposição e montagem de sistemas de energia de emergência em 12 V. O EP12-18 agrega praticidade por ser selado e de manutenção reduzida, além de 12 meses de garantia, o que simplifica a argumentação para clientes de segurança, nobreak e telecomunicações."
                           },
     "Heliar|H40JD": {
-      "technology": "SLI / chumbo-ácida convencional",
+      "technology": "SLI / chumbo-ácido convencional",
       "voltage": "12 V",
       "capacity": "40 Ah (C20)",
       "cca": "320 A",
@@ -723,7 +723,7 @@ export const PRODUCT_SPECS: Record<string, ProductSpec> = {
       "description": "Bateria Heliar de 40 Ah para reposição em veículos convencionais compatíveis. Combina 320 A de CCA e garantia de 24 meses, com o respaldo da tecnologia PowerFrame. Uma escolha direta para quem procura confiabilidade na partida e compatibilidade com a aplicação correta."
     },
     "Heliar|HE45BE": {
-      "technology": "SLI / chumbo-ácida convencional",
+      "technology": "SLI / chumbo-ácido convencional",
       "voltage": "12 V",
       "capacity": "45 Ah (C20)",
       "cca": "330 A",
@@ -733,7 +733,7 @@ export const PRODUCT_SPECS: Record<string, ProductSpec> = {
       "description": "Bateria Heliar de 45 Ah indicada para reposição em veículos convencionais compatíveis. Seus 330 A de CCA apoiam partidas consistentes dentro da aplicação prevista, enquanto os 24 meses de garantia e a tecnologia PowerFrame reforçam uma proposta de confiança para o cliente."
     },
     "Heliar|H45JE": {
-      "technology": "SLI / chumbo-ácida convencional",
+      "technology": "SLI / chumbo-ácido convencional",
       "voltage": "12 V",
       "capacity": "45 Ah (C20)",
       "cca": "340 A",
@@ -743,7 +743,7 @@ export const PRODUCT_SPECS: Record<string, ProductSpec> = {
       "description": "Bateria Heliar de 45 Ah para aplicações convencionais compatíveis, com 340 A de CCA e garantia de 24 meses. O formato específico do modelo amplia as opções de reposição para veículos que exigem essa configuração, combinando desempenho de partida e a reconhecida tecnologia PowerFrame."
     },
     "Heliar|HS180TE": {
-      "technology": "Chumbo-ácida para frota",
+      "technology": "Chumbo-ácido para frota",
       "voltage": "12 V",
       "capacity": "180 Ah (C20)",
       "cca": "950 A",

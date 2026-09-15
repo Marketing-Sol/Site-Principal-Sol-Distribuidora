@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ComponentProps } from "react";
 import Link from "next/link";
 import NextImage, { getImageProps } from "next/image";
 import { CATEGORY_META, PAGE_IDS, PRODUCTS, type Product } from "./data";
@@ -32,7 +32,7 @@ export const PRODUCT_IMAGES: Record<string, string> = {
   "heliar-hagm95md": "/Imagens%20baterias/Heliar/Faltantes/Genericas/webp/HAGM%20-%20perspectiva%20.webp",
   "heliar-hagm105sd": "/Imagens%20baterias/Heliar/Faltantes/Genericas/webp/HAGM%20-%20perspectiva%20.webp",
   "heliar-he48bd": "/Imagens%20baterias/Heliar/Faltantes/Genericas/webp/HE%20-%2060%20-%20perspectiva.webp",
-  "heliar-he45be": "/Imagens%20baterias/Heliar/Faltantes/SLI/Superior/Webp/HE45BE%20-%20superior.webp",
+  "heliar-he45be": "/Imagens%20baterias/Heliar/Faltantes/SLI/Superior/PNG/HE45BE%20-%20superior.png",
   "heliar-he50gd": "/Imagens%20baterias/Heliar/Webp/HE50GD%20-%20perspectiva.webp",
   "heliar-he60dd": "/Imagens%20baterias/Heliar/Faltantes/Genericas/webp/HE%20-%2060%20-%20perspectiva.webp",
   "heliar-he60de": "/Imagens%20baterias/Heliar/Webp/HE60DE%20-%20perspectiva.webp",
@@ -553,35 +553,35 @@ function Home() {
       <HomeScrollVideo />
 
       <div className="home-content-after-animation">
-      <section className="home-about-mobile section">
-        <div className="home-about-mobile-card">
-          <span className="eyebrow light">A Distribuidora Sol</span>
-          <h2>Energia, parceria e crescimento.</h2>
-          <p>Posicionada para atuar no ramo atacadista de todas as linhas de baterias, a Distribuidora Sol vem, a cada ano, incrementando resultados e crescendo juntamente de nossos clientes e parceiros.</p>
-          <p>Graças à filosofia de trabalho de procurar exceder às expectativas de nossos clientes, a Distribuidora Sol hoje é reconhecida no mercado em que atua pela seriedade e competência em oferecer produtos de alta tecnologia que atendam satisfatoriamente às necessidades dos seus clientes, desde pequenas revendas a grandes corporações.</p>
-        </div>
-      </section>
+        <section className="home-about-mobile section">
+          <div className="home-about-mobile-card">
+            <span className="eyebrow light">A Distribuidora Sol</span>
+            <h2>Energia, parceria e crescimento.</h2>
+            <p>Posicionada para atuar no ramo atacadista de todas as linhas de baterias, a Distribuidora Sol vem, a cada ano, incrementando resultados e crescendo juntamente de nossos clientes e parceiros.</p>
+            <p>Graças à filosofia de trabalho de procurar exceder às expectativas de nossos clientes, a Distribuidora Sol hoje é reconhecida no mercado em que atua pela seriedade e competência em oferecer produtos de alta tecnologia que atendam satisfatoriamente às necessidades dos seus clientes, desde pequenas revendas a grandes corporações.</p>
+          </div>
+        </section>
 
-      <section className="solutions section">
-        <SectionTitle eyebrow="Soluções" title={<>Um portfólio que <em>move negócios.</em></>} text="Produtos de alta confiabilidade, selecionados para atender diferentes demandas do mercado profissional." />
-        <div className="solution-grid">
-          <SolutionCard href="/baterias-automotivas" title="Baterias automotivas" text="Linhas completas para veículos leves e pesados, com marcas reconhecidas pelo mercado." image="/linha-automotiva copiar.webp" featuredImage revealDelay={0} />
-          <SolutionCard href="/bluetti-estacoes-de-energia" title="Energia portátil e solar" text="Estações de energia e painéis solares para novas demandas, dentro e fora da rede." image="/linha-bluetti copiar.webp" featuredImage revealDelay={0.2} />
-          <SolutionCard href="/baterias-estacionarias" title="Baterias estacionárias" text="Energia segura e contínua para telecom, nobreaks, sistemas solares e aplicações críticas." image="/linha-estacionarias copiar.webp" featuredImage revealDelay={0.4} />
-        </div>
-      </section>
+        <section className="solutions section">
+          <SectionTitle eyebrow="Soluções" title={<>Um portfólio que <em>move negócios.</em></>} text="Produtos de alta confiabilidade, selecionados para atender diferentes demandas do mercado profissional." />
+          <div className="solution-grid">
+            <SolutionCard href="/baterias-automotivas" title="Baterias automotivas" text="Linhas completas para veículos leves e pesados, com marcas reconhecidas pelo mercado." image="/linha-automotiva copiar.webp" featuredImage revealDelay={0} />
+            <SolutionCard href="/bluetti-estacoes-de-energia" title="Energia portátil e solar" text="Estações de energia e painéis solares para novas demandas, dentro e fora da rede." image="/linha-bluetti copiar.webp" featuredImage revealDelay={0.2} />
+            <SolutionCard href="/baterias-estacionarias" title="Baterias estacionárias" text="Energia segura e contínua para telecom, nobreaks, sistemas solares e aplicações críticas." image="/linha-estacionarias copiar.webp" featuredImage revealDelay={0.4} />
+          </div>
+        </section>
 
-      <section className="partnership section">
-        <span className="partnership-mobile-eyebrow eyebrow">Parceria de verdade</span>
-        <div className="partnership-art"><NextImage src="/sol-drive-02.jpg" alt="Fachada da Sol Distribuidora e frota própria" fill sizes="(max-width: 780px) 100vw, 50vw" unoptimized /><div className="photo-caption"><NextImage src="/sol-symbol-white-crop.png" alt="" width={695} height={166} sizes="92px" unoptimized /><span>Estrutura e Logística Própria</span></div></div>
-        <div className="partnership-copy"><SectionTitle eyebrow="Parceria de verdade" title={<>Mais do que distribuir.<br /><em>Impulsionamos os seus resultados.</em></>} />
-          <p>Da escolha do produto ao pós-venda, nossa equipe está ao lado da sua empresa com conhecimento técnico, agilidade e transparência.</p>
-          <ul><li><Icon name="check" /> Consultoria comercial especializada</li><li><Icon name="check" /> Suporte depois da compra</li><li><Icon name="check" /> Estrutura e Logística Própria</li></ul>
-          <Link className="button blue" href="/sobre-nos">Conheça a Sol <Icon name="arrow" /></Link>
-        </div>
-      </section>
+        <section className="partnership section">
+          <span className="partnership-mobile-eyebrow eyebrow">Parceria de verdade</span>
+          <div className="partnership-art"><NextImage src="/sol-drive-02.jpg" alt="Fachada da Sol Distribuidora e frota própria" fill sizes="(max-width: 780px) 100vw, 50vw" unoptimized /><div className="photo-caption"><NextImage src="/sol-symbol-white-crop.png" alt="" width={695} height={166} sizes="92px" unoptimized /><span>Estrutura e Logística Própria</span></div></div>
+          <div className="partnership-copy"><SectionTitle eyebrow="Parceria de verdade" title={<>Mais do que distribuir.<br /><em>Impulsionamos os seus resultados.</em></>} />
+            <p>Da escolha do produto ao pós-venda, nossa equipe está ao lado da sua empresa com conhecimento técnico, agilidade e transparência.</p>
+            <ul><li><Icon name="check" /> Consultoria comercial especializada</li><li><Icon name="check" /> Suporte depois da compra</li><li><Icon name="check" /> Estrutura e Logística Própria</li></ul>
+            <Link className="button blue" href="/sobre-nos">Conheça a Sol <Icon name="arrow" /></Link>
+          </div>
+        </section>
 
-      <PartnerTestimonials />
+        <PartnerTestimonials />
       </div>
     </div>
   </Shell>;
@@ -722,6 +722,79 @@ function StationaryCatalog() {
   return <Catalog title="Baterias estacionárias" intro="Linhas profissionais organizadas por marca para facilitar a escolha da solução ideal." filter="estacionaria" />;
 }
 
+const BLUETTI_COMPARISON = [
+  { slug: "bluetti-premium-30-v2", model: "Premium 30 v2", watts: 600, peakWatts: 1500, wattHours: 320 },
+  { slug: "bluetti-ac50", model: "AC50", watts: 700, peakWatts: 1000, wattHours: 448 },
+  { slug: "bluetti-ac50p", model: "AC50P", watts: 700, peakWatts: 1200, wattHours: 504 },
+  { slug: "bluetti-ac70p", model: "AC70P", watts: 1000, peakWatts: 2000, wattHours: 864 },
+  { slug: "bluetti-ac180p", model: "AC180P", watts: 1800, peakWatts: 2700, wattHours: 1440 },
+  { slug: "bluetti-premium-100-v2", model: "Premium 100 v2", watts: 1800, peakWatts: 2700, wattHours: 1024 },
+  { slug: "bluetti-ac200pl", model: "AC200PL", watts: 2400, peakWatts: 3600, wattHours: 2304 },
+  { slug: "bluetti-elite-200-v2", model: "Elite 200 v2", watts: 2600, peakWatts: 3900, wattHours: 2073.6 },
+  { slug: "bluetti-premium-200-v2", model: "Premium 200 v2", watts: 2700, peakWatts: 4050, wattHours: 2073.6 },
+  { slug: "bluetti-elite-300", model: "Elite 300", watts: 2400, peakWatts: 4800, wattHours: 3014.4 },
+  { slug: "bluetti-apex-300", model: "Apex 300", watts: 3840, peakWatts: 7680, wattHours: 2764.8 },
+] as const;
+
+type BluettiComparisonModel = (typeof BLUETTI_COMPARISON)[number];
+
+const formatEnergy = (value: number) => new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 }).format(value);
+
+function ComparisonMetric({ label, metric, unit, first, second }: { label: string; metric: "watts" | "peakWatts" | "wattHours"; unit: "W" | "Wh"; first: BluettiComparisonModel; second?: BluettiComparisonModel }) {
+  const firstValue = first[metric];
+  const secondValue = second?.[metric];
+  const hasComparison = secondValue !== undefined;
+  const maximum = hasComparison ? Math.max(firstValue, secondValue) : firstValue;
+  const absolute = hasComparison ? secondValue - firstValue : 0;
+  const percentage = firstValue ? (absolute / firstValue) * 100 : 0;
+  const direction = absolute === 0 ? "igual" : absolute > 0 ? "mais" : "menos";
+
+  return <article className={`comparison-metric ${hasComparison ? "is-complete" : "is-single"}`}>
+    <div className="comparison-metric-heading"><span>{label}</span>{hasComparison && <strong>{absolute === 0 ? "Mesma medida" : `${formatEnergy(Math.abs(percentage))}% ${direction}`}</strong>}</div>
+    <div className="comparison-row">
+      <div><b>{first.model}</b><span>{formatEnergy(firstValue)} {unit}</span></div>
+      <div className="comparison-bar" aria-hidden="true"><i style={{ width: `${(firstValue / maximum) * 100}%` }} /></div>
+    </div>
+    <div className={`comparison-expansion${hasComparison ? " is-open" : ""}`} aria-hidden={!hasComparison}>
+      <div className="comparison-expansion-inner">
+        {second && secondValue !== undefined && <>
+          <div className="comparison-row comparison-row-reveal">
+            <div><b>{second.model}</b><span>{formatEnergy(secondValue)} {unit}</span></div>
+            <div className="comparison-bar" aria-hidden="true"><i style={{ width: `${(secondValue / maximum) * 100}%` }} /></div>
+          </div>
+          <p className="comparison-detail-reveal">{absolute === 0 ? `As duas estações entregam ${formatEnergy(firstValue)} ${unit}.` : <><b>{second.model}</b> tem {formatEnergy(Math.abs(absolute))} {unit} {direction} que <b>{first.model}</b>.</>}</p>
+        </>}
+      </div>
+    </div>
+  </article>;
+}
+
+function BluettiComparison({ initialSlug }: { initialSlug: string }) {
+  const [firstSlug, setFirstSlug] = useState(initialSlug);
+  const [secondSlug, setSecondSlug] = useState("");
+  const first = BLUETTI_COMPARISON.find((station) => station.slug === firstSlug) ?? BLUETTI_COMPARISON[0];
+  const second = BLUETTI_COMPARISON.find((station) => station.slug === secondSlug);
+
+  return <section className="bluetti-comparison" aria-labelledby="bluetti-comparison-title">
+    <div className="bluetti-comparison-intro">
+      <span className="eyebrow light">Compare as estações</span>
+      <h2 id="bluetti-comparison-title">Potência e autonomia,<br /><em>lado a lado.</em></h2>
+      <p>Compare a potência contínua, a potência de pico em watts (W) e a capacidade de energia em watt-hora (Wh) para encontrar a estação adequada a cada necessidade.</p>
+    </div>
+    <div className="comparison-controls">
+      <label><span>Primeira estação</span><select value={firstSlug} onChange={(event) => setFirstSlug(event.target.value)}>{BLUETTI_COMPARISON.map((station) => <option value={station.slug} key={station.slug} disabled={station.slug === secondSlug}>{station.model}</option>)}</select></label>
+      <span className="comparison-versus">VS</span>
+      <label><span>Segunda estação</span><select value={secondSlug} onChange={(event) => setSecondSlug(event.target.value)}><option value="" disabled>Escolha uma estação</option>{BLUETTI_COMPARISON.map((station) => <option value={station.slug} key={station.slug} disabled={station.slug === firstSlug}>{station.model}</option>)}</select></label>
+    </div>
+    <div className="comparison-results" aria-live="polite">
+      <ComparisonMetric label="Potência contínua" metric="watts" unit="W" first={first} second={second} />
+      <ComparisonMetric label="Potência de pico" metric="peakWatts" unit="W" first={first} second={second} />
+      <ComparisonMetric label="Capacidade de energia" metric="wattHours" unit="Wh" first={first} second={second} />
+    </div>
+    {second ? <p className="comparison-note">A porcentagem usa a primeira estação como base. Potência contínua indica quanto a estação sustenta durante o uso; potência de pico indica a carga temporária máxima; capacidade indica quanta energia ela consegue armazenar.</p> : <p className="comparison-note comparison-prompt">Escolha a segunda estação para completar a comparação.</p>}
+  </section>;
+}
+
 function BluettiCatalog() {
   const [search, setSearch] = useState("");
   const stations = useMemo(() => PRODUCTS.filter((product) => product.brand === "Bluetti" && product.segment === "energia" && clean(`${product.brand} ${product.model}`).includes(clean(search))), [search]);
@@ -739,19 +812,18 @@ function BluettiCatalog() {
   </Shell>;
 }
 
-function scrollToProductPageTop() {
-  const root = document.documentElement;
-  const previousScrollBehavior = root.style.scrollBehavior;
-  root.style.scrollBehavior = "auto";
-  window.scrollTo(0, 0);
-  window.requestAnimationFrame(() => { root.style.scrollBehavior = previousScrollBehavior; });
-}
+// Only the latest product click may position the destination before it is painted.
+// Do not leave scrolling to the router's asynchronous navigation completion.
+let pendingProductScroll: string | null = null;
 
+function ProductLink({ productSlug, ...props }: Omit<ComponentProps<typeof Link>, "href" | "scroll" | "onNavigate"> & { productSlug: string }) {
+  return <Link {...props} href={`/${productSlug}`} scroll={false} onNavigate={() => { pendingProductScroll = productSlug; }} />;
+}
 function ProductCard({ product }: { product: Product }) {
   const image = PRODUCT_IMAGES[product.slug];
   const isBattery = product.segment !== "energia" && product.segment !== "solar";
-  const cardImage = isBattery ? `/product-card-images/${product.slug}.webp` : image;
-  return <Link href={`/${product.slug}`} className="product-card" onClick={scrollToProductPageTop}><span className="product-brand">{product.brand}</span>{image ? <div className={`product-art real${isBattery ? " battery-product-art" : ""}${product.brand === "Heliar" ? " heliar-product-art" : ""}`} style={heliarImageStyle(product)}><img src={cardImage} alt={product.model} /></div> : <div className={`product-art ${product.segment}`}><i /><i /><b>{product.model.slice(0, 8)}</b></div>}<h3>{product.model}</h3><p>{segmentLabel(product.segment)}</p><span className="card-link">Ver solução <Icon name="arrow" /></span></Link>;
+  const cardImage = isBattery ? `/product-card-images/${product.slug}.${product.slug === "heliar-he45be" ? "png" : "webp"}` : image;
+  return <ProductLink productSlug={product.slug} className="product-card" data-product-slug={product.slug} data-product-name-style={isBattery ? "code" : undefined}><span className="product-brand">{product.brand}</span>{image ? <div className={`product-art real${isBattery ? " battery-product-art" : ""}${product.brand === "Heliar" ? " heliar-product-art" : ""}`} style={heliarImageStyle(product)}><img src={cardImage} alt={product.model} /></div> : <div className={`product-art ${product.segment}`}><i /><i /><b>{product.model.slice(0, 8)}</b></div>}<h3>{product.model}</h3><p>{segmentLabel(product.segment)}</p><span className="card-link">Ver solução <Icon name="arrow" /></span></ProductLink>;
 }
 
 function segmentLabel(segment: Product["segment"]) {
@@ -812,6 +884,12 @@ function BrandGridCatalog({ brand, eyebrow, title, intro }: { brand: Product["br
 }
 
 type BluettiContent = { datasheet: [string, string][]; intro: string; advantages: [string, string][]; summary: string };
+const peakPowerTerminology = (text: string) => text
+  .replace("modo de elevação de potência de 3.600 W; potência de pico de 7.200 W", "potência de pico de 3.600 W; surto instantâneo de 7.200 W")
+  .replace("modo de elevação de potência de 3.900 W; potência de pico de 5.200 W", "potência de pico de 3.900 W; surto instantâneo de 5.200 W")
+  .replace("modo de elevação de potência e potência de pico", "potência de pico")
+  .replace(/modo de elevação de potência/gi, "potência de pico")
+  .replace(/^Modo de elevação$/i, "Potência de pico");
 const BLUETTI_CONTENT: Partial<Record<string, BluettiContent>> = {
   "bluetti-ac50": { datasheet: [["Saída contínua", "700 W, com modo de elevação de potência de até 1.000 W."], ["Capacidade", "448 Wh."], ["Entradas e recarga", "Entrada CA de até 580 W e solar de até 200 W. Recarga CA: cerca de 45 min até 80% e 70 min até 100%; solar: cerca de 2,7 h; veículo: 4,9 h em 12 V ou 2,7 h em 24 V."], ["Saídas / compatibilidade", "1 tomada CA de 700 W; 2 USB-C de até 65 W cada; 1 USB-A de 15 W; 1 porta veicular de 12 V/10 A (120 W)."], ["Tecnologia e segurança", "LiFePO4, mais de 3.000 ciclos até 80%, BMS, controlador MPPT, recarga pass-through e UPS com comutação de até 20 ms."], ["Dimensões e peso", "280 x 200 x 220 mm; 7,5 kg."], ["Garantia", "5 anos."]], intro: "A página oficial atual associada ao nome AC50 é a do AC50B, modelo de 448 Wh e 700 W. Ele atende acampamentos, viagens de carro, lazer ao ar livre e backup de itens essenciais com bom equilíbrio entre autonomia e peso.", advantages: [["Potência versátil", "opera eletrônicos e pequenos eletrodomésticos, com margem adicional para cargas resistivas."], ["Recarga em várias fontes", "aceita tomada, painel solar, veículo, gerador, bateria B80 e combinações de entrada."], ["Portas úteis no dia a dia", "USB-C, USB-A, CA e saída automotiva atendem equipamentos diversos."], ["Gestão inteligente", "o BMS e o MPPT otimizam proteção, carga e aproveitamento da energia."], ["Backup rápido", "a função UPS reduz interrupções em roteadores, iluminação e eletrônicos compatíveis."]], summary: "Mesmo descontinuado no catálogo europeu, o AC50B permanece uma referência portátil robusta, segura e simples de recarregar." },
   "bluetti-ac50p": { datasheet: [["Saída contínua", "700 W, com modo de elevação de potência de até 1.200 W."], ["Capacidade", "504 Wh."], ["Entradas e recarga", "Entrada CA Turbo de 600 W e solar de até 200 W. Recarga CA: 50 min até 80% e 80 min até 100%; solar: cerca de 2,7 h; veículo: 4,9 h em 12 V ou 2,7 h em 24 V."], ["Saídas / compatibilidade", "1 tomada CA de 700 W; 2 USB-C de 65 W; 1 USB-A de 15 W; 1 porta veicular de 12 V/10 A (120 W)."], ["Tecnologia e segurança", "LiFePO4, mais de 3.000 ciclos até 80%, BMS, MPPT, recarga pass-through e UPS com comutação de até 20 ms."], ["Dimensões e peso", "280 x 200 x 220 mm; 6,9 kg."], ["Garantia", "5 anos."]], intro: "A AC50P entrega 504 Wh e 700 W em um conjunto compacto, adequado para camping, viagens, pequenos escritórios móveis e reserva doméstica de curta duração.", advantages: [["Capacidade ampliada", "os 504 Wh oferecem mais tempo de uso para iluminação, refrigeração portátil e eletrônicos."], ["Modo de elevação", "até 1.200 W para determinadas cargas resistivas amplia os cenários de uso."], ["Carga rápida em tomada", "atinge 80% em aproximadamente 50 minutos."], ["Energia solar compatível", "a entrada de 200 W facilita autonomia fora da rede."], ["Vida útil prolongada", "química LFP e mais de 3.000 ciclos favorecem uso frequente com segurança."]], summary: "O conjunto privilegia mobilidade, flexibilidade de recarga e confiabilidade para rotinas externas ou emergenciais." },
@@ -848,8 +926,8 @@ function ProductGallery({ product, images }: { product: Product; images: string[
     setActiveImage((current) => (current + direction + images.length) % images.length);
   };
 
-  return <div className={`product-gallery product-gallery-${product.segment}`} aria-roledescription="carrossel" aria-label={`Galeria da ${product.brand} ${product.model}`}>
-    <img className="product-gallery-image" src={images[activeImage]} alt={`${product.brand} ${product.model} — imagem ${activeImage + 1} de ${images.length}`} />
+  return <div className={`product-gallery product-gallery-${product.segment}`} data-product-slug={product.slug} aria-roledescription="carrossel" aria-label={`Galeria da ${product.brand} ${product.model}`}>
+    <img className="product-gallery-image" style={product.slug === "bluetti-premium-100-v2" ? ({ "--premium-100-scale": [1.4, 1.6, 1.7, 1.6, 1.7, 1.6][activeImage] ?? 1.4 } as React.CSSProperties) : undefined} src={images[activeImage]} alt={`${product.brand} ${product.model} — imagem ${activeImage + 1} de ${images.length}`} />
     {images.length > 1 && <><button className="gallery-arrow gallery-arrow-prev" type="button" onClick={() => showImage(-1)} aria-label="Imagem anterior"><span aria-hidden="true">{"\u2190"}</span></button><button className="gallery-arrow gallery-arrow-next" type="button" onClick={() => showImage(1)} aria-label="Próxima imagem"><span aria-hidden="true">{"\u2192"}</span></button><span className="gallery-count">{activeImage + 1} / {images.length}</span><button className="gallery-pause" type="button" onClick={() => setPaused((current) => !current)}>{paused ? "Retomar" : "Pausar"}</button></>}
   </div>;
 }
@@ -857,7 +935,7 @@ function ProductGallery({ product, images }: { product: Product; images: string[
 function ProductDetail({ product }: { product: Product }) {
   const realImage = PRODUCT_IMAGES[product.slug];
   const isBattery = product.segment !== "energia" && product.segment !== "solar";
-  const detailImage = isBattery ? `/product-card-images/${product.slug}.webp` : realImage;
+  const detailImage = isBattery ? `/product-card-images/${product.slug}.${product.slug === "heliar-he45be" ? "png" : "webp"}` : realImage;
   const isPremium30 = product.slug === "bluetti-premium-30-v2";
   const bluettiContent = BLUETTI_CONTENT[product.slug];
   const bluettiGallery = BLUETTI_GALLERIES[product.slug];
@@ -876,24 +954,25 @@ function ProductDetail({ product }: { product: Product }) {
     : [];
   const brandCatalogHref: Record<Product["brand"], string> = { Freedom: "/freedom-baterias-estacionarias", Heliar: "/heliar-baterias-automotivas", eCON: "/econ-baterias-automotivas", "eCON VRLA": "/secpower-baterias-estacionarias", Bluetti: "/bluetti-estacoes-de-energia" };
   return <Shell>
-    <section className="product-hero">
+    <section className="product-hero" data-product-name-style={isBattery ? "code" : undefined}>
       <div><span className="eyebrow light product-hero-label">{product.brand} · {segmentLabel(product.segment)}</span><h1>{product.model}</h1><p>Uma solução para compor um portfólio profissional, com o atendimento, suporte e pós-venda da Sol.</p><a className="button yellow" href={WHATSAPP} target="_blank" rel="noreferrer">Solicite uma cotação <Icon name="arrow" /></a></div>
       <div className={`product-media-card${product.segment === "solar" ? " product-media-card-solar" : ""}`}>{bluettiGallery ? <><span className="eyebrow light product-stage-label">{product.brand} · {segmentLabel(product.segment)}</span><ProductGallery product={product} images={bluettiGallery} /></> : <div className={`product-stage ${product.segment}`}><span className="eyebrow light product-stage-label">{product.brand} · {segmentLabel(product.segment)}</span>{realImage ? <div className={product.brand === "Heliar" ? "heliar-product-stage" : "product-stage-image"} style={heliarImageStyle(product)}><div className="stage-glow" /><img className="stage-real-product" src={detailImage} alt={`${product.brand} ${product.model}`} /></div> : <><div className="stage-glow" /><div className="stage-product"><i /><i /><b>{product.model}</b><span>{product.brand}</span></div></>}</div>}</div>
     </section>
     {isPremium30 ? <section className="detail section premium-30-overview">
-      <div className="premium-30-datasheet"><span className="eyebrow">Visão geral</span><h2>Premium 30 V2 <em>em detalhes.</em></h2><span className="detail-label">Datasheet</span><p><strong>Saída contínua:</strong> 600 W, com modo de elevação de potência de até 1.500 W.</p><p><strong>Capacidade:</strong> 320 Wh.</p><p><strong>Entradas e recarga:</strong> entrada CA de até 380 W; bypass CA de até 980 W; solar ou Charger 1 de até 200 W. A página informa 80% em cerca de 50 minutos no TurboBoost e aproximadamente 2,2 h por solar/Charger 1.</p><p><strong>Saídas e compatibilidade:</strong> 8 saídas: 1 veicular de 12 V/10 A; 2 DC5521 de 12 V/5 A cada, 8 A no total; 2 USB-A de 5 V/3 A e até 15 W cada; 1 USB-C de até 100 W; 1 USB-C de até 140 W; e 1 saída CA de 600 W.</p><p><strong>Tecnologia e segurança:</strong> bateria LiFePO4, mais de 3.000 ciclos até 80%, vida projetada de 10 anos, UPS em até 10 ms, UltraCell, gerenciamento térmico e operação abaixo de 30 dB em baixa carga.</p><p><strong>Dimensões e peso:</strong> 250 x 178 x 167,5 mm; 4,3 kg.</p><p className="premium-30-warranty"><strong>Garantia:</strong> 5 anos.</p></div>
-      <div className="premium-30-advantages"><span className="eyebrow">Principais vantagens</span><h2>Energia compacta para <em>mobilidade.</em></h2><p>A Premium 30 V2 combina 320 Wh de capacidade com 600 W de saída em um corpo de 4,3 kg. É indicada para camping, piqueniques, viagens curtas, trabalho móvel e alimentação emergencial de eletrônicos e pequenos aparelhos.</p><ul><li><strong>Leve e fácil de transportar:</strong> o formato compacto reduz o esforço em deslocamentos e no uso fora de casa.</li><li><strong>Potência acima do tamanho:</strong> o modo de elevação de potência amplia a compatibilidade com cargas resistivas de maior pico.</li><li><strong>Recarga rápida:</strong> chega a 80% em cerca de 50 minutos, reduzindo o tempo fora de operação.</li><li><strong>Conectividade completa:</strong> oito saídas e USB-C de alta potência permitem atender vários dispositivos.</li><li><strong>Backup silencioso:</strong> UPS rápida, bateria LFP e baixo ruído favorecem quartos, escritórios e uso noturno.</li></ul><p className="premium-30-summary">É uma solução equilibrada para quem prioriza mobilidade sem abrir mão de recarga rápida, segurança e potência suficiente para as necessidades essenciais.</p></div>
+      <div className="premium-30-datasheet" data-product-name-style={isBattery ? "code" : undefined}><span className="eyebrow">Visão geral</span><h2>Premium 30 V2 <em>em detalhes.</em></h2><span className="detail-label">Datasheet</span><p><strong>Saída contínua:</strong> 600 W, com potência de pico de até 1.500 W.</p><p><strong>Capacidade:</strong> 320 Wh.</p><p><strong>Entradas e recarga:</strong> entrada CA de até 380 W; bypass CA de até 980 W; solar ou Charger 1 de até 200 W. A página informa 80% em cerca de 50 minutos no TurboBoost e aproximadamente 2,2 h por solar/Charger 1.</p><p><strong>Saídas e compatibilidade:</strong> 8 saídas: 1 veicular de 12 V/10 A; 2 DC5521 de 12 V/5 A cada, 8 A no total; 2 USB-A de 5 V/3 A e até 15 W cada; 1 USB-C de até 100 W; 1 USB-C de até 140 W; e 1 saída CA de 600 W.</p><p><strong>Tecnologia e segurança:</strong> bateria LiFePO4, mais de 3.000 ciclos até 80%, vida projetada de 10 anos, UPS em até 10 ms, UltraCell, gerenciamento térmico e operação abaixo de 30 dB em baixa carga.</p><p><strong>Dimensões e peso:</strong> 250 x 178 x 167,5 mm; 4,3 kg.</p><p className="premium-30-warranty"><strong>Garantia:</strong> 5 anos.</p></div>
+      <div className="premium-30-advantages"><span className="eyebrow">Principais vantagens</span><h2>Energia compacta para <em>mobilidade.</em></h2><p>A Premium 30 V2 combina 320 Wh de capacidade com 600 W de saída em um corpo de 4,3 kg. É indicada para camping, piqueniques, viagens curtas, trabalho móvel e alimentação emergencial de eletrônicos e pequenos aparelhos.</p><ul><li><strong>Leve e fácil de transportar:</strong> o formato compacto reduz o esforço em deslocamentos e no uso fora de casa.</li><li><strong>Potência acima do tamanho:</strong> a potência de pico amplia a compatibilidade com cargas resistivas de maior demanda.</li><li><strong>Recarga rápida:</strong> chega a 80% em cerca de 50 minutos, reduzindo o tempo fora de operação.</li><li><strong>Conectividade completa:</strong> oito saídas e USB-C de alta potência permitem atender vários dispositivos.</li><li><strong>Backup silencioso:</strong> UPS rápida, bateria LFP e baixo ruído favorecem quartos, escritórios e uso noturno.</li></ul><p className="premium-30-summary">É uma solução equilibrada para quem prioriza mobilidade sem abrir mão de recarga rápida, segurança e potência suficiente para as necessidades essenciais.</p></div>
     </section> : bluettiContent ? <section className="detail section premium-30-overview">
-      <div className="premium-30-datasheet"><span className="eyebrow">Visão geral</span><h2>{product.model} <em>em detalhes.</em></h2><span className="detail-label">Datasheet</span>{bluettiContent.datasheet.map(([label, text]) => <p key={label} className={label === "Garantia" ? "premium-30-warranty" : undefined}><strong>{label}:</strong> {text}</p>)}</div>
-      <div className="premium-30-advantages"><span className="eyebrow">Principais vantagens</span><h2>Principais <em>vantagens.</em></h2><p>{bluettiContent.intro}</p><ul>{bluettiContent.advantages.map(([title, text]) => <li key={title}><strong>{title}:</strong> {text}</li>)}</ul><p className="premium-30-summary">{bluettiContent.summary}</p></div>
+      <div className="premium-30-datasheet" data-product-name-style={isBattery ? "code" : undefined}><span className="eyebrow">Visão geral</span><h2>{product.model} <em>em detalhes.</em></h2><span className="detail-label">Datasheet</span>{bluettiContent.datasheet.map(([label, text]) => <p key={label} className={label === "Garantia" ? "premium-30-warranty" : undefined}><strong>{label}:</strong> {peakPowerTerminology(text)}</p>)}</div>
+      <div className="premium-30-advantages"><span className="eyebrow">Principais vantagens</span><h2>Principais <em>vantagens.</em></h2><p>{bluettiContent.intro}</p><ul>{bluettiContent.advantages.map(([title, text]) => <li key={title}><strong>{peakPowerTerminology(title)}:</strong> {peakPowerTerminology(text)}</li>)}</ul><p className="premium-30-summary">{bluettiContent.summary}</p></div>
     </section> : productSpec ? <section className="detail section premium-30-overview">
-      <div className="premium-30-datasheet"><span className="eyebrow">Especificações</span><h2>{product.model} <em>em detalhes.</em></h2><span className="detail-label">Ficha técnica</span><p><strong>Tecnologia:</strong> {productSpec.technology}</p><p><strong>Tensão:</strong> {productSpec.voltage}</p><p><strong>Capacidade:</strong> {productSpec.capacity}</p>{productSpec.cca !== "-" && <p><strong>CCA:</strong> {productSpec.cca}</p>}<p><strong>Dimensões:</strong> {productSpec.dimensions}</p><p><strong>Peso:</strong> {productSpec.weight}</p><p className="premium-30-warranty"><strong>Garantia:</strong> {productSpec.warranty}</p></div>
+      <div className="premium-30-datasheet" data-product-name-style={isBattery ? "code" : undefined}><span className="eyebrow">Especificações</span><h2>{product.model} <em>em detalhes.</em></h2><span className="detail-label">Ficha técnica</span><p><strong>Tecnologia:</strong> {productSpec.technology}</p><p><strong>Tensão:</strong> {productSpec.voltage}</p><p><strong>Capacidade:</strong> {productSpec.capacity}</p>{productSpec.cca !== "-" && <p><strong>CCA:</strong> {productSpec.cca}</p>}<p><strong>Dimensões:</strong> {productSpec.dimensions}</p><p><strong>Peso:</strong> {productSpec.weight}</p><p className="premium-30-warranty"><strong>Garantia:</strong> {productSpec.warranty}</p></div>
       <div className="premium-30-advantages"><span className="eyebrow">Sobre o produto</span><h2>Escolha com <em>confiança.</em></h2><p>{productSpec.description}</p><p className="premium-30-summary">Nossa equipe ajuda a confirmar aplicação, disponibilidade e especificações para a solução ideal.</p></div>
     </section> : <section className="detail section">
       <div><span className="eyebrow">Visão geral</span><h2>Escolha técnica com <em>apoio comercial.</em></h2><p>Nossa equipe ajuda sua empresa a confirmar aplicação, disponibilidade e especificações antes da compra. Assim, você indica a solução correta e negocia com mais segurança.</p></div>
       <div className="detail-cards"><div><Icon name="shield" /><b>Procedência</b><span>Produto comercializado por uma distribuidora com mais de 27 anos.</span></div><div><Icon name="people" /><b>Atendimento B2B</b><span>Orientação para revendas, integradores e empresas.</span></div><div><Icon name="energy" /><b>Ficha sob consulta</b><span>Confirme dados técnicos e disponibilidade com um especialista.</span></div></div>
     </section>}
-    <section className="related section premium-100-related"><div className="related-heading"><SectionTitle eyebrow="Continue explorando" title={<>Outras soluções da <em>mesma linha.</em></>} /><div className="related-search-wrap"><label className="related-search"><span>Buscar em todo o catálogo</span><input type="search" value={relatedSearch} onChange={(event) => { setRelatedSearch(event.target.value); setRelatedOpen(true); }} onFocus={() => setRelatedOpen(true)} onBlur={() => window.setTimeout(() => setRelatedOpen(false), 120)} onKeyDown={(event) => { if (event.key === "Escape") setRelatedOpen(false); }} placeholder="Buscar marca ou modelo" aria-autocomplete="list" aria-controls="related-suggestions" aria-expanded={relatedOpen && !!relatedSearch.trim()} /></label>{relatedOpen && !!relatedSearch.trim() && <div id="related-suggestions" className="related-suggestions" role="list">{searchSuggestions.length ? searchSuggestions.map((item) => <Link href={`/${item.slug}`} key={item.id} role="listitem" onClick={() => setRelatedOpen(false)}><b>{item.model}</b><span>{item.brand}</span></Link>) : <span className="related-no-results">Nenhum produto encontrado.</span>}</div>}</div></div><div className="product-carousel-track" role="region" aria-label={`Produtos ${product.brand} recomendados`} tabIndex={0}>{suggestedProducts.map((item) => <ProductCard product={item} key={item.id} />)}<Link href={brandCatalogHref[product.brand]} className="related-more-card"><span><Icon name="arrow" />Ver mais</span><small>Todos os produtos {product.brand}</small></Link></div></section>
+    {product.brand === "Bluetti" && product.segment === "energia" && <div className="bluetti-comparison-wrap section"><BluettiComparison key={product.slug} initialSlug={product.slug} /></div>}
+    <section className="related section premium-100-related"><div className="related-heading"><SectionTitle eyebrow="Continue explorando" title={<>Outras soluções da <em>mesma linha.</em></>} /><div className="related-search-wrap"><label className="related-search"><span>Buscar em todo o catálogo</span><input type="search" value={relatedSearch} onChange={(event) => { setRelatedSearch(event.target.value); setRelatedOpen(true); }} onFocus={() => setRelatedOpen(true)} onBlur={() => window.setTimeout(() => setRelatedOpen(false), 120)} onKeyDown={(event) => { if (event.key === "Escape") setRelatedOpen(false); }} placeholder="Buscar marca ou modelo" aria-autocomplete="list" aria-controls="related-suggestions" aria-expanded={relatedOpen && !!relatedSearch.trim()} /></label>{relatedOpen && !!relatedSearch.trim() && <div id="related-suggestions" className="related-suggestions" role="list">{searchSuggestions.length ? searchSuggestions.map((item) => <ProductLink productSlug={item.slug} key={item.id} role="listitem" onClick={() => setRelatedOpen(false)}><b data-product-name-style={item.segment !== "energia" && item.segment !== "solar" ? "code" : undefined}>{item.model}</b><span>{item.brand}</span></ProductLink>) : <span className="related-no-results">Nenhum produto encontrado.</span>}</div>}</div></div><div className="product-carousel-track" role="region" aria-label={`Produtos ${product.brand} recomendados`} tabIndex={0}>{suggestedProducts.map((item) => <ProductCard product={item} key={item.id} />)}<Link href={brandCatalogHref[product.brand]} className="related-more-card"><span><Icon name="arrow" />Ver mais</span><small>Todos os produtos {product.brand}</small></Link></div></section>
     <Cta />
   </Shell>;
 }
@@ -1034,6 +1113,18 @@ function NotFoundPage() {
 
 export function SitePage({ slug }: { slug: string }) {
   const resolved = PAGE_IDS[slug] || slug;
+  useLayoutEffect(() => {
+    const target = pendingProductScroll;
+    pendingProductScroll = null;
+    if (target === resolved) {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    }
+  }, [resolved]);
+  useEffect(() => {
+    const cancelProductScroll = () => { pendingProductScroll = null; };
+    window.addEventListener("popstate", cancelProductScroll);
+    return () => window.removeEventListener("popstate", cancelProductScroll);
+  }, []);
   if (resolved === "home" || resolved === "home-nova") return <Home />;
   if (resolved === "produtos") return <Catalog heroVideo />;
   if (resolved === "sobre-nos") return <About />;
