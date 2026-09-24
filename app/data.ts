@@ -7,12 +7,12 @@ export type Product = {
 };
 
 const products: Product[] = [
-  [601,"elementor-601","Freedom","DF300","estacionaria"],
+  [601,"freedom-df300","Freedom","DF300","estacionaria"],
   [900,"freedom-df500","Freedom","DF500","estacionaria"],
   [908,"freedom-df700","Freedom","DF700","estacionaria"],
   [913,"freedom-df1000","Freedom","DF1000","estacionaria"],
   [922,"freedom-df1500","Freedom","DF1500","estacionaria"],
-  [931,"freedom-df1000-copy","Freedom","DF2000","estacionaria"],
+  [931,"freedom-df2000","Freedom","DF2000","estacionaria"],
   [942,"freedom-df2500","Freedom","DF2500","estacionaria"],
   [947,"freedom-df3000","Freedom","DF3000","estacionaria"],
   [956,"freedom-df4100","Freedom","DF4100","estacionaria"],
@@ -72,11 +72,11 @@ const products: Product[] = [
   [1418,"econ-e180td-12","eCON","E180TD-12","automotiva"],
   [1426,"econ-e180te-12","eCON","E180TE-12","automotiva"],
   [3360,"econ-es150td-15","eCON","ES150TD-15","automotiva"],
-  [1596,"secpower-sp12-5","eCON VRLA","EP12-5","estacionaria"],
-  [1601,"secpower-sp12-7s","eCON VRLA","EP12-7W","estacionaria"],
-  [1606,"secpower-sp12-9","eCON VRLA","EP12-7","estacionaria"],
-  [1611,"secpower-sp12-12","eCON VRLA","EP12-9","estacionaria"],
-  [1616,"secpower-sp12-18","eCON VRLA","EP12-12","estacionaria"],
+  [1596,"econ-vrla-ep12-5","eCON VRLA","EP12-5","estacionaria"],
+  [1601,"econ-vrla-ep12-7w","eCON VRLA","EP12-7W","estacionaria"],
+  [1606,"econ-vrla-ep12-7","eCON VRLA","EP12-7","estacionaria"],
+  [1611,"econ-vrla-ep12-9","eCON VRLA","EP12-9","estacionaria"],
+  [1616,"econ-vrla-ep12-12","eCON VRLA","EP12-12","estacionaria"],
   [4124,"econ-vrla-ep12-18","eCON VRLA","EP12-18","estacionaria"],
   [4848,"bluetti-premium-30-v2","Bluetti","Premium 30 v2","energia"],
   [4860,"bluetti-ac50","Bluetti","AC50","energia"],
@@ -97,13 +97,24 @@ const products: Product[] = [
 
 export const PRODUCTS = products;
 
+export const LEGACY_URLS: Record<string, string> = {
+  "secpower-baterias-estacionarias": "econ-vrla-baterias-estacionarias",
+  "secpower-sp12-5": "econ-vrla-ep12-5",
+  "secpower-sp12-7s": "econ-vrla-ep12-7w",
+  "secpower-sp12-9": "econ-vrla-ep12-7",
+  "secpower-sp12-12": "econ-vrla-ep12-9",
+  "secpower-sp12-18": "econ-vrla-ep12-12",
+};
+
 export const PAGE_IDS: Record<string, string> = {
   "12":"home", "2997":"home", "15":"sustentabilidade", "17":"sobre-nos",
   "19":"freedom-baterias-estacionarias", "21":"contato",
   "227":"politica-de-privacidade", "322":"heliar-baterias-automotivas",
   "333":"econ-baterias-automotivas", "342":"baterias-automotivas",
-  "1510":"baterias-estacionarias", "1532":"secpower-baterias-estacionarias",
+  "1510":"baterias-estacionarias", "1532":"econ-vrla-baterias-estacionarias",
   "2176":"heliar-baterias-de-motos", "4729":"bluetti-estacoes-de-energia",
+  "elementor-601":"freedom-df300", "freedom-df1000-copy":"freedom-df2000",
+  ...LEGACY_URLS,
   ...Object.fromEntries(products.map((p) => [String(p.id), p.slug])),
 };
 
@@ -114,6 +125,6 @@ export const CATEGORY_META = {
   "bluetti-estacoes-de-energia": ["Bluetti","Estações de energia e painéis solares para novas oportunidades de negócio.","Bluetti"],
   "freedom-baterias-estacionarias": ["Freedom","Portfólio de baterias estacionárias para aplicações profissionais.","Freedom"],
   "heliar-baterias-automotivas": ["Heliar","Linha automotiva para uma oferta completa e confiável.","Heliar"],
-  "econ-baterias-automotivas": ["eCON","Soluções automotivas para ampliar o portfólio da sua revenda.","eCON"],
-  "secpower-baterias-estacionarias": ["eCON VRLA","Baterias seladas para energia de emergência, telecom e outras aplicações.","eCON VRLA"],
+  "econ-baterias-automotivas": ["Baterias automotivas eCON","Conheça as linhas eCON Convencional, EFB, AGM e Frota e selecione a bateria pela tecnologia e aplicação do veículo.","eCON"],
+  "econ-vrla-baterias-estacionarias": ["eCON VRLA","Baterias seladas para energia de emergência, telecom e outras aplicações.","eCON VRLA"],
 } as const;

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { CATEGORY_META, PAGE_IDS, PRODUCTS } from "../data";
+import { permanentRedirect } from "next/navigation";
+import { CATEGORY_META, LEGACY_URLS, PAGE_IDS, PRODUCTS } from "../data";
 import { PRODUCT_IMAGES, SitePage } from "../site";
 
 const PAGE_METADATA: Record<string, { title: string; description: string; image: string }> = {
@@ -46,5 +47,6 @@ export default async function DynamicPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  if (LEGACY_URLS[slug]) permanentRedirect(`/${LEGACY_URLS[slug]}`);
   return <SitePage slug={slug} />;
 }
