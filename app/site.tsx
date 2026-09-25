@@ -235,7 +235,7 @@ function Header() {
       <button className="menu-button" onClick={() => { setOpen(!open); setSolutionsOpen(false); }} aria-expanded={open} aria-controls="primary-navigation" aria-label={open ? "Fechar menu" : "Abrir menu"}><span /><span /></button>
       <nav id="primary-navigation" className={open ? "nav open" : "nav"} aria-label="Navegação principal">
         <div className={solutionsOpen ? "nav-solutions is-open" : "nav-solutions"} ref={solutionsMenuRef}>
-          <button type="button" className="nav-solutions-trigger" onClick={() => setSolutionsOpen((current) => !current)} aria-expanded={solutionsOpen} aria-controls="solutions-submenu">Soluções <span aria-hidden="true">⌄</span></button>
+          <button type="button" className="nav-solutions-trigger" onClick={() => setSolutionsOpen((current) => !current)} aria-expanded={solutionsOpen} aria-controls="solutions-submenu">Soluções <span className="solutions-chevron" aria-hidden="true"><svg className="solutions-chevron-up" viewBox="0 0 16 16" fill="none"><path d="m3.5 10 4.5-4.5 4.5 4.5" /></svg><svg className="solutions-chevron-down" viewBox="0 0 16 16" fill="none"><path d="m3.5 6 4.5 4.5L12.5 6" /></svg></span></button>
           <div id="solutions-submenu" className="solutions-submenu" aria-hidden={!solutionsOpen}>
             <Link href="/baterias-automotivas" onClick={closeNavigation}><strong>Baterias automotivas</strong><small>Veículos leves e pesados</small></Link>
             <Link href="/baterias-estacionarias" onClick={closeNavigation}><strong>Baterias estacionárias</strong><small>Backup e aplicações críticas</small></Link>
@@ -739,7 +739,11 @@ function CatalogCategorySection({ id, eyebrow, title, text, products }: { id: st
   </section>;
 }
 
-function Catalog({ title = "Nosso portfólio", intro = "Encontre a solução certa para o seu negócio.", filter, heroVideo = false }: { title?: string; intro?: string; filter?: string; heroVideo?: boolean }) {
+function CatalogHeroVideo({ src, loop = true }: { src: string; loop?: boolean }) {
+  return <video className="solutions-hero-video" autoPlay loop={loop} muted playsInline preload="auto" aria-hidden="true"><source src={src} type="video/mp4" media="(min-width: 781px)" /></video>;
+}
+
+function Catalog({ title = "Nosso portfólio", intro = "Encontre a solução certa para o seu negócio.", filter, heroVideo = false, heroVideoSrc }: { title?: string; intro?: string; filter?: string; heroVideo?: boolean; heroVideoSrc?: string }) {
   const [search, setSearch] = useState("");
   const list = useMemo(() => PRODUCTS.filter((product) => {
     const matchesFilter = !filter || product.segment === filter || product.brand === filter;
@@ -748,11 +752,12 @@ function Catalog({ title = "Nosso portfólio", intro = "Encontre a solução cer
   const automotiveProducts = list.filter((product) => product.segment === "automotiva" || product.segment === "moto");
   const stationaryProducts = list.filter((product) => product.segment === "estacionaria");
   const energyProducts = list.filter((product) => product.segment === "energia" || product.segment === "solar");
+  const videoSrc = heroVideo ? "/hero-solucoes.mp4" : heroVideoSrc;
   return <Shell>
-    <section className={`page-hero compact${heroVideo ? " solutions-hero" : ""}`}>{heroVideo && <video className="solutions-hero-video" autoPlay muted playsInline preload="auto" aria-hidden="true"><source src="/hero-solucoes.mp4" type="video/mp4" /></video>}<span className="eyebrow light">Portfólio Sol</span><h1>{title}</h1><p>{intro}</p></section>
+    <section className={`page-hero compact${videoSrc ? " solutions-hero" : ""}${heroVideoSrc ? " portfolio-video-hero" : ""}`}>{videoSrc && <CatalogHeroVideo src={videoSrc} loop={!heroVideo} />}<span className="eyebrow light">Portfólio Sol</span><h1>{title}</h1><p>{intro}</p></section>
     <section className="catalog section">
       {heroVideo && <nav className="catalog-category-links" aria-label="Acesso rápido às categorias"><a href="#catalogo-automotivo"><span>01</span><strong>Baterias automotivas</strong><small>Veículos leves e pesados</small><Icon name="arrow" /></a><a href="#catalogo-estacionario"><span>02</span><strong>Baterias estacionárias</strong><small>Backup, telecom e aplicações críticas</small><Icon name="arrow" /></a><a href="#catalogo-energia"><span>03</span><strong>Estações de energia</strong><small>Energia portátil e solar</small><Icon name="arrow" /></a></nav>}
-      <div className="catalog-tools"><div><strong>{list.length}</strong><span> soluções encontradas</span></div><label><span>{filter ? "Buscar nesta categoria por marca ou modelo" : "Buscar em todo o catálogo por marca ou modelo"}</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={filter ? "Ex.: Heliar, DF1500…" : "Ex.: Heliar, DF1500, Bluetti…"} /></label></div>
+      <div className="catalog-tools"><div><strong>{list.length}</strong><span> soluções encontradas</span></div><label><span>{filter ? "Buscar nesta categoria por marca ou modelo" : "Buscar em todo o catálogo por marca ou modelo"}</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={filter === "automotiva" ? "Ex.: Heliar, E60DD-18..." : filter === "estacionaria" ? "Ex.: Freedom, DF1500, EP12-7..." : filter ? "Ex.: Heliar, DF1500…" : "Ex.: Heliar, DF1500, Bluetti…"} /></label></div>
       {heroVideo ? <div className="catalog-category-sections">
         <CatalogCategorySection id="catalogo-automotivo" eyebrow="Mobilidade" title="Baterias automotivas" text="Soluções para veículos leves e pesados." products={automotiveProducts} />
         <CatalogCategorySection id="catalogo-estacionario" eyebrow="Energia contínua" title="Baterias estacionárias" text="Soluções para backup, telecom, nobreaks e aplicações críticas." products={stationaryProducts} />
@@ -765,7 +770,7 @@ function Catalog({ title = "Nosso portfólio", intro = "Encontre a solução cer
 }
 
 function StationaryCatalog() {
-  return <Catalog title="Baterias estacionárias" intro="Linhas profissionais organizadas por marca para facilitar a escolha da solução ideal." filter="estacionaria" />;
+  return <Catalog title="Baterias estacionárias" intro="Linhas profissionais organizadas por marca para facilitar a escolha da solução ideal." filter="estacionaria" heroVideoSrc="/hero-baterias-estacionarias.mp4" />;
 }
 
 type BluettiComparisonModel = { slug: string; model: string; watts: number; wattHours: number; powerLiftingWatts: number; surgeWatts?: number; modeNote?: string };
@@ -846,7 +851,7 @@ function BluettiCatalog() {
   const panels = useMemo(() => PRODUCTS.filter((product) => product.brand === "Bluetti" && product.segment === "solar" && clean(`${product.brand} ${product.model}`).includes(clean(search))), [search]);
   const total = stations.length + panels.length;
   return <Shell>
-    <section className="page-hero compact"><span className="eyebrow light">Portfólio Bluetti</span><h1>Energia portátil e solar</h1><p>Estações de energia e painéis solares para autonomia, mobilidade e novas oportunidades de negócio.</p></section>
+    <section className="page-hero compact solutions-hero portfolio-video-hero"><CatalogHeroVideo src="/hero-estacoes-energia.mp4" /><span className="eyebrow light">Portfólio Bluetti</span><h1>Energia portátil e solar</h1><p>Estações de energia e painéis solares para autonomia, mobilidade e novas oportunidades de negócio.</p></section>
     <section className="stationary-catalog section">
       <div className="catalog-tools"><div><strong>{total}</strong><span> soluções encontradas</span></div><label><span>Buscar nesta categoria por modelo</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Ex.: AC70P, Elite 300, Sora 130…" /></label></div>
       {!!stations.length && <div className="catalog-group"><div className="catalog-group-heading"><span className="eyebrow">Energia portátil</span><h2>Estações de energia</h2><p>Soluções Bluetti para backup, mobilidade e operações dentro e fora da rede.</p></div><div className="product-grid">{stations.map((product) => <ProductCard key={product.id} product={product} />)}</div></div>}
@@ -1685,7 +1690,7 @@ export function SitePage({ slug }: { slug: string }) {
   if (resolved === "freedom-baterias-estacionarias") return <BrandGridCatalog brand="Freedom" eyebrow="Portfólio Freedom" title="Baterias estacionárias" intro="Portfólio de baterias estacionárias para aplicações profissionais." />;
   if (resolved === "econ-vrla-baterias-estacionarias") return <BrandGridCatalog brand="eCON VRLA" eyebrow="Portfólio eCON VRLA" title="Baterias estacionárias" intro="Baterias seladas para energia de emergência, telecom e outras aplicações." />;
   const meta = CATEGORY_META[resolved as keyof typeof CATEGORY_META];
-  if (meta) return <Catalog title={meta[0]} intro={meta[1]} filter={meta[2]} />;
+  if (meta) return <Catalog title={meta[0]} intro={meta[1]} filter={meta[2]} heroVideoSrc={resolved === "baterias-automotivas" ? "/hero-baterias-automotivas.mp4" : undefined} />;
   const product = PRODUCTS.find((p) => p.slug === resolved);
   if (product) return <ProductDetail key={product.slug} product={product} />;
   return <NotFoundPage />;

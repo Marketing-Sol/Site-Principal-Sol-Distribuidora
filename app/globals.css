@@ -43,7 +43,9 @@ footer{background:#10143f;color:#fff;padding:70px max(6vw,24px) 25px}.footer-top
 .stage-real-product{position:relative;z-index:2;width:min(440px,90%);height:auto;filter:drop-shadow(0 35px 30px rgba(0,0,0,.4))}
 .heliar-product-art img{transform:scale(var(--heliar-image-scale,1))}
 .heliar-product-stage{display:flex;align-items:center;justify-content:center;width:100%;min-height:inherit;position:relative}.heliar-product-stage .stage-glow{left:50%;top:50%;transform:translate(-50%,-50%)}.heliar-product-stage .stage-real-product{transform:scale(var(--heliar-image-scale,1))}
-.about-hero{background:linear-gradient(90deg,rgba(16,21,68,.99) 0%,rgba(16,21,68,.96) 38%,rgba(30,39,128,.7) 64%,rgba(30,39,128,0) 100%),url("/sol-about-hero.webp") calc(50% + 350px) 58%/cover}
+.about-hero{background:linear-gradient(90deg,rgba(16,21,68,.752) 0%,rgba(16,21,68,.72) 38%,rgba(30,39,128,.48) 64%,rgba(30,39,128,0) 100%),url("/sol-about-hero.webp") calc(50% + 350px) 58%/cover}
+.about-hero h1{line-height:.98}
+@media(min-width:781px){.about-hero{background-size: auto,175% auto;background-position:0 0,calc(-6% - 200px) calc(58% + 75px)}}
 .structure-grid div{padding:0 0 34px;overflow:hidden}
 .structure-grid img{width:100%;height:220px;object-fit:cover;margin-bottom:28px}
 .structure-grid b,.structure-grid span{margin-left:28px;margin-right:28px}
@@ -251,7 +253,9 @@ body.site-header-hidden .header{transform:translateY(-100%)}.header{transition:t
 
 /* Hero da página de Soluções */
 .solutions-hero{background:var(--blue-deep)}.solutions-hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}.solutions-hero:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(23,30,105,.82) 0%,rgba(31,40,128,.68) 38%,rgba(31,40,128,.22) 58%,rgba(31,40,128,.03) 74%,rgba(31,40,128,0) 100%);z-index:1}.solutions-hero>:not(.solutions-hero-video){position:relative;z-index:2}.solutions-hero:after{z-index:3}
-@media(max-width:780px){.solutions-hero:before{background:linear-gradient(90deg,rgba(23,30,105,.82),rgba(31,40,128,.48))}}
+.portfolio-video-hero h1{max-width:min(48vw,720px);font-size:clamp(54px,6vw,88px)}.portfolio-video-hero p{max-width:min(48vw,620px)}
+@media(min-width:781px){.portfolio-video-hero{background:#050509}.portfolio-video-hero .solutions-hero-video{left:auto;width:80%}}
+@media(max-width:780px){.solutions-hero{background:linear-gradient(135deg,var(--blue-deep),var(--blue))}.solutions-hero:before,.solutions-hero-video{display:none}.portfolio-video-hero h1,.portfolio-video-hero p{max-width:100%}}
 
 /* Mídia das páginas de produto em telas pequenas */
 @media(max-width:780px){
@@ -383,8 +387,15 @@ body.site-header-hidden .header{transform:translateY(-100%)}.header{transition:t
 /* Navigation and catalog shortcuts for the three main solution categories. */
 .nav-solutions{position:relative}
 .nav-solutions-trigger{display:flex;align-items:center;gap:7px;padding:15px 0;background:none;border:0;color:inherit;font-weight:700;cursor:pointer}
-.nav-solutions-trigger>span{font-size:17px;line-height:1;transition:transform .2s}
-.nav-solutions.is-open .nav-solutions-trigger>span{transform:rotate(180deg)}
+.nav-solutions-trigger .solutions-chevron{position:relative;display:inline-block;flex:0 0 16px;width:16px;height:16px;margin-left:1px;color:var(--blue)}
+.solutions-chevron svg{position:absolute;inset:0;width:16px;height:16px;overflow:visible;opacity:0;transition:opacity .24s ease}
+.solutions-chevron path{stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
+.solutions-chevron-down{opacity:1!important}
+.solutions-chevron-up{transition-duration:.14s!important}
+.nav-solutions.is-open .solutions-chevron-up{opacity:1}
+.nav-solutions.is-open .solutions-chevron-down{transition-duration:.14s!important}
+.nav-solutions.is-open .solutions-chevron-down{opacity:0!important}
+@media(prefers-reduced-motion:reduce){.solutions-chevron svg{transition:none}}
 .solutions-submenu{position:absolute;top:calc(100% + 12px);left:50%;width:310px;padding:10px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 22px 50px rgba(18,24,80,.18);opacity:0;visibility:hidden;transform:translate(-50%,-8px);transition:opacity .18s,transform .18s,visibility .18s}
 .nav-solutions.is-open .solutions-submenu{opacity:1;visibility:visible;transform:translate(-50%,0)}
 .solutions-submenu>a{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:13px 14px;border-radius:8px}
