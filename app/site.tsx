@@ -8,10 +8,6 @@ import { PRODUCT_SPECS, productSpecKey, type ProductSpec } from "./product-specs
 
 const WHATSAPP = "https://api.whatsapp.com/send?phone=5541998220358&text=Ol%C3%A1%2C%20quero%20falar%20com%20um%20especialista%20da%20Sol.";
 const CONTACT_LEADS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwN1U6lRr3ZYtpF8mlgUeQGr7FpC9YculkBb67sDmMdF9bMgMDCPtmNd9e_iDBwLXmr/exec";
-const HOME_SCROLL_FRAME_COUNT = 61;
-const HOME_SCROLL_VIDEO_END = 6 / 11;
-const HOME_SCROLL_FRAME_VERSION = "kling-3-0-pro-4k-20260831-15fps-1440-q82";
-const HOME_SCROLL_MAX_CONCURRENT_LOADS = 4;
 
 export const PRODUCT_IMAGES: Record<string, string> = {
   "freedom-df300": "/freedom-df300.png",
@@ -398,168 +394,70 @@ function TrustStrip() {
   })}</section>;
 }
 
-function HomeScrollVideo() {
+// Home "A Distribuidora Sol" section: the Sol facade as background and the
+// products on a display table in a separate layer that follows the pointer;
+// the copy is revealed after the products.
+function HomeLayers() {
   const sectionRef = useRef<HTMLElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const desktop = window.matchMedia("(min-width: 781px)");
+    const section = sectionRef.current;
+    if (!section) return;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let dispose = () => { };
+    const finePointer = window.matchMedia("(pointer: fine)");
+    let animationFrame = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+    let disposed = false;
 
-    const initialize = () => {
-      if (!desktop.matches) return;
-      const section = sectionRef.current;
-      const canvas = canvasRef.current;
-      const context = canvas?.getContext("2d");
-      if (!section || !canvas || !context) return;
-
-      const frames = Array.from({ length: HOME_SCROLL_FRAME_COUNT }, () => {
-        const frame = new Image();
-        frame.decoding = "async";
-        return frame;
+    // Start the sequence (background fades in, blur ramps up, products land,
+    // copy appears) only once both layers are decoded, so nothing pops in late.
+    const revealObserver = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      revealObserver.disconnect();
+      const layersReady = Promise.all([...section.querySelectorAll("img")].map((image) => image.decode().catch(() => undefined)));
+      const timeout = new Promise((resolve) => window.setTimeout(resolve, 2500));
+      Promise.race([layersReady, timeout]).then(() => {
+        if (!disposed) section.classList.add("is-revealed");
       });
-      const loadedFrames = new Set<number>();
-      const loadingFrames = new Set<number>();
-      const pendingFrames = Array.from({ length: HOME_SCROLL_FRAME_COUNT - 1 }, (_, index) => index + 1);
-      let targetFrame = 0;
-      let animationFrame = 0;
-      let activeLoads = 0;
-      let queueStarted = false;
-      let disposed = false;
-      const loadObserverRef: { current?: IntersectionObserver } = {};
+    }, { threshold: 0.35 });
+    revealObserver.observe(section);
 
-      const closestLoadedFrame = (index: number) => {
-        if (loadedFrames.has(index)) return index;
-        for (let distance = 1; distance < HOME_SCROLL_FRAME_COUNT; distance += 1) {
-          const before = index - distance;
-          const after = index + distance;
-          if (before >= 0 && loadedFrames.has(before)) return before;
-          if (after < HOME_SCROLL_FRAME_COUNT && loadedFrames.has(after)) return after;
-        }
-        return null;
-      };
-
-      const drawFrame = (index: number) => {
-        const drawableIndex = closestLoadedFrame(index);
-        if (drawableIndex === null) return;
-        const frame = frames[drawableIndex];
-        if (!frame?.complete || !frame.naturalWidth) return;
-        const { width, height } = canvas.getBoundingClientRect();
-        const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-        const canvasWidth = Math.round(width * pixelRatio);
-        const canvasHeight = Math.round(height * pixelRatio);
-        if (canvas.width !== canvasWidth || canvas.height !== canvasHeight) {
-          canvas.width = canvasWidth;
-          canvas.height = canvasHeight;
-        }
-        const scale = Math.max(canvasWidth / frame.naturalWidth, canvasHeight / frame.naturalHeight);
-        const drawWidth = frame.naturalWidth * scale;
-        const drawHeight = frame.naturalHeight * scale;
-        context.clearRect(0, 0, canvasWidth, canvasHeight);
-        context.imageSmoothingQuality = "high";
-        context.drawImage(frame, (canvasWidth - drawWidth) / 2, (canvasHeight - drawHeight) / 2 - 9, drawWidth, drawHeight);
-      };
-
-      const loadFrame = (index: number, onSettled?: () => void) => {
-        if (disposed || index < 0 || index >= HOME_SCROLL_FRAME_COUNT || loadedFrames.has(index) || loadingFrames.has(index)) {
-          onSettled?.();
-          return;
-        }
-        const frame = frames[index];
-        loadingFrames.add(index);
-        const settle = () => {
-          loadingFrames.delete(index);
-          onSettled?.();
-        };
-        frame.onload = () => {
-          if (disposed) return;
-          loadedFrames.add(index);
-          drawFrame(targetFrame);
-          settle();
-        };
-        frame.onerror = settle;
-        frame.src = `/home-scroll-video/frame-${String(index).padStart(3, "0")}.webp?v=${HOME_SCROLL_FRAME_VERSION}`;
-      };
-
-      const pumpQueue = () => {
-        while (queueStarted && activeLoads < HOME_SCROLL_MAX_CONCURRENT_LOADS && pendingFrames.length) {
-          const index = pendingFrames.shift();
-          if (index === undefined || loadedFrames.has(index) || loadingFrames.has(index)) continue;
-          activeLoads += 1;
-          loadFrame(index, () => {
-            activeLoads -= 1;
-            pumpQueue();
-          });
-        }
-      };
-
-      const startQueue = () => {
-        if (queueStarted || reducedMotion.matches) return;
-        queueStarted = true;
-        pumpQueue();
-      };
-
-      const updateFrame = () => {
-        const start = section.offsetTop;
-        const distance = Math.max(section.offsetHeight - window.innerHeight, 1);
-        const progress = Math.min(1, Math.max(0, (window.scrollY - start) / distance));
-        const videoProgress = Math.min(1, progress / HOME_SCROLL_VIDEO_END);
-        section.classList.toggle("is-copy-visible", videoProgress >= 0.5);
-        targetFrame = Math.round(videoProgress * (HOME_SCROLL_FRAME_COUNT - 1));
-        loadFrame(targetFrame);
-        window.cancelAnimationFrame(animationFrame);
-        animationFrame = window.requestAnimationFrame(() => drawFrame(targetFrame));
-      };
-
-      loadFrame(0);
-
-      const cleanup = () => {
-        disposed = true;
-        window.cancelAnimationFrame(animationFrame);
-        window.removeEventListener("scroll", updateFrame);
-        window.removeEventListener("resize", updateFrame);
-        loadObserverRef.current?.disconnect();
-        frames.forEach((frame) => {
-          frame.onload = null;
-          frame.onerror = null;
-          frame.removeAttribute("src");
-        });
-        section.classList.remove("is-copy-visible");
-      };
-
-      if (reducedMotion.matches) {
-        section.classList.add("is-copy-visible");
-        return cleanup;
-      }
-
-      loadObserverRef.current = new IntersectionObserver(([entry]) => {
-        if (!entry.isIntersecting) return;
-        startQueue();
-        loadObserverRef.current?.disconnect();
-      }, { threshold: 0.01 });
-      loadObserverRef.current.observe(section);
-      updateFrame();
-      window.addEventListener("scroll", updateFrame, { passive: true });
-      window.addEventListener("resize", updateFrame);
-      return cleanup;
+    const applyPointer = () => {
+      section.style.setProperty("--layer-x", pointerX.toFixed(3));
+      section.style.setProperty("--layer-y", pointerY.toFixed(3));
     };
-
-    const updateMode = () => {
-      dispose();
-      dispose = initialize() || (() => { });
+    const handlePointerMove = (event: PointerEvent) => {
+      if (reducedMotion.matches || !finePointer.matches) return;
+      const { left, top, width, height } = section.getBoundingClientRect();
+      pointerX = ((event.clientX - left) / width) * 2 - 1;
+      pointerY = ((event.clientY - top) / height) * 2 - 1;
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = window.requestAnimationFrame(applyPointer);
     };
-    updateMode();
-    desktop.addEventListener("change", updateMode);
-    reducedMotion.addEventListener("change", updateMode);
+    const handlePointerLeave = () => {
+      pointerX = 0;
+      pointerY = 0;
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = window.requestAnimationFrame(applyPointer);
+    };
+    section.addEventListener("pointermove", handlePointerMove);
+    section.addEventListener("pointerleave", handlePointerLeave);
+
     return () => {
-      dispose();
-      desktop.removeEventListener("change", updateMode);
-      reducedMotion.removeEventListener("change", updateMode);
+      disposed = true;
+      revealObserver.disconnect();
+      window.cancelAnimationFrame(animationFrame);
+      section.removeEventListener("pointermove", handlePointerMove);
+      section.removeEventListener("pointerleave", handlePointerLeave);
     };
   }, []);
 
-  return <section ref={sectionRef} className="home-scroll-video"><div className="home-scroll-video-sticky"><canvas ref={canvasRef} /><div className="home-scroll-video-copy"><h2>A Distribuidora Sol</h2><p>Posicionada para atuar no ramo atacadista de todas as linhas de baterias, a Distribuidora Sol vem, a cada ano, incrementando resultados e crescendo juntamente de nossos clientes e parceiros.</p><p>Graças à filosofia de trabalho de procurar exceder às expectativas de nossos clientes, a Distribuidora Sol hoje é reconhecida no mercado em que atua pela seriedade e competência em oferecer produtos de alta tecnologia que atendam satisfatoriamente às necessidades dos seus clientes, desde pequenas revendas à grandes corporações.</p></div></div></section>;
+  return <section ref={sectionRef} className="home-layers" aria-labelledby="home-layers-title">
+    <div className="home-layers-background" aria-hidden="true"><img src="/home-camadas/fundo-fachada.webp" alt="" width={1920} height={1080} loading="lazy" decoding="async" /></div>
+    <div className="home-layers-products"><div className="home-layers-products-entry"><img src="/home-camadas/produtos-mesa.webp" alt="Bateria automotiva Heliar SLI, estação de energia Bluetti Premium 100 e bateria estacionária Freedom DF1000 sobre uma mesa expositora" width={1920} height={1080} loading="lazy" decoding="async" /></div></div>
+    <div className="home-layers-copy"><h2 id="home-layers-title">A Distribuidora Sol</h2><p>Posicionada para atuar no ramo atacadista de todas as linhas de baterias, a Distribuidora Sol vem, a cada ano, incrementando resultados e crescendo juntamente de nossos clientes e parceiros.</p><p>Graças à filosofia de trabalho de procurar exceder às expectativas de nossos clientes, a Distribuidora Sol hoje é reconhecida no mercado em que atua pela seriedade e competência em oferecer produtos de alta tecnologia que atendam satisfatoriamente às necessidades dos seus clientes, desde pequenas revendas à grandes corporações.</p></div>
+  </section>;
 }
 
 function Home() {
@@ -578,7 +476,7 @@ function Home() {
       </section>
 
       <TrustStrip />
-      <HomeScrollVideo />
+      <HomeLayers />
 
       <div className="home-content-after-animation">
         <section className="home-about-mobile section">
@@ -745,10 +643,7 @@ function CatalogHeroVideo({ src, loop = true }: { src: string; loop?: boolean })
 
 function Catalog({ title = "Nosso portfólio", intro = "Encontre a solução certa para o seu negócio.", filter, heroVideo = false, heroVideoSrc }: { title?: string; intro?: string; filter?: string; heroVideo?: boolean; heroVideoSrc?: string }) {
   const [search, setSearch] = useState("");
-  const list = useMemo(() => PRODUCTS.filter((product) => {
-    const matchesFilter = !filter || product.segment === filter || product.brand === filter;
-    return matchesFilter && clean(`${product.brand} ${product.model} ${segmentLabel(product.segment)}`).includes(clean(search));
-  }), [search, filter]);
+  const list = useMemo(() => PRODUCTS.filter((product) => !filter || product.segment === filter || product.brand === filter), [filter]);
   const automotiveProducts = list.filter((product) => product.segment === "automotiva" || product.segment === "moto");
   const stationaryProducts = list.filter((product) => product.segment === "estacionaria");
   const energyProducts = list.filter((product) => product.segment === "energia" || product.segment === "solar");
@@ -757,13 +652,12 @@ function Catalog({ title = "Nosso portfólio", intro = "Encontre a solução cer
     <section className={`page-hero compact${videoSrc ? " solutions-hero" : ""}${heroVideoSrc ? " portfolio-video-hero" : ""}`}>{videoSrc && <CatalogHeroVideo src={videoSrc} loop={!heroVideo} />}<span className="eyebrow light">Portfólio Sol</span><h1>{title}</h1><p>{intro}</p></section>
     <section className="catalog section">
       {heroVideo && <nav className="catalog-category-links" aria-label="Acesso rápido às categorias"><a href="#catalogo-automotivo"><span>01</span><strong>Baterias automotivas</strong><small>Veículos leves e pesados</small><Icon name="arrow" /></a><a href="#catalogo-estacionario"><span>02</span><strong>Baterias estacionárias</strong><small>Backup, telecom e aplicações críticas</small><Icon name="arrow" /></a><a href="#catalogo-energia"><span>03</span><strong>Estações de energia</strong><small>Energia portátil e solar</small><Icon name="arrow" /></a></nav>}
-      <div className="catalog-tools"><div><strong>{list.length}</strong><span> soluções encontradas</span></div><label><span>{filter ? "Buscar nesta categoria por marca ou modelo" : "Buscar em todo o catálogo por marca ou modelo"}</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={filter === "automotiva" ? "Ex.: Heliar, E60DD-18..." : filter === "estacionaria" ? "Ex.: Freedom, DF1500, EP12-7..." : filter ? "Ex.: Heliar, DF1500…" : "Ex.: Heliar, DF1500, Bluetti…"} /></label></div>
+      <CatalogSearchTools count={list.length} search={search} setSearch={setSearch} placeholder={filter === "automotiva" ? "Ex.: Heliar, eCON, E60DD-18…" : filter === "estacionaria" ? "Ex.: Freedom, DF1500, EP12-7…" : "Ex.: Heliar, DF1500, Bluetti…"} />
       {heroVideo ? <div className="catalog-category-sections">
         <CatalogCategorySection id="catalogo-automotivo" eyebrow="Mobilidade" title="Baterias automotivas" text="Soluções para veículos leves e pesados." products={automotiveProducts} />
         <CatalogCategorySection id="catalogo-estacionario" eyebrow="Energia contínua" title="Baterias estacionárias" text="Soluções para backup, telecom, nobreaks e aplicações críticas." products={stationaryProducts} />
         <CatalogCategorySection id="catalogo-energia" eyebrow="Autonomia" title="Estações de energia" text="Estações portáteis e painéis solares para uso dentro e fora da rede." products={energyProducts} />
       </div> : <ProductCarousels products={list} />}
-      {!list.length && <div className="empty">Nenhum produto encontrado. Tente outro termo.</div>}
     </section>
     <Cta />
   </Shell>;
@@ -845,19 +739,31 @@ function BluettiComparison({ initialSlug }: { initialSlug: string }) {
   </section>;
 }
 
+function searchCatalog(search: string) {
+  const term = clean(search);
+  return PRODUCTS.filter((product) => clean(`${product.brand} ${product.model} ${segmentLabel(product.segment)}`).includes(term));
+}
+
+function CatalogSearchTools({ count, search, setSearch, placeholder }: { count: number; search: string; setSearch: (value: string) => void; placeholder: string }) {
+  const [open, setOpen] = useState(false);
+  const term = search.trim();
+  const suggestions = term ? searchCatalog(term).slice(0, 8) : [];
+  const showSuggestions = open && !!term;
+  return <div className="catalog-tools"><div><strong>{count}</strong><span> soluções encontradas</span></div><div className="catalog-search-wrap"><label><span>Buscar em todo o catálogo por marca ou modelo</span><input type="search" role="combobox" value={search} onChange={(event) => { setSearch(event.target.value); setOpen(true); }} onFocus={() => setOpen(true)} onBlur={() => window.setTimeout(() => setOpen(false), 120)} onKeyDown={(event) => { if (event.key === "Escape") setOpen(false); }} placeholder={placeholder} aria-autocomplete="list" aria-controls="catalog-suggestions" aria-expanded={showSuggestions} /></label>{showSuggestions && <div id="catalog-suggestions" className="related-suggestions" role="list">{suggestions.length ? suggestions.map((item) => <ProductLink productSlug={item.slug} key={item.id} role="listitem" onClick={() => setOpen(false)}><b data-product-name-style={item.segment !== "energia" && item.segment !== "solar" ? "code" : undefined}>{item.model}</b><span>{item.brand}</span><small>{segmentLabel(item.segment)}</small></ProductLink>) : <span className="related-no-results">Nenhum produto encontrado.</span>}</div>}</div></div>;
+}
+
 function BluettiCatalog() {
   const [search, setSearch] = useState("");
-  const stations = useMemo(() => PRODUCTS.filter((product) => product.brand === "Bluetti" && product.segment === "energia" && clean(`${product.brand} ${product.model}`).includes(clean(search))), [search]);
-  const panels = useMemo(() => PRODUCTS.filter((product) => product.brand === "Bluetti" && product.segment === "solar" && clean(`${product.brand} ${product.model}`).includes(clean(search))), [search]);
+  const stations = useMemo(() => PRODUCTS.filter((product) => product.brand === "Bluetti" && product.segment === "energia"), []);
+  const panels = useMemo(() => PRODUCTS.filter((product) => product.brand === "Bluetti" && product.segment === "solar"), []);
   const total = stations.length + panels.length;
   return <Shell>
     <section className="page-hero compact solutions-hero portfolio-video-hero"><CatalogHeroVideo src="/hero-estacoes-energia.mp4" /><span className="eyebrow light">Portfólio Bluetti</span><h1>Energia portátil e solar</h1><p>Estações de energia e painéis solares para autonomia, mobilidade e novas oportunidades de negócio.</p></section>
     <section className="stationary-catalog section">
-      <div className="catalog-tools"><div><strong>{total}</strong><span> soluções encontradas</span></div><label><span>Buscar nesta categoria por modelo</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Ex.: AC70P, Elite 300, Sora 130…" /></label></div>
+      <CatalogSearchTools count={total} search={search} setSearch={setSearch} placeholder="Ex.: AC70P, Elite 300, Freedom, Heliar…" />
       {!!stations.length && <div className="catalog-group"><div className="catalog-group-heading"><span className="eyebrow">Energia portátil</span><h2>Estações de energia</h2><p>Soluções Bluetti para backup, mobilidade e operações dentro e fora da rede.</p></div><div className="product-grid">{stations.map((product) => <ProductCard key={product.id} product={product} />)}</div></div>}
       {!!panels.length && <div className="catalog-group bluetti-solar-group"><div className="catalog-group-heading"><span className="eyebrow">Geração solar</span><h2>Painéis solares</h2><p>Painéis portáteis para captar energia solar e ampliar a autonomia das estações Bluetti.</p></div><div className="product-grid">{panels.map((product) => <ProductCard key={product.id} product={product} />)}</div></div>}
-      {!total && <div className="empty">Nenhum produto encontrado. Tente outro termo.</div>}
-    </section>
+      </section>
     <Cta />
   </Shell>;
 }
@@ -896,7 +802,7 @@ function segmentLabel(segment: Product["segment"]) {
 
 function HeliarCatalog() {
   const [search, setSearch] = useState("");
-  const products = useMemo(() => PRODUCTS.filter((product) => product.brand === "Heliar" && clean(`${product.brand} ${product.model}`).includes(clean(search))), [search]);
+  const products = useMemo(() => PRODUCTS.filter((product) => product.brand === "Heliar"), []);
   const categories = [
     ["SLI", "Baterias convencionais para diferentes aplicações automotivas.", (product: Product) => productNiche(product) === "SLI Tech"],
     ["EFB", "Tecnologia EFB para demandas específicas de veículos.", (product: Product) => productNiche(product) === "EFB Tech"],
@@ -906,9 +812,8 @@ function HeliarCatalog() {
   return <Shell>
     <section className="page-hero compact"><span className="eyebrow light">Portfólio Heliar</span><h1>Baterias automotivas</h1><p>A linha Heliar reúne baterias SLI convencionais, EFB, AGM e opções para veículos pesados. A tecnologia adequada depende da especificação do veículo: SLI para aplicações convencionais; EFB e AGM para veículos equipados e compatíveis com essas construções; Frota para aplicações comerciais correspondentes.</p></section>
     <section className="stationary-catalog section heliar-catalog">
-      <div className="catalog-tools"><div><strong>{products.length}</strong><span> soluções encontradas</span></div><label><span>Buscar nesta categoria por modelo</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Ex.: H40JD, HAGM60HD, H100LE…" /></label></div>
+      <CatalogSearchTools count={products.length} search={search} setSearch={setSearch} placeholder="Ex.: H40JD, HAGM60HD, DF1500, Bluetti…" />
       {categories.map(([name, description, matches]) => { const list = products.filter(matches); return !!list.length && <div className="catalog-group" key={name}><div className="catalog-group-heading"><span className="eyebrow">Linha Heliar</span><h2>{name}</h2><p>{description}</p></div><div className="product-grid">{list.map((product) => <ProductCard key={product.id} product={product} />)}</div></div>; })}
-      {!products.length && <div className="empty">Nenhum produto encontrado. Tente outro termo.</div>}
     </section>
     <Cta />
   </Shell>;
@@ -916,7 +821,7 @@ function HeliarCatalog() {
 
 function EconCatalog() {
   const [search, setSearch] = useState("");
-  const products = useMemo(() => PRODUCTS.filter((product) => product.brand === "eCON" && clean(`${product.brand} ${product.model}`).includes(clean(search))), [search]);
+  const products = useMemo(() => PRODUCTS.filter((product) => product.brand === "eCON"), []);
   const categories = [
     ["Convencional (SLI)", "Para veículos de uso diário que utilizam bateria convencional. Compare capacidade, corrente de partida e dimensões antes da substituição.", (product: Product) => productNiche(product) === "SLI"],
     ["EFB", "Construção aprimorada para veículos com start-stop leve, conforme a especificação de cada aplicação.", (product: Product) => productNiche(product) === "EFB"],
@@ -927,9 +832,8 @@ function EconCatalog() {
     <section className="page-hero compact"><span className="eyebrow light">eCON Automotive na Sol</span><h1>Baterias automotivas eCON</h1><p>Uma marca criada para conectar experiência no mercado automotivo, distribuição e escolha técnica. Na Sol, você encontra linhas convencionais, EFB, AGM e Frota para compor seu portfólio conforme a aplicação de cada veículo.</p></section>
     <section className="econ-brand-intro section"><div><span className="eyebrow">Energia nos conecta</span><h2>Uma marca para as <em>novas demandas.</em></h2></div><div><p>A eCON Automotive nasceu do grupo Conecta, formado por empresas com longa atuação no segmento de manutenção automotiva e uma rede própria de distribuição. A Sol integra essa rede no Paraná e apoia revendas na seleção da tecnologia e do código adequados a cada veículo.</p><p>O portfólio automotivo combina a linha convencional com opções EFB e AGM. A família Frota atende aplicações comerciais com modelos próprios. Cada linha tem uma função; a indicação final depende da especificação do veículo.</p><small>Fontes: <a href="https://econautomotive.com.br/" target="_blank" rel="noreferrer">eCON Automotive</a>, <a href="https://econautomotive.com.br/produtos/" target="_blank" rel="noreferrer">linhas de produtos</a> e <a href="https://econautomotive.com.br/distribuidores/" target="_blank" rel="noreferrer">rede de distribuidores</a>.</small></div></section>
     <section className="stationary-catalog section econ-catalog">
-      <div className="catalog-tools"><div><strong>{products.length}</strong><span> soluções encontradas</span></div><label><span>Buscar nesta categoria por modelo</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Ex.: EGM60HD-24, EFB50GD-24, E45BD-18…" /></label></div>
+      <CatalogSearchTools count={products.length} search={search} setSearch={setSearch} placeholder="Ex.: EGM60HD-24, E45BD-18, Heliar, Bluetti…" />
       {categories.map(([name, description, matches]) => { const list = products.filter(matches); return !!list.length && <div className="catalog-group" key={name}><div className="catalog-group-heading"><span className="eyebrow">Linha eCON</span><h2>{name}</h2><p>{description}</p></div><div className="product-grid">{list.map((product) => <ProductCard key={product.id} product={product} />)}</div></div>; })}
-      {!products.length && <div className="empty">Nenhum produto encontrado. Tente outro termo.</div>}
     </section>
     <Cta />
   </Shell>;
@@ -937,13 +841,12 @@ function EconCatalog() {
 
 function BrandGridCatalog({ brand, eyebrow, title, intro }: { brand: Product["brand"]; eyebrow: string; title: string; intro: string }) {
   const [search, setSearch] = useState("");
-  const products = useMemo(() => PRODUCTS.filter((product) => product.brand === brand && clean(`${product.brand} ${product.model}`).includes(clean(search))), [brand, search]);
+  const products = useMemo(() => PRODUCTS.filter((product) => product.brand === brand), [brand]);
   return <Shell>
     <section className="page-hero compact"><span className="eyebrow light">{eyebrow}</span><h1>{title}</h1><p>{intro}</p></section>
     <section className="stationary-catalog section brand-grid-catalog">
-      <div className="catalog-tools"><div><strong>{products.length}</strong><span> soluções encontradas</span></div><label><span>Buscar nesta categoria por modelo</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={`Ex.: ${products[0]?.model ?? "produto"}…`} /></label></div>
+      <CatalogSearchTools count={products.length} search={search} setSearch={setSearch} placeholder={`Ex.: ${products[0]?.model ?? "produto"}, Heliar, Bluetti…`} />
       {!!products.length && <div className="catalog-group"><div className="catalog-group-heading"><span className="eyebrow">Linha {brand}</span><h2>Produtos</h2><p>{intro}</p></div><div className="product-grid">{products.map((product) => <ProductCard key={product.id} product={product} />)}</div></div>}
-      {!products.length && <div className="empty">Nenhum produto encontrado. Tente outro termo.</div>}
     </section>
     <Cta />
   </Shell>;
@@ -1524,7 +1427,7 @@ function ProductDetail({ product }: { product: Product }) {
       <div className="detail-cards"><div><Icon name="shield" /><b>Procedência</b><span>Produto comercializado por uma distribuidora com mais de 27 anos.</span></div><div><Icon name="people" /><b>Atendimento B2B</b><span>Orientação para revendas, integradores e empresas.</span></div><div><Icon name="energy" /><b>Ficha sob consulta</b><span>Confirme dados técnicos e disponibilidade com um especialista.</span></div></div>
     </section>}
     {product.brand === "Bluetti" && product.segment === "energia" && <div className="bluetti-comparison-wrap section"><BluettiComparison key={product.slug} initialSlug={product.slug} /></div>}
-    <section className="related section premium-100-related"><div className="related-heading"><SectionTitle eyebrow="Continue explorando" title={<>Outras soluções da <em>mesma linha.</em></>} /><div className="related-search-wrap"><label className="related-search"><span>Buscar em todo o catálogo</span><input type="search" value={relatedSearch} onChange={(event) => { setRelatedSearch(event.target.value); setRelatedOpen(true); }} onFocus={() => setRelatedOpen(true)} onBlur={() => window.setTimeout(() => setRelatedOpen(false), 120)} onKeyDown={(event) => { if (event.key === "Escape") setRelatedOpen(false); }} placeholder="Buscar marca ou modelo" aria-autocomplete="list" aria-controls="related-suggestions" aria-expanded={relatedOpen && !!relatedSearch.trim()} /></label>{relatedOpen && !!relatedSearch.trim() && <div id="related-suggestions" className="related-suggestions" role="list">{searchSuggestions.length ? searchSuggestions.map((item) => <ProductLink productSlug={item.slug} key={item.id} role="listitem" onClick={() => setRelatedOpen(false)}><b data-product-name-style={item.segment !== "energia" && item.segment !== "solar" ? "code" : undefined}>{item.model}</b><span>{item.brand}</span><small>{segmentLabel(item.segment)}</small></ProductLink>) : <span className="related-no-results">Nenhum produto encontrado.</span>}</div>}</div></div><div className="product-carousel-track" role="region" aria-label={`Produtos ${product.brand} recomendados`} tabIndex={0}>{suggestedProducts.map((item) => <ProductCard product={item} key={item.id} />)}<Link href={brandCatalogHref[product.brand]} className="related-more-card"><span><Icon name="arrow" />Ver mais</span><small>Todos os produtos {product.brand}</small></Link></div></section>
+    <section className="related section premium-100-related"><div className="related-heading"><SectionTitle eyebrow="Continue explorando" title={<>Outras soluções da <em>mesma linha.</em></>} /><div className="related-search-wrap"><label className="related-search"><span>Buscar em todo o catálogo</span><input type="search" role="combobox" value={relatedSearch} onChange={(event) => { setRelatedSearch(event.target.value); setRelatedOpen(true); }} onFocus={() => setRelatedOpen(true)} onBlur={() => window.setTimeout(() => setRelatedOpen(false), 120)} onKeyDown={(event) => { if (event.key === "Escape") setRelatedOpen(false); }} placeholder="Buscar marca ou modelo" aria-autocomplete="list" aria-controls="related-suggestions" aria-expanded={relatedOpen && !!relatedSearch.trim()} /></label>{relatedOpen && !!relatedSearch.trim() && <div id="related-suggestions" className="related-suggestions" role="list">{searchSuggestions.length ? searchSuggestions.map((item) => <ProductLink productSlug={item.slug} key={item.id} role="listitem" onClick={() => setRelatedOpen(false)}><b data-product-name-style={item.segment !== "energia" && item.segment !== "solar" ? "code" : undefined}>{item.model}</b><span>{item.brand}</span><small>{segmentLabel(item.segment)}</small></ProductLink>) : <span className="related-no-results">Nenhum produto encontrado.</span>}</div>}</div></div><div className="product-carousel-track" role="region" aria-label={`Produtos ${product.brand} recomendados`} tabIndex={0}>{suggestedProducts.map((item) => <ProductCard product={item} key={item.id} />)}<Link href={brandCatalogHref[product.brand]} className="related-more-card"><span><Icon name="arrow" />Ver mais</span><small>Todos os produtos {product.brand}</small></Link></div></section>
     <Cta />
   </Shell>;
 }

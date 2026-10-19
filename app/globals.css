@@ -121,10 +121,6 @@ footer{background:#10143f;color:#fff;padding:70px max(6vw,24px) 25px}.footer-top
 @media(max-width:780px){.solution-grid{gap:12px;margin-top:34px}.solution-card.solution-card-featured{display:grid;grid-template-columns:96px minmax(0,1fr);grid-template-rows:1fr auto;column-gap:16px;min-height:118px;padding:12px 16px;align-items:center}.solution-card-featured .card-head{display:none}.solution-card-featured .product-image{display:flex;grid-column:1;grid-row:1 / span 2;width:calc(100% + 16px);height:calc(100% + 24px);margin:-12px 0 -12px -16px;align-self:stretch}.solution-card-featured .product-image img{width:100%;height:100%;object-fit:cover}.solution-card-featured h3{grid-column:2;grid-row:1;margin:0;padding:0;font-size:21px;line-height:1.05}.solution-card-featured p{display:none}.solution-card-featured>b{grid-column:2;grid-row:2;margin:0;font-size:12px;align-self:end}}
 @media(max-width:780px){.solutions{padding-bottom:56px}}
 
-.home-scroll-video{display:none}
-@media(min-width:781px){.home-scroll-video{display:block;height:320vh;width:100%;position:relative}.home-scroll-video-sticky{position:sticky;top:0;width:100%;height:100vh;overflow:hidden}.home-scroll-video-sticky:after{content:"";position:absolute;left:0;top:0;width:min(760px,66vw);height:min(570px,78vh);background:radial-gradient(ellipse at top left,rgba(0,0,0,.74),rgba(0,0,0,.48) 45%,transparent 74%);opacity:0;transition:opacity .55s ease;pointer-events:none}.home-scroll-video canvas{display:block;width:100%;height:100%}.home-scroll-video-copy{position:absolute;z-index:1;top:calc(clamp(42px,6vw,104px) + 5px);left:max(6vw,28px);width:min(550px,41vw);color:#fff;opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}.home-scroll-video-copy h2{font-size:clamp(36px,4vw,62px);line-height:.96;letter-spacing:-.045em;margin:0 0 24px}.home-scroll-video-copy p{margin:0 0 18px;font-size:clamp(14px,1.2vw,18px);line-height:1.6}.home-scroll-video.is-copy-visible .home-scroll-video-sticky:after,.home-scroll-video.is-copy-visible .home-scroll-video-copy{opacity:1}.home-scroll-video.is-copy-visible .home-scroll-video-copy{transform:translateY(0)}}
-@media(min-width:781px){.home-scroll-video + .home-content-after-animation{position:relative;z-index:2;margin-top:-100vh;background:var(--off);border-radius:32px 32px 0 0;box-shadow:0 -18px 42px rgba(10,15,57,.16);overflow:hidden}.home-content-after-animation>.solutions{padding-top:clamp(58px,calc(10vw - 30px),102px)}}
-@media(min-width:781px) and (prefers-reduced-motion:reduce){.home-scroll-video{height:100vh}.home-scroll-video + .home-content-after-animation{margin-top:0}}
 .home-page{width:100%}.home-about-mobile{display:none}
 .home-mobile-break{display:none}.home-page .hero h1{display:flex;flex-direction:column;gap:clamp(12px,1.2vw,20px)}.home-page .hero h1>span,.home-page .hero h1>em{display:block}.home-page .solutions .section-title{max-width:none}
 @media(min-width:781px){.nav-wrap{max-width:none;padding-left:max(6vw,28px);padding-right:max(4vw,22px)}}
@@ -520,4 +516,31 @@ body.site-header-hidden .header{transform:translateY(-100%)}.header{transition:t
   .stationary-spec-table>div{grid-template-columns:1fr;gap:6px}
   .stationary-documents .button,.stationary-document-actions{width:100%}
   .stationary-document-actions .text-link{padding:10px 0}
+}
+.catalog-search-wrap{position:relative;width:min(460px,100%)}.catalog-search-wrap label{width:100%}.catalog-tools .related-suggestions{text-transform:none;letter-spacing:normal;font-weight:400}
+
+/* Home: seção "A Distribuidora Sol" em camadas */
+.home-layers{display:none}
+@media(min-width:781px){
+  .home-layers{--layer-x:0;--layer-y:0;display:block;position:relative;height:min(100vh,880px);min-height:640px;overflow:hidden;background:linear-gradient(180deg,#2f7fe0 0%,#5aa0ea 100%);isolation:isolate}
+  .home-layers-background{position:absolute;inset:-24px;transform:translate3d(calc(var(--layer-x) * -10px),calc(var(--layer-y) * -6px),0);transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+  .home-layers-background img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 70%;opacity:0;transform:scale(1.08);filter:blur(0);transition:opacity 1s ease,transform 1.6s cubic-bezier(.2,.7,.2,1),filter 1.2s ease .6s;will-change:opacity,transform,filter}
+  .home-layers:after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(9,17,66,.86),rgba(9,17,66,.62) 26%,rgba(9,17,66,0) 42%);opacity:0;transition:opacity .8s ease 1.2s;pointer-events:none}
+  .home-layers-products{position:absolute;z-index:2;inset:-24px;pointer-events:none}
+  .home-layers-products-entry{position:absolute;inset:0;opacity:0;transform:translate3d(0,-60px,0);transition:opacity .6s ease .8s,transform 1s cubic-bezier(.3,1.25,.5,1) .8s}
+  .home-layers-products img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 70%;transform:translate3d(calc(var(--layer-x) * 18px),calc((var(--layer-y) + 1) * 4px),0);transition:transform .5s cubic-bezier(.2,.7,.2,1);will-change:transform}
+  .home-layers-copy{position:absolute;z-index:3;top:36%;left:max(5vw,28px);width:min(440px,29vw);color:#fff;opacity:0;transform:translate3d(0,calc(-50% + 22px),0);transition:opacity .7s ease 1.6s,transform .7s ease 1.6s}
+  .home-layers-copy h2{font-size:clamp(36px,4vw,62px);line-height:.96;letter-spacing:-.045em;margin:0 0 24px}
+  .home-layers-copy p{margin:0 0 18px;font-size:clamp(14px,1.15vw,17px);line-height:1.6}
+  .home-layers.is-revealed:after,.home-layers.is-revealed .home-layers-products-entry,.home-layers.is-revealed .home-layers-copy{opacity:1}
+  .home-layers.is-revealed .home-layers-background img{opacity:1;transform:none;filter:blur(2.5px)}
+  .home-layers.is-revealed .home-layers-products-entry{transform:none}
+  .home-layers.is-revealed .home-layers-copy{transform:translate3d(0,-50%,0)}
+}
+@media(prefers-reduced-motion:reduce){
+  .home-layers *,.home-layers:after{transition:none!important;animation:none!important}
+  .home-layers:after,.home-layers-products-entry,.home-layers-copy{opacity:1!important}
+  .home-layers-products-entry{transform:none!important}
+  .home-layers-background img{opacity:1!important;transform:none!important;filter:blur(2.5px)!important}
+  .home-layers-copy{transform:translate3d(0,-50%,0)!important}
 }
