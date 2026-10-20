@@ -5,97 +5,10 @@ import Link from "next/link";
 import NextImage, { getImageProps } from "next/image";
 import { CATEGORY_META, PAGE_IDS, PRODUCTS, type Product } from "./data";
 import { PRODUCT_SPECS, productSpecKey, type ProductSpec } from "./product-specs";
+import { BLUETTI_COMPARISON, PRODUCT_IMAGES, type BluettiComparisonModel } from "./catalog-meta";
 
 const WHATSAPP = "https://api.whatsapp.com/send?phone=5541998220358&text=Ol%C3%A1%2C%20quero%20falar%20com%20um%20especialista%20da%20Sol.";
 
-export const PRODUCT_IMAGES: Record<string, string> = {
-  "freedom-df300": "/freedom-df300.png",
-  "freedom-df500": "/freedom-df500.png",
-  "freedom-df700": "/freedom-df700.png",
-  "freedom-df1000": "/freedom-df1000.png",
-  "freedom-df1500": "/freedom-df1500.png",
-  "freedom-df2000": "/freedom-df2000.png",
-  "freedom-df2500": "/freedom-df2500.png",
-  "freedom-df3000": "/freedom-df3000.png",
-  "freedom-df4100": "/freedom-df4100.png",
-  "heliar-h40jd": "/Imagens%20baterias/Heliar/Webp/H40JD%20-%20superior.webp",
-  "heliar-h40jd-jis": "/Imagens%20baterias/Heliar/Faltantes/Antigas/webp/H40JD%20JIS%20-%20antiga%20H40FD.webp",
-  "heliar-hefb225td": "/Imagens%20baterias/Heliar/Faltantes/Antigas/EFB/webp/HEFB225TD%20-%20antiga%20HEFB225TD.webp",
-  "heliar-hefb225te": "/Imagens%20baterias/Heliar/Faltantes/Antigas/EFB/webp/HEFB225TE%20-%20antiga%20HEFB225TE.webp",
-  "heliar-hagm70pd": "/Imagens%20baterias/Heliar/Faltantes/Genericas/webp/HAGM%20-%20perspectiva%20.webp",
-  "heliar-hagm80kd": "/Imagens%20baterias/Heliar/Faltantes/Genericas/webp/HAGM%20-%20perspectiva%20.webp",
-  "heliar-hagm95md": "/Imagens%20baterias/Heliar/Faltantes/Genericas/webp/HAGM%20-%20perspectiva%20.webp",
-  "heliar-hagm105sd": "/Imagens%20baterias/Heliar/Faltantes/Genericas/webp/HAGM%20-%20perspectiva%20.webp",
-  "heliar-he48bd": "/Imagens%20baterias/Heliar/Faltantes/Genericas/webp/HE%20-%2060%20-%20perspectiva.webp",
-  "heliar-he45be": "/Imagens%20baterias/Heliar/Faltantes/SLI/Superior/PNG/HE45BE%20-%20superior.png",
-  "heliar-he50gd": "/Imagens%20baterias/Heliar/Webp/HE50GD%20-%20perspectiva.webp",
-  "heliar-he60dd": "/Imagens%20baterias/Heliar/Faltantes/Genericas/webp/HE%20-%2060%20-%20perspectiva.webp",
-  "heliar-he60de": "/Imagens%20baterias/Heliar/Webp/HE60DE%20-%20perspectiva.webp",
-  "heliar-he60hd": "/Imagens%20baterias/Heliar/Webp/HE60HD%20-%20perspectiva.webp",
-  "heliar-h45je": "/Imagens%20baterias/Heliar/Faltantes/Antigas/webp/H45JE%20-%20antiga%20H45JE.webp",
-  "heliar-h50jd": "/Imagens%20baterias/Heliar/Faltantes/Antigas/webp/H50JD%20-%20antiga%20H45JE.webp",
-  "heliar-h65hd": "/Imagens%20baterias/Heliar/Webp/H65HD%20-%20perspectiva.webp",
-  "heliar-h70nd": "/Imagens%20baterias/Heliar/Webp/H70ND%20-%20lateral.webp",
-  "heliar-h70ne": "/Imagens%20baterias/Heliar/Webp/H70NE%20-%20perspectiva.webp",
-  "heliar-h75pd": "/Imagens%20baterias/Heliar/Faltantes/Genericas/webp/H%20-%2065%20ou%20maior%20-%20frontal%20branca.webp",
-  "heliar-h75ld": "/Imagens%20baterias/Heliar/Faltantes/Genericas/webp/H%20-%2065%20ou%20maior%20-%20frontal%20branca.webp",
-  "heliar-h75le": "/Imagens%20baterias/Heliar/Faltantes/Genericas/webp/H%20-%2065%20ou%20maior%20-%20frontal%20branca.webp",
-  "heliar-h90ld": "/Imagens%20baterias/Heliar/Webp/H90LD%20-%20perspectiva.webp",
-  "heliar-h90le": "/Imagens%20baterias/Heliar/Webp/H90LE%20-%20perspectiva.webp",
-  "heliar-hagm60hd": "/Imagens%20baterias/Heliar/Webp/HAGM60HD%20-%20perspectiva.webp",
-  "heliar-hefb50gd": "/Imagens%20baterias/Heliar/Webp/HEFB50GD%20-%20perspectiva.webp",
-  "heliar-hefb60hd": "/Imagens%20baterias/Heliar/Webp/HEFB60HD%20-%20perspectiva.webp",
-  "heliar-hefb72pd": "/Imagens%20baterias/Heliar/Webp/HEFB72PD%20-%20perspectiva.webp",
-  "heliar-h95md": "/Imagens%20baterias/Heliar/Webp/H95MD%20-%20perspectiva.webp",
-  "heliar-h100le": "/Imagens%20baterias/Heliar/Faltantes/Antigas/Frota/webp/H100LE%20-%20antiga%20H100LE.webp",
-  "heliar-hs100le": "/Imagens%20baterias/Heliar/Faltantes/Antigas/Frota/webp/HS100LE%20-%20antiga%20HS100LE.webp",
-  "heliar-h150td": "/Imagens%20baterias/Heliar/Faltantes/Antigas/Frota/webp/H150TD%20-%20antiga%20H150TD.webp",
-  "heliar-hs150td": "/Imagens%20baterias/Heliar/Faltantes/Antigas/Frota/webp/HS150TD%20-%20antiga%20HS150TD.webp",
-  "heliar-h180td": "/Imagens%20baterias/Heliar/Faltantes/Antigas/Frota/webp/H180TD%20-%20antiga%20H180TD.webp",
-  "heliar-hs180td": "/Imagens%20baterias/Heliar/Faltantes/Antigas/Frota/webp/HS180TD%20-%20antiga%20HS150TD.webp",
-  "heliar-hs180te": "/Imagens%20baterias/Heliar/Faltantes/Antigas/Frota/webp/HS180TE%20-%20antiga%20HT180TE.webp",
-  "heliar-ht180te": "/Imagens%20baterias/Heliar/Faltantes/Antigas/Frota/webp/HT180TE%20-%20antiga%20HT180TE.webp",
-  "econ-egm60hd-24": "/Imagens%20baterias/eCON/webp/EGM60HD-24.webp",
-  "econ-egm70pd-24": "/Imagens%20baterias/eCON/webp/EGM70PD-24.webp",
-  "econ-egm80kd-24": "/Imagens%20baterias/eCON/webp/EGM80KD-24.webp",
-  "econ-egm92md-24": "/Imagens%20baterias/eCON/webp/EGM92MD-24.webp",
-  "econ-efb50gd-24": "/Imagens%20baterias/eCON/webp/EFB50GD-24.webp",
-  "econ-efb60hd-24": "/Imagens%20baterias/eCON/webp/EFB60HD-24.webp",
-  "econ-efb72pd-24": "/Imagens%20baterias/eCON/webp/EFB72PD-24.webp",
-  "econ-e45bd-18": "/Imagens%20baterias/eCON/webp/E45BD-18.webp",
-  "econ-e50gd-18": "/Imagens%20baterias/eCON/webp/E50GD-18.webp",
-  "econ-e60dd-18": "/Imagens%20baterias/eCON/webp/E60DD-18.webp",
-  "econ-e60hd-18": "/Imagens%20baterias/eCON/webp/E60HD-18.webp",
-  "econ-e70nd-15": "/Imagens%20baterias/eCON/webp/E70ND-18.webp",
-  "econ-e95md-15": "/Imagens%20baterias/eCON/webp/E95MD-18.webp",
-  "econ-es100le-15": "/Imagens%20baterias/eCON/webp/ES100LE-15.webp",
-  "econ-em100le-12": "/Imagens%20baterias/eCON/webp/E100LE-15.webp",
-  "econ-e150td-12": "/Imagens%20baterias/eCON/webp/E150TD-15.webp",
-  "econ-e180td-12": "/Imagens%20baterias/eCON/webp/E180TD-15.webp",
-  "econ-e180te-12": "/Imagens%20baterias/eCON/webp/ES180TE-15.webp",
-  "econ-es150td-15": "/Imagens%20baterias/eCON/webp/ES150TD-15.webp",
-  "econ-vrla-ep12-5": "/econ-vrla-ep12-5.webp",
-  "econ-vrla-ep12-7w": "/econ-vrla-ep12-7w.webp",
-  "econ-vrla-ep12-7": "/econ-vrla-ep12-7.webp",
-  "econ-vrla-ep12-9": "/econ-vrla-ep12-9.webp",
-  "econ-vrla-ep12-12": "/econ-vrla-ep12-12.webp",
-  "econ-vrla-ep12-18": "/econ-vrla-ep12-18.webp",
-  "bluetti-premium-30-v2": "/bluetti-premium-30-v2.webp",
-  "bluetti-ac50": "/bluetti-ac50.webp",
-  "bluetti-ac50p": "/bluetti-ac50p.webp",
-  "bluetti-ac70p": "/bluetti-ac70p.webp",
-  "bluetti-ac180p": "/bluetti-ac180p.webp",
-  "bluetti-premium-100-v2": "/bluetti-premium-100-v2.webp",
-  "bluetti-ac200pl": "/bluetti-ac200pl.webp",
-  "bluetti-elite-200-v2": "/bluetti-elite-200-v2.webp",
-  "bluetti-premium-200-v2": "/bluetti-premium-200-v2.webp",
-  "bluetti-elite-300": "/Elite%20300.webp",
-  "bluetti-apex-300": "/bluetti-apex-300.webp",
-  "bluetti-sora-60": "/bluetti-sora-60.webp",
-  "bluetti-pv100": "/bluetti-pv100.webp",
-  "bluetti-sora-130": "/bluetti-sora-130.webp",
-  "bluetti-sora-220": "/bluetti-sora-220.webp",
-};
 
 const BLUETTI_GALLERY_COUNTS: Record<string, number> = {
   "bluetti-premium-30-v2": 6, "bluetti-ac50": 4, "bluetti-ac50p": 10, "bluetti-ac70p": 10,
@@ -180,6 +93,7 @@ function Header() {
   const [open, setOpen] = useState(false);
   const [solutionsOpen, setSolutionsOpen] = useState(false);
   const solutionsMenuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     document.body.classList.toggle("menu-open", open);
     return () => document.body.classList.remove("menu-open");
@@ -189,7 +103,12 @@ function Header() {
       if (!solutionsMenuRef.current?.contains(event.target as Node)) setSolutionsOpen(false);
     };
     const closeSolutionsMenuWithKeyboard = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setSolutionsOpen(false);
+      if (event.key !== "Escape") return;
+      setSolutionsOpen(false);
+      setOpen((wasOpen) => {
+        if (wasOpen) menuButtonRef.current?.focus();
+        return false;
+      });
     };
     document.addEventListener("pointerdown", closeSolutionsMenu);
     document.addEventListener("keydown", closeSolutionsMenuWithKeyboard);
@@ -224,10 +143,11 @@ function Header() {
       document.body.classList.remove("site-header-hidden");
     };
   }, []);
-  return <header className="header">
+  // A keyboard user tabbing into the header must see it even if it slid away on scroll.
+  return <header className="header" onFocus={() => document.body.classList.remove("site-header-hidden")}>
     <div className="nav-wrap">
       <Brand />
-      <button className="menu-button" onClick={() => { setOpen(!open); setSolutionsOpen(false); }} aria-expanded={open} aria-controls="primary-navigation" aria-label={open ? "Fechar menu" : "Abrir menu"}><span /><span /></button>
+      <button ref={menuButtonRef} className="menu-button" onClick={() => { setOpen(!open); setSolutionsOpen(false); }} aria-expanded={open} aria-controls="primary-navigation" aria-label={open ? "Fechar menu" : "Abrir menu"}><span /><span /></button>
       <nav id="primary-navigation" className={open ? "nav open" : "nav"} aria-label="Navegação principal">
         <div className={solutionsOpen ? "nav-solutions is-open" : "nav-solutions"} ref={solutionsMenuRef}>
           <button type="button" className="nav-solutions-trigger" onClick={() => setSolutionsOpen((current) => !current)} aria-expanded={solutionsOpen} aria-controls="solutions-submenu">Soluções <span className="solutions-chevron" aria-hidden="true"><svg className="solutions-chevron-up" viewBox="0 0 16 16" fill="none"><path d="m3.5 10 4.5-4.5 4.5 4.5" /></svg><svg className="solutions-chevron-down" viewBox="0 0 16 16" fill="none"><path d="m3.5 6 4.5 4.5L12.5 6" /></svg></span></button>
@@ -251,10 +171,10 @@ function Footer() {
   return <footer>
     <div className="footer-top">
       <div><Brand variant="white" /><p>Energia para quem não pode parar.</p></div>
-      <div><b>Navegue</b><Link href="/produtos">Soluções</Link><Link href="/sobre-nos">A Sol</Link><Link href="/sustentabilidade">Sustentabilidade</Link></div>
+      <div><b>Navegue</b><Link href="/produtos">Soluções</Link><Link href="/sobre-nos">A Sol</Link><Link href="/sustentabilidade">Sustentabilidade</Link><Link href="/contato">Contato</Link></div>
       <div><b>Fale com a Sol</b><a href="tel:+554132775080">(41) 3277-5080</a><a href="mailto:atendimento@distribuidorasol.com.br">atendimento@distribuidorasol.com.br</a><span>Curitiba · PR</span></div>
     </div>
-    <div className="footer-bottom"><span>© 2026 Sol Distribuidora · CNPJ 00.338.610/0002-80</span><Link href="/politica-de-privacidade">Política de Privacidade</Link></div>
+    <div className="footer-bottom"><span>© {new Date().getFullYear()} Sol Distribuidora · CNPJ 00.338.610/0002-80</span><Link href="/politica-de-privacidade">Política de Privacidade</Link></div>
   </footer>;
 }
 
@@ -264,57 +184,6 @@ function Shell({ children }: { children: React.ReactNode }) {
 
 function SectionTitle({ eyebrow, title, text }: { eyebrow: string; title: React.ReactNode; text?: string }) {
   return <div className="section-title"><span className="eyebrow">{eyebrow}</span><h2>{title}</h2>{text && <p>{text}</p>}</div>;
-}
-
-function HeroVisual({ className = "" }: { className?: string }) {
-  const visualRef = useRef<HTMLDivElement>(null);
-  const productRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const rotations = [-5, 5, 0];
-    const horizontalDistance = [14, -12, 9];
-    const verticalDistance = [8, 10, -7];
-    let frame = 0;
-
-    const updateMotion = () => {
-      frame = 0;
-      const visual = visualRef.current;
-      if (!visual) return;
-      const bounds = visual.getBoundingClientRect();
-      if (bounds.bottom < 0 || bounds.top > window.innerHeight) return;
-
-      const progress = Math.max(-1, Math.min(1, (window.innerHeight / 2 - (bounds.top + bounds.height / 2)) / (window.innerHeight / 2 + bounds.height / 2)));
-      productRefs.current.forEach((product, index) => {
-        if (!product) return;
-        const x = Math.sin(progress * Math.PI) * horizontalDistance[index];
-        const y = Math.cos(progress * Math.PI + index) * verticalDistance[index];
-        product.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rotations[index]}deg)`;
-      });
-    };
-
-    const requestUpdate = () => {
-      if (!frame) frame = window.requestAnimationFrame(updateMotion);
-    };
-
-    requestUpdate();
-    window.addEventListener("scroll", requestUpdate, { passive: true });
-    window.addEventListener("resize", requestUpdate);
-    return () => {
-      window.removeEventListener("scroll", requestUpdate);
-      window.removeEventListener("resize", requestUpdate);
-      if (frame) window.cancelAnimationFrame(frame);
-    };
-  }, []);
-
-  return <div ref={visualRef} className={`hero-visual ${className}`.trim()} aria-label="Representação de soluções de energia">
-    <div className="energy-orbit orbit-one" /><div className="energy-orbit orbit-two" />
-    <div ref={(element) => { productRefs.current[0] = element; }} className="hero-product hero-product-a"><img src="/DF_4100 Diagonal.webp" alt="Bateria estacionária Freedom DF 4100" /></div>
-    <div ref={(element) => { productRefs.current[1] = element; }} className="hero-product hero-product-b"><img src="/Heliar embalagem nova.webp" alt="Bateria automotiva Heliar" /></div>
-    <div ref={(element) => { productRefs.current[2] = element; }} className="hero-product hero-product-c"><img src="/bluetti-premium-100-v2.webp" alt="Estação de energia Bluetti Premium 100 v2" /></div>
-    <div className="visual-label"><i /> Soluções para revendas e empresas</div>
-  </div>;
 }
 
 function HeroPhoto({ className = "" }: { className?: string }) {
@@ -490,9 +359,9 @@ function Home() {
         <section className="solutions section">
           <SectionTitle eyebrow="Soluções" title={<>Um portfólio que <em>move negócios.</em></>} text="Produtos de alta confiabilidade, selecionados para atender diferentes demandas do mercado profissional." />
           <div className="solution-grid">
-            <SolutionCard href="/baterias-automotivas" title="Baterias automotivas" text="Linhas completas para veículos leves e pesados, com marcas reconhecidas pelo mercado." image="/linha-automotiva copiar.webp" featuredImage revealDelay={0} />
-            <SolutionCard href="/bluetti-estacoes-de-energia" title="Energia portátil e solar" text="Estações de energia e painéis solares para novas demandas, dentro e fora da rede." image="/linha-bluetti copiar.webp" featuredImage revealDelay={0.2} />
-            <SolutionCard href="/baterias-estacionarias" title="Baterias estacionárias" text="Energia segura e contínua para telecom, nobreaks, sistemas solares e aplicações críticas." image="/linha-estacionarias copiar.webp" featuredImage revealDelay={0.4} />
+            <SolutionCard href="/baterias-automotivas" title="Baterias automotivas" text="Linhas completas para veículos leves e pesados, com marcas reconhecidas pelo mercado." image="/linha-automotiva-card.webp" featuredImage revealDelay={0} />
+            <SolutionCard href="/bluetti-estacoes-de-energia" title="Energia portátil e solar" text="Estações de energia e painéis solares para novas demandas, dentro e fora da rede." image="/linha-bluetti-card.webp" featuredImage revealDelay={0.2} />
+            <SolutionCard href="/baterias-estacionarias" title="Baterias estacionárias" text="Energia segura e contínua para telecom, nobreaks, sistemas solares e aplicações críticas." image="/linha-estacionarias-card.webp" featuredImage revealDelay={0.4} />
           </div>
         </section>
 
@@ -637,7 +506,20 @@ function CatalogCategorySection({ id, eyebrow, title, text, products }: { id: st
 }
 
 function CatalogHeroVideo({ src, loop = true }: { src: string; loop?: boolean }) {
-  return <video className="solutions-hero-video" autoPlay loop={loop} muted playsInline preload="auto" aria-hidden="true"><source src={src} type="video/mp4" media="(min-width: 781px)" /></video>;
+  const videoRef = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const video = videoRef.current;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => {
+      if (!video) return;
+      if (reducedMotion.matches) video.pause();
+      else void video.play().catch(() => undefined);
+    };
+    sync();
+    reducedMotion.addEventListener("change", sync);
+    return () => reducedMotion.removeEventListener("change", sync);
+  }, []);
+  return <video ref={videoRef} className="solutions-hero-video" loop={loop} muted playsInline preload="metadata" aria-hidden="true"><source src={src} type="video/mp4" media="(min-width: 781px)" /></video>;
 }
 
 function Catalog({ title = "Nosso portfólio", intro = "Encontre a solução certa para o seu negócio.", filter, heroVideo = false, heroVideoSrc }: { title?: string; intro?: string; filter?: string; heroVideo?: boolean; heroVideoSrc?: string }) {
@@ -666,20 +548,6 @@ function StationaryCatalog() {
   return <Catalog title="Baterias estacionárias" intro="Linhas profissionais organizadas por marca para facilitar a escolha da solução ideal." filter="estacionaria" heroVideoSrc="/hero-baterias-estacionarias.mp4" />;
 }
 
-type BluettiComparisonModel = { slug: string; model: string; watts: number; wattHours: number; powerLiftingWatts: number; surgeWatts?: number; modeNote?: string };
-const BLUETTI_COMPARISON: BluettiComparisonModel[] = [
-  { slug: "bluetti-premium-30-v2", model: "Premium 30 v2", watts: 600, wattHours: 320, powerLiftingWatts: 1500, modeNote: "Power Lifting atende cargas puramente resistivas; potência CA+CC combinada limitada a 600 W." },
-  { slug: "bluetti-ac50", model: "AC50", watts: 700, wattHours: 448, powerLiftingWatts: 1000 },
-  { slug: "bluetti-ac50p", model: "AC50P", watts: 700, wattHours: 504, powerLiftingWatts: 1200 },
-  { slug: "bluetti-ac70p", model: "AC70P", watts: 1000, wattHours: 864, powerLiftingWatts: 2000 },
-  { slug: "bluetti-ac180p", model: "AC180P", watts: 1800, wattHours: 1440, powerLiftingWatts: 2700 },
-  { slug: "bluetti-premium-100-v2", model: "Premium 100 v2", watts: 1800, wattHours: 1024, powerLiftingWatts: 2700 },
-  { slug: "bluetti-ac200pl", model: "AC200PL", watts: 2400, wattHours: 2304, powerLiftingWatts: 3600, surgeWatts: 2500, modeNote: "Saída nominal de 2.400 W; Power Lifting de 3.600 W; potência de pico de 2.500 W. São condições distintas." },
-  { slug: "bluetti-elite-200-v2", model: "Elite 200 v2", watts: 2600, wattHours: 2073.6, powerLiftingWatts: 3900, modeNote: "Power Lifting até 3.900 W somente para cargas puramente resistivas; a saída nominal permanece limitada a 2.600 W." },
-  { slug: "bluetti-premium-200-v2", model: "Premium 200 v2", watts: 2700, wattHours: 2073.6, powerLiftingWatts: 3900 },
-  { slug: "bluetti-elite-300", model: "Elite 300", watts: 2400, wattHours: 3014.4, powerLiftingWatts: 4800 },
-  { slug: "bluetti-apex-300", model: "Apex 300", watts: 3840, wattHours: 2764.8, powerLiftingWatts: 7680 },
-];
 
 const formatEnergy = (value: number) => new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 }).format(value);
 
@@ -748,7 +616,7 @@ function CatalogSearchTools({ count, search, setSearch, placeholder }: { count: 
   const term = search.trim();
   const suggestions = term ? searchCatalog(term).slice(0, 8) : [];
   const showSuggestions = open && !!term;
-  return <div className="catalog-tools"><div><strong>{count}</strong><span> soluções encontradas</span></div><div className="catalog-search-wrap"><label><span>Buscar em todo o catálogo por marca ou modelo</span><input type="search" role="combobox" value={search} onChange={(event) => { setSearch(event.target.value); setOpen(true); }} onFocus={() => setOpen(true)} onBlur={() => window.setTimeout(() => setOpen(false), 120)} onKeyDown={(event) => { if (event.key === "Escape") setOpen(false); }} placeholder={placeholder} aria-autocomplete="list" aria-controls="catalog-suggestions" aria-expanded={showSuggestions} /></label>{showSuggestions && <div id="catalog-suggestions" className="related-suggestions" role="list">{suggestions.length ? suggestions.map((item) => <ProductLink productSlug={item.slug} key={item.id} role="listitem" onClick={() => setOpen(false)}><b data-product-name-style={item.segment !== "energia" && item.segment !== "solar" ? "code" : undefined}>{item.model}</b><span>{item.brand}</span><small>{segmentLabel(item.segment)}</small></ProductLink>) : <span className="related-no-results">Nenhum produto encontrado.</span>}</div>}</div></div>;
+  return <div className="catalog-tools"><div><strong>{count}</strong><span> produtos nesta página</span></div><div className="catalog-search-wrap"><label><span>Buscar em todo o catálogo por marca ou modelo</span><input type="search" role="combobox" value={search} onChange={(event) => { setSearch(event.target.value); setOpen(true); }} onFocus={() => setOpen(true)} onBlur={() => window.setTimeout(() => setOpen(false), 120)} onKeyDown={(event) => { if (event.key === "Escape") setOpen(false); }} placeholder={placeholder} aria-autocomplete="list" aria-controls="catalog-suggestions" aria-expanded={showSuggestions} /></label>{showSuggestions && <div id="catalog-suggestions" className="related-suggestions" role="listbox" onMouseDown={(event) => event.preventDefault()}>{suggestions.length ? suggestions.map((item) => <ProductLink productSlug={item.slug} key={item.id} role="option" aria-selected="false" onClick={() => setOpen(false)}><b data-product-name-style={item.segment !== "energia" && item.segment !== "solar" ? "code" : undefined}>{item.model}</b><span>{item.brand}</span><small>{segmentLabel(item.segment)}</small></ProductLink>) : <span className="related-no-results">Nenhum produto encontrado.</span>}</div>}</div></div>;
 }
 
 function BluettiCatalog() {
@@ -785,14 +653,14 @@ const LEGACY_CARD_ASSETS: Record<string, string> = {
 
 function productCardImage(product: Product) {
   const assetSlug = product.slug === "freedom-df300" ? "elementor-601" : product.slug === "freedom-df2000" ? "freedom-df1000-copy" : LEGACY_CARD_ASSETS[product.slug] ?? product.slug;
-  return `/product-card-images/${assetSlug}.${product.slug === "heliar-he45be" ? "png" : "webp"}`;
+  return `/product-card-images/${assetSlug}.webp`;
 }
 
 function ProductCard({ product }: { product: Product }) {
   const image = PRODUCT_IMAGES[product.slug];
   const isBattery = product.segment !== "energia" && product.segment !== "solar";
   const cardImage = isBattery ? productCardImage(product) : image;
-  return <ProductLink productSlug={product.slug} className="product-card" data-product-slug={product.slug} data-product-name-style={isBattery ? "code" : undefined}><span className="product-brand">{product.brand}</span>{image ? <div className={`product-art real${isBattery ? " battery-product-art" : ""}${product.brand === "Heliar" ? " heliar-product-art" : ""}`} style={heliarImageStyle(product)}><img src={cardImage} alt={product.model} /></div> : <div className={`product-art ${product.segment}`}><i /><i /><b>{product.model.slice(0, 8)}</b></div>}<h3>{product.model}</h3><p>{segmentLabel(product.segment)}</p><span className="card-link">Ver solução <Icon name="arrow" /></span></ProductLink>;
+  return <ProductLink productSlug={product.slug} className="product-card" data-product-slug={product.slug} data-product-name-style={isBattery ? "code" : undefined}><span className="product-brand">{product.brand}</span>{image ? <div className={`product-art real${isBattery ? " battery-product-art" : ""}${product.brand === "Heliar" ? " heliar-product-art" : ""}`} style={heliarImageStyle(product)}><img src={cardImage} alt={product.model} loading="lazy" decoding="async" /></div> : <div className={`product-art ${product.segment}`}><i /><i /><b>{product.model.slice(0, 8)}</b></div>}<h3>{product.model}</h3><p>{segmentLabel(product.segment)}</p><span className="card-link">Ver solução <Icon name="arrow" /></span></ProductLink>;
 }
 
 function segmentLabel(segment: Product["segment"]) {
@@ -910,7 +778,7 @@ function ProductGallery({ product, images }: { product: Product; images: string[
 
 function PowerFrameDiagram() {
   return <figure className="powerframe-diagram">
-    <img src="/Imagens%20baterias/Heliar/Webp/powerframe-tecnologia.webp" alt="Grade interna oficial da tecnologia PowerFrame Heliar" />
+    <img src="/Imagens%20baterias/Heliar/Webp/powerframe-tecnologia.webp" alt="Grade interna oficial da tecnologia PowerFrame Heliar" loading="lazy" decoding="async" />
   </figure>;
 }
 
@@ -1184,19 +1052,17 @@ type FreedomManualData = {
   c3: string;
   datasheet: string;
   discharge: Array<[string, string]>;
-  dimensions?: string;
   hole?: string;
   terminal: string;
-  weight?: string;
 };
 
 const FREEDOM_MANUAL_DATA: Partial<Record<string, FreedomManualData>> = {
-  DF300: { c3: "20,8 Ah", dimensions: "175 × 175 × 175 mm (C × L × altura total)", weight: "8,8 kg (tolerância ±4%)", terminal: "Tipo L", hole: "7 mm", datasheet: "/documentos/freedom-df300-ficha-tecnica.pdf", discharge: [["1 hora", "18,00 A"], ["3 horas", "6,92 A"], ["10 horas", "2,40 A"], ["20 horas", "1,30 A"], ["100 horas", "0,30 A"]] },
-  DF500: { c3: "25,8 Ah", dimensions: "175 × 175 × 175 mm (C × L × altura total)", weight: "9,4 kg (tolerância ±4%)", terminal: "Tipo L", hole: "7 mm", datasheet: "/documentos/freedom-df500-ficha-tecnica.pdf", discharge: [["1 hora", "20,00 A"], ["3 horas", "8,60 A"], ["10 horas", "3,00 A"], ["20 horas", "1,80 A"], ["100 horas", "0,40 A"]] },
-  DF700: { c3: "34,5 Ah", dimensions: "210 × 175 × 175 mm (C × L × altura total)", weight: "12,3 kg (tolerância ±4%)", terminal: "Tipo L", hole: "7 mm", datasheet: "/documentos/freedom-df700-ficha-tecnica.pdf", discharge: [["1 hora", "27,00 A"], ["3 horas", "11,50 A"], ["10 horas", "4,10 A"], ["20 horas", "2,25 A"], ["100 horas", "0,50 A"]] },
-  DF1000: { c3: "43,5 Ah", dimensions: "242 × 175 × 175 mm (C × L × altura total)", weight: "15 kg (tolerância ±4%)", terminal: "Tipo L", hole: "7 mm", datasheet: "/documentos/freedom-df1000-ficha-tecnica.pdf", discharge: [["1 hora", "35,00 A"], ["3 horas", "14,50 A"], ["10 horas", "5,40 A"], ["20 horas", "3,00 A"], ["100 horas", "0,70 A"]] },
-  DF1500: { c3: "63,0 Ah", dimensions: "330 × 172 × 240 mm (C × L × altura total)", weight: "23,9 kg (tolerância ±4%)", terminal: "Rosqueado 3/8″-16 UNC", datasheet: "/documentos/freedom-df1500-ficha-tecnica.pdf", discharge: [["1 hora", "54,00 A"], ["3 horas", "21,00 A"], ["10 horas", "7,60 A"], ["20 horas", "4,00 A"], ["100 horas", "0,93 A"]] },
-  DF2000: { c3: "75,0 Ah", dimensions: "330 × 172 × 240 mm (C × L × altura total)", weight: "27,3 kg (tolerância ±4%)", terminal: "Rosqueado 3/8″-16 UNC", datasheet: "/documentos/freedom-df2000-ficha-tecnica.pdf", discharge: [["1 hora", "60,00 A"], ["3 horas", "25,00 A"], ["10 horas", "9,40 A"], ["20 horas", "5,25 A"], ["100 horas", "1,15 A"]] },
+  DF300: { c3: "20,8 Ah", terminal: "Tipo L", hole: "7 mm", datasheet: "/documentos/freedom-df300-ficha-tecnica.pdf", discharge: [["1 hora", "18,00 A"], ["3 horas", "6,92 A"], ["10 horas", "2,40 A"], ["20 horas", "1,30 A"], ["100 horas", "0,30 A"]] },
+  DF500: { c3: "25,8 Ah", terminal: "Tipo L", hole: "7 mm", datasheet: "/documentos/freedom-df500-ficha-tecnica.pdf", discharge: [["1 hora", "20,00 A"], ["3 horas", "8,60 A"], ["10 horas", "3,00 A"], ["20 horas", "1,80 A"], ["100 horas", "0,40 A"]] },
+  DF700: { c3: "34,5 Ah", terminal: "Tipo L", hole: "7 mm", datasheet: "/documentos/freedom-df700-ficha-tecnica.pdf", discharge: [["1 hora", "27,00 A"], ["3 horas", "11,50 A"], ["10 horas", "4,10 A"], ["20 horas", "2,25 A"], ["100 horas", "0,50 A"]] },
+  DF1000: { c3: "43,5 Ah", terminal: "Tipo L", hole: "7 mm", datasheet: "/documentos/freedom-df1000-ficha-tecnica.pdf", discharge: [["1 hora", "35,00 A"], ["3 horas", "14,50 A"], ["10 horas", "5,40 A"], ["20 horas", "3,00 A"], ["100 horas", "0,70 A"]] },
+  DF1500: { c3: "63,0 Ah", terminal: "Rosqueado 3/8″-16 UNC", datasheet: "/documentos/freedom-df1500-ficha-tecnica.pdf", discharge: [["1 hora", "54,00 A"], ["3 horas", "21,00 A"], ["10 horas", "7,60 A"], ["20 horas", "4,00 A"], ["100 horas", "0,93 A"]] },
+  DF2000: { c3: "75,0 Ah", terminal: "Rosqueado 3/8″-16 UNC", datasheet: "/documentos/freedom-df2000-ficha-tecnica.pdf", discharge: [["1 hora", "60,00 A"], ["3 horas", "25,00 A"], ["10 horas", "9,40 A"], ["20 horas", "5,25 A"], ["100 horas", "1,15 A"]] },
   DF2500: { c3: "102,0 Ah", terminal: "Tipo L", hole: "7 mm", datasheet: "/documentos/freedom-df2500-ficha-tecnica.pdf", discharge: [["1 hora", "81,00 A"], ["3 horas", "34,00 A"], ["10 horas", "13,00 A"], ["20 horas", "7,50 A"], ["100 horas", "1,65 A"]] },
   DF3000: { c3: "123,0 Ah", terminal: "Tipo L", hole: "7 mm", datasheet: "/documentos/freedom-df3000-ficha-tecnica.pdf", discharge: [["1 hora", "95,00 A"], ["3 horas", "41,00 A"], ["10 horas", "15,60 A"], ["20 horas", "8,50 A"], ["100 horas", "1,85 A"]] },
 };
@@ -1322,7 +1188,7 @@ function StationaryProductContent({ product, productSpec }: { product: Product; 
           <div role="row"><span role="rowheader">Capacidade C100</span><strong role="cell">{freedomCapacity?.c100}</strong></div>
           {freedomManual && <div role="row"><span role="rowheader">Condição da capacidade</span><strong role="cell">25 °C, até 1,75 V por elemento (10,5 V)</strong></div>}
           {isDf4100 && <div role="row"><span role="rowheader">Condição da capacidade</span><strong role="cell">25 °C — condição indicada na ficha</strong></div>}
-          <div role="row"><span role="rowheader">Dimensões (C × L × A)</span><strong role="cell">{isDf4100 ? FREEDOM_DF4100_DATA.dimensions : productSpec.dimensions}</strong></div>
+          <div role="row"><span role="rowheader">Dimensões (C × L × A)</span><strong role="cell">{(isDf4100 ? FREEDOM_DF4100_DATA.dimensions : productSpec.dimensions)?.replace(" (C × L × A)", "")}</strong></div>
           <div role="row"><span role="rowheader">Peso</span><strong role="cell">{isDf4100 ? "60,3 kg" : productSpec.weight}</strong></div>
           {freedomManual && <><div role="row"><span role="rowheader">Terminal</span><strong role="cell">{freedomManual.terminal}</strong></div>{freedomManual.hole && <div role="row"><span role="rowheader">Diâmetro do furo</span><strong role="cell">{freedomManual.hole}</strong></div>}</>}
           {isDf4100 && <><div role="row"><span role="rowheader">Terminal</span><strong role="cell">{FREEDOM_DF4100_DATA.terminal}</strong></div><div role="row"><span role="rowheader">Diâmetro do furo</span><strong role="cell">{FREEDOM_DF4100_DATA.hole}</strong></div><div role="row"><span role="rowheader">Certificação Anatel</span><strong role="cell">Não possui — conforme folder Freedom</strong></div></>}
@@ -1331,7 +1197,7 @@ function StationaryProductContent({ product, productSpec }: { product: Product; 
           <div role="row"><span role="rowheader">Tecnologia</span><strong role="cell">{productSpec.technology}</strong></div>
           <div role="row"><span role="rowheader">Tensão nominal</span><strong role="cell">{productSpec.voltage}</strong></div>
           <div role="row"><span role="rowheader">Capacidade nominal</span><strong role="cell">{productSpec.capacity}</strong></div>
-          <div role="row"><span role="rowheader">Dimensões (C × L × A)</span><strong role="cell">{productSpec.dimensions} (±2 mm)</strong></div>
+          <div role="row"><span role="rowheader">Dimensões (C × L × A)</span><strong role="cell">{productSpec.dimensions?.replace(" (C × L × A)", "")} (±2 mm)</strong></div>
           <div role="row"><span role="rowheader">Altura total</span><strong role="cell">{econVrlaData?.totalHeight}</strong></div>
           <div role="row"><span role="rowheader">Peso aproximado</span><strong role="cell">{productSpec.weight} (±5%)</strong></div>
           <div role="row"><span role="rowheader">Terminais</span><strong role="cell">{econVrlaData?.terminal}</strong></div>
@@ -1340,7 +1206,7 @@ function StationaryProductContent({ product, productSpec }: { product: Product; 
           <div role="row"><span role="rowheader">Resistência interna a 25 °C</span><strong role="cell">Aprox. {econVrlaData?.internalResistance}</strong></div>
         </>}
       </div>
-      {isFreedom && <small className="stationary-source-note">Fonte: Ficha técnica Freedom {product.model} ({product.model.toLowerCase()}-ficha-tecnica.pdf), página 1. Dimensões e peso conforme ficha individual.</small>}
+      {isFreedom && <small className="stationary-source-note">Fonte: Ficha técnica Freedom {product.model} ({product.slug}-ficha-tecnica.pdf), página 1. Dimensões e peso conforme ficha individual.</small>}
       {isEconVrla && <small className="stationary-source-note">Fonte: Catálogo ECON VRLA, página {econVrlaData?.sourcePage}; capacidade a 25 °C até 1,75 V/célula; dimensões ±2 mm e peso ±5%.</small>}
     </section>
     {usesFreedomManual ? <FreedomTechnology /> : isDf4100 ? <FreedomDf4100Technology /> : isEconVrla && <EconVrlaTechnology />}
@@ -1353,8 +1219,8 @@ function StationaryProductContent({ product, productSpec }: { product: Product; 
       <div className="stationary-section-heading"><span className="eyebrow light">Desempenho em descarga</span><h2>Dados de descarga da <em>{product.model}.</em></h2><p>Valores a 25 °C e tensão final de 1,75 V por célula. Use-os para dimensionar a bateria para a carga; eles não garantem a autonomia do equipamento.</p></div>
       <div>
         <div className="econ-vrla-discharge-tables">
-          <div className="stationary-discharge-table"><div><span>Tempo</span><strong>Corrente constante</strong></div>{econVrlaData.currentDischarge.map(([time, value]) => <div role="row" key={`current-${time}`}><span>{time}</span><strong>{value}</strong></div>)}</div>
-          <div className="stationary-discharge-table"><div><span>Tempo</span><strong>Potência constante</strong></div>{econVrlaData.powerDischarge.map(([time, value]) => <div role="row" key={`power-${time}`}><span>{time}</span><strong>{value}</strong></div>)}</div>
+          <div className="stationary-discharge-table" role="table" aria-label={`Corrente de descarga ${product.model}`}><div role="row"><span role="columnheader">Tempo</span><strong role="columnheader">Corrente constante</strong></div>{econVrlaData.currentDischarge.map(([time, value]) => <div role="row" key={`current-${time}`}><span role="cell">{time}</span><strong role="cell">{value}</strong></div>)}</div>
+          <div className="stationary-discharge-table" role="table" aria-label={`Potência por célula ${product.model}`}><div role="row"><span role="columnheader">Tempo</span><strong role="columnheader">Potência constante</strong></div>{econVrlaData.powerDischarge.map(([time, value]) => <div role="row" key={`power-${time}`}><span role="cell">{time}</span><strong role="cell">{value}</strong></div>)}</div>
         </div>
         <small className="stationary-source-note">Fonte: Catálogo ECON VRLA, página {econVrlaData.sourcePage}; condições de ensaio a 25 °C e 1,75 V/célula. Correntes em A; potência por célula em W/célula.</small>
       </div>
@@ -1390,27 +1256,34 @@ function ProductDetail({ product }: { product: Product }) {
   const [relatedSearch, setRelatedSearch] = useState("");
   const [relatedOpen, setRelatedOpen] = useState(false);
   const brandProducts = PRODUCTS.filter((item) => item.brand === product.brand);
-  const heliarApplication = productSpec && (heliarLine === "FROTA" || Number.parseInt(productSpec.capacity, 10) >= 100) ? "comercial" : "leve";
-  const relatedProducts = heliarLine ? brandProducts.filter((item) => {
+  // "Mesma linha": Heliar and eCON by technology line (heavy fleet grouped
+  // together), Bluetti by segment (stations vs. panels), other brands as a whole.
+  const lineOf = (item: Product) => {
     const spec = PRODUCT_SPECS[productSpecKey(item.brand, item.model)];
-    if (!spec || heliarLineFor(spec, item.model) !== heliarLine) return false;
-    const itemLine = heliarLineFor(spec, item.model);
-    const itemApplication = itemLine === "FROTA" || itemLine === "FROTA_EFB" || Number.parseInt(spec.capacity, 10) >= 100 ? "comercial" : "leve";
-    return itemApplication === heliarApplication;
-  }) : brandProducts;
+    if (item.brand === "Heliar" && spec) return heliarLineFor(spec, item.model).replace("FROTA_EFB", "FROTA");
+    if (item.brand === "eCON" && spec) return econLineFor(spec);
+    if (item.brand === "Bluetti") return item.segment;
+    return item.brand;
+  };
+  const productLine = lineOf(product);
+  const relatedProducts = brandProducts.filter((item) => lineOf(item) === productLine);
   const productIndex = relatedProducts.findIndex((item) => item.id === product.id);
-  const suggestedProducts = [
-    ...relatedProducts.slice(Math.max(0, productIndex - 2), productIndex),
-    ...relatedProducts.slice(productIndex + 1, productIndex + 3),
-  ];
+  // Up to four neighbours in catalogue order, filling from the other side at the ends.
+  const suggestedProducts = relatedProducts
+    .filter((item) => item.id !== product.id)
+    .map((item) => ({ item, distance: Math.abs(relatedProducts.indexOf(item) - productIndex) }))
+    .sort((first, second) => first.distance - second.distance)
+    .slice(0, 4)
+    .map(({ item }) => item)
+    .sort((first, second) => relatedProducts.indexOf(first) - relatedProducts.indexOf(second));
   const searchSuggestions = relatedSearch.trim()
     ? PRODUCTS.filter((item) => clean(`${item.brand} ${item.model} ${segmentLabel(item.segment)}`).includes(clean(relatedSearch))).slice(0, 6)
     : [];
   const brandCatalogHref: Record<Product["brand"], string> = { Freedom: "/freedom-baterias-estacionarias", Heliar: "/heliar-baterias-automotivas", eCON: "/econ-baterias-automotivas", "eCON VRLA": "/econ-vrla-baterias-estacionarias", Bluetti: "/bluetti-estacoes-de-energia" };
   return <Shell>
     <section className="product-hero" data-product-name-style={isBattery ? "code" : undefined}>
-      <div><span className="eyebrow light product-hero-label">{heliarContent ? `Heliar · ${heliarContent.label}` : econContent ? `eCON · ${econContent.label}` : `${product.brand} · ${segmentLabel(product.segment)}`}</span><h1>{product.model}</h1><p>{stationaryDetail ? stationaryHero : heliarContent && productSpec ? (["HEFB225TD", "HEFB225TE", "HE60HD", "HEFB60HD"].includes(product.model) ? productSpec.description : heliarContent.hero(productSpec.capacity)) : econContent && productSpec ? (confirmedEconAuto ? productSpec.description : econContent.hero(product.model)) : isPremium30 ? "Estação BLUETTI de 320 Wh com saída nominal de 600 W e Power Lifting para cargas puramente resistivas." : bluettiContent ? bluettiContent.intro : "Nossa equipe ajuda a confirmar aplicação e especificações do modelo antes da compra."}</p><a className="button yellow" href={WHATSAPP} target="_blank" rel="noreferrer">Solicite uma cotação <Icon name="arrow" /></a>{econContent && <nav className="product-hero-links" aria-label="Atalhos da página"><a href="#ficha-tecnica">Ficha técnica</a><a href="#tecnologia-econ">Conheça a linha</a></nav>}{heliarContent && <nav className="product-hero-links" aria-label="Atalhos da página"><a href="#ficha-tecnica">Ficha técnica</a><a href="#tecnologia-heliar">Conheça a tecnologia</a></nav>}{stationaryDetail && <nav className="product-hero-links" aria-label="Atalhos da página"><a href="#dados-tecnicos">Dados técnicos</a><a href="#documentos-tecnicos">Documentação</a></nav>}</div>
-      <div className={`product-media-card${product.segment === "solar" ? " product-media-card-solar" : ""}`}>{bluettiGallery ? <><span className="eyebrow light product-stage-label">{product.brand} · {segmentLabel(product.segment)}</span><ProductGallery key={product.slug} product={product} images={bluettiGallery} /></> : <div className={`product-stage ${product.segment}`}><span className="eyebrow light product-stage-label">{heliarContent ? `Heliar · ${heliarContent.label}` : econContent ? `eCON · ${econContent.label}` : `${product.brand} · ${segmentLabel(product.segment)}`}</span>{realImage ? <div className={product.brand === "Heliar" ? "heliar-product-stage" : "product-stage-image"} style={heliarImageStyle(product)}><div className="stage-glow" /><img className="stage-real-product" src={detailImage} alt={`${product.brand} ${product.model}`} /></div> : <><div className="stage-glow" /><div className="stage-product"><i /><i /><b>{product.model}</b><span>{product.brand}</span></div></>}</div>}</div>
+      <div><span className="eyebrow light product-hero-label">{heliarContent ? `Heliar · ${heliarContent.label}` : econContent ? `eCON · ${econContent.label}` : `${product.brand} · ${segmentLabel(product.segment)}`}</span><h1><span className="visually-hidden">{product.brand === "Bluetti" ? "BLUETTI" : product.brand} </span>{product.model}</h1><p>{stationaryDetail ? stationaryHero : heliarContent && productSpec ? (["HEFB225TD", "HEFB225TE", "HE60HD", "HEFB60HD"].includes(product.model) ? productSpec.description : heliarContent.hero(productSpec.capacity)) : econContent && productSpec ? (confirmedEconAuto ? productSpec.description : econContent.hero(product.model)) : isPremium30 ? "Estação BLUETTI de 320 Wh com saída nominal de 600 W e Power Lifting para cargas puramente resistivas." : bluettiContent ? bluettiContent.intro : "Nossa equipe ajuda a confirmar aplicação e especificações do modelo antes da compra."}</p><a className="button yellow" href={WHATSAPP} target="_blank" rel="noreferrer">Solicite uma cotação <Icon name="arrow" /></a>{econContent && <nav className="product-hero-links" aria-label="Atalhos da página"><a href="#ficha-tecnica">Ficha técnica</a><a href="#tecnologia-econ">Conheça a linha</a></nav>}{heliarContent && <nav className="product-hero-links" aria-label="Atalhos da página"><a href="#ficha-tecnica">Ficha técnica</a><a href="#tecnologia-heliar">Conheça a tecnologia</a></nav>}{stationaryDetail && <nav className="product-hero-links" aria-label="Atalhos da página"><a href="#dados-tecnicos">Dados técnicos</a><a href="#documentos-tecnicos">Documentação</a></nav>}</div>
+      <div className={`product-media-card${product.segment === "solar" ? " product-media-card-solar" : ""}`}>{bluettiGallery ? <><span className="eyebrow light product-stage-label">{product.brand} · {segmentLabel(product.segment)}</span><ProductGallery key={product.slug} product={product} images={bluettiGallery} /></> : <div className={`product-stage ${product.segment}`}><span className="eyebrow light product-stage-label">{heliarContent ? `Heliar · ${heliarContent.label}` : econContent ? `eCON · ${econContent.label}` : `${product.brand} · ${segmentLabel(product.segment)}`}</span>{realImage ? <div className={product.brand === "Heliar" ? "heliar-product-stage" : "product-stage-image"} style={heliarImageStyle(product)}><div className="stage-glow" /><img className="stage-real-product" src={detailImage} alt={`${product.brand} ${product.model}`} fetchPriority="high" decoding="async" /></div> : <><div className="stage-glow" /><div className="stage-product"><i /><i /><b>{product.model}</b><span>{product.brand}</span></div></>}</div>}</div>
     </section>
     {stationaryDetail && productSpec ? <StationaryProductContent product={product} productSpec={productSpec} /> : heliarLine && productSpec ? <HeliarProductContent product={product} productSpec={productSpec} line={heliarLine} /> : econLine && productSpec ? <EconProductContent product={product} productSpec={productSpec} line={econLine} /> : isPremium30 ? <section className="detail section premium-30-overview">
       <div className="premium-30-datasheet" data-product-name-style={isBattery ? "code" : undefined}><span className="eyebrow">Visão geral</span><h2>Premium 30 V2 <em>em detalhes.</em></h2><span className="detail-label">Ficha técnica</span><p><strong>Saída:</strong> 600 W nominais; Power Lifting até 1.500 W para cargas puramente resistivas. Saída combinada CA + CC: até 600 W.</p><p><strong>Capacidade e bateria:</strong> 320 Wh (20 Ah), LiFePO₄.</p><p><strong>Entrada CA:</strong> até 380 W; 80% de carga em cerca de 50 min a 25 °C.</p><p><strong>Entrada CC:</strong> até 200 W, 12–28 V e 10 A máx.</p><p><strong>UPS:</strong> comutação ≤10 ms.</p><p><strong>Dimensões e peso:</strong> 250 × 178 × 167,5 mm; aproximadamente 4,3 kg.</p><p className="premium-30-warranty"><strong>Garantia:</strong> 5 anos.</p><small className="product-source-note">Fonte: Manual do usuário BLUETTI Premium 30 V2, versão 2.0 (2025), seção 9, página 20. <a href="https://www.offgridtec.com/media/product_attachements/Bluetti_Powerstation_Premium-30-V2_UserManual.pdf" target="_blank" rel="noreferrer">Abrir manual (PDF)</a></small></div>
@@ -1426,7 +1299,7 @@ function ProductDetail({ product }: { product: Product }) {
       <div className="detail-cards"><div><Icon name="shield" /><b>Procedência</b><span>Produto comercializado por uma distribuidora com mais de 27 anos.</span></div><div><Icon name="people" /><b>Atendimento B2B</b><span>Orientação para revendas, integradores e empresas.</span></div><div><Icon name="energy" /><b>Ficha sob consulta</b><span>Confirme dados técnicos e disponibilidade com um especialista.</span></div></div>
     </section>}
     {product.brand === "Bluetti" && product.segment === "energia" && <div className="bluetti-comparison-wrap section"><BluettiComparison key={product.slug} initialSlug={product.slug} /></div>}
-    <section className="related section premium-100-related"><div className="related-heading"><SectionTitle eyebrow="Continue explorando" title={<>Outras soluções da <em>mesma linha.</em></>} /><div className="related-search-wrap"><label className="related-search"><span>Buscar em todo o catálogo</span><input type="search" role="combobox" value={relatedSearch} onChange={(event) => { setRelatedSearch(event.target.value); setRelatedOpen(true); }} onFocus={() => setRelatedOpen(true)} onBlur={() => window.setTimeout(() => setRelatedOpen(false), 120)} onKeyDown={(event) => { if (event.key === "Escape") setRelatedOpen(false); }} placeholder="Buscar marca ou modelo" aria-autocomplete="list" aria-controls="related-suggestions" aria-expanded={relatedOpen && !!relatedSearch.trim()} /></label>{relatedOpen && !!relatedSearch.trim() && <div id="related-suggestions" className="related-suggestions" role="list">{searchSuggestions.length ? searchSuggestions.map((item) => <ProductLink productSlug={item.slug} key={item.id} role="listitem" onClick={() => setRelatedOpen(false)}><b data-product-name-style={item.segment !== "energia" && item.segment !== "solar" ? "code" : undefined}>{item.model}</b><span>{item.brand}</span><small>{segmentLabel(item.segment)}</small></ProductLink>) : <span className="related-no-results">Nenhum produto encontrado.</span>}</div>}</div></div><div className="product-carousel-track" role="region" aria-label={`Produtos ${product.brand} recomendados`} tabIndex={0}>{suggestedProducts.map((item) => <ProductCard product={item} key={item.id} />)}<Link href={brandCatalogHref[product.brand]} className="related-more-card"><span><Icon name="arrow" />Ver mais</span><small>Todos os produtos {product.brand}</small></Link></div></section>
+    <section className="related section premium-100-related"><div className="related-heading"><SectionTitle eyebrow="Continue explorando" title={<>Outras soluções da <em>mesma linha.</em></>} /><div className="related-search-wrap"><label className="related-search"><span>Buscar em todo o catálogo</span><input type="search" role="combobox" value={relatedSearch} onChange={(event) => { setRelatedSearch(event.target.value); setRelatedOpen(true); }} onFocus={() => setRelatedOpen(true)} onBlur={() => window.setTimeout(() => setRelatedOpen(false), 120)} onKeyDown={(event) => { if (event.key === "Escape") setRelatedOpen(false); }} placeholder="Buscar marca ou modelo" aria-autocomplete="list" aria-controls="related-suggestions" aria-expanded={relatedOpen && !!relatedSearch.trim()} /></label>{relatedOpen && !!relatedSearch.trim() && <div id="related-suggestions" className="related-suggestions" role="listbox" onMouseDown={(event) => event.preventDefault()}>{searchSuggestions.length ? searchSuggestions.map((item) => <ProductLink productSlug={item.slug} key={item.id} role="option" aria-selected="false" onClick={() => setRelatedOpen(false)}><b data-product-name-style={item.segment !== "energia" && item.segment !== "solar" ? "code" : undefined}>{item.model}</b><span>{item.brand}</span><small>{segmentLabel(item.segment)}</small></ProductLink>) : <span className="related-no-results">Nenhum produto encontrado.</span>}</div>}</div></div><div className="product-carousel-track" role="region" aria-label={`Produtos ${product.brand} recomendados`} tabIndex={0}>{suggestedProducts.map((item) => <ProductCard product={item} key={item.id} />)}<Link href={brandCatalogHref[product.brand]} className="related-more-card"><span><Icon name="arrow" />Ver mais</span><small>Todos os produtos {product.brand}</small></Link></div></section>
     <Cta />
   </Shell>;
 }
@@ -1448,8 +1321,8 @@ function StructureExperience() {
   return <section className="structure-section section">
     <div className="structure-heading"><span className="eyebrow">Nossa estrutura</span><h2>Capacidade para<br /><em>ir mais longe.</em></h2></div>
     <div className="structure-cards">
-      <article className="structure-card"><img src="/cd-curitiba-2.png" alt="Fachada do centro de distribuição 1 da Sol em Curitiba, com veículos Heliar e eCON" /><div><b>Curitiba · CD 1</b><span>Escritório comercial, testes de garantia e capacidade para mais de 60 mil baterias.</span><a className="structure-map-link" href="https://maps.app.goo.gl/HPbCUKdtAxa5Mkxw6" target="_blank" rel="noreferrer"><Icon name="pin" />Ver localização do CD 1</a></div></article>
-      <article className="structure-card"><img src="/cd-sao-paulo.png" alt="Estoque de baterias no centro de distribuição 2 da Sol em Curitiba" /><div><b>Curitiba · CD 2</b><span>Armazenagem e expedição que ampliam nossa capacidade logística e agilizam o atendimento.</span><a className="structure-map-link" href="https://maps.app.goo.gl/j1LRUpFonGCF8Mg89" target="_blank" rel="noreferrer"><Icon name="pin" />Ver localização do CD 2</a></div></article>
+      <article className="structure-card"><img src="/cd-curitiba-2.webp" alt="Fachada do centro de distribuição 1 da Sol em Curitiba, com veículos Heliar e eCON" width={800} height={500} loading="lazy" decoding="async" /><div><b>Curitiba · CD 1</b><span>Escritório comercial, testes de garantia e capacidade para mais de 60 mil baterias.</span><a className="structure-map-link" href="https://maps.app.goo.gl/HPbCUKdtAxa5Mkxw6" target="_blank" rel="noreferrer"><Icon name="pin" />Ver localização do CD 1</a></div></article>
+      <article className="structure-card"><img src="/cd-sao-paulo.webp" alt="Estoque de baterias no centro de distribuição 2 da Sol em Curitiba" width={800} height={500} loading="lazy" decoding="async" /><div><b>Curitiba · CD 2</b><span>Armazenagem e expedição que ampliam nossa capacidade logística e agilizam o atendimento.</span><a className="structure-map-link" href="https://maps.app.goo.gl/j1LRUpFonGCF8Mg89" target="_blank" rel="noreferrer"><Icon name="pin" />Ver localização do CD 2</a></div></article>
     </div>
   </section>;
 }
@@ -1462,11 +1335,11 @@ function Sustainability() {
     <section className="circular-economy section">
       <div className="circular-economy-heading"><span className="eyebrow">Economia circular em ação</span><h2>Baterias que voltam a<br /><em>gerar valor.</em></h2></div>
       <div className="circular-economy-copy"><p>Na Sol Distribuidora, sustentabilidade também faz parte do caminho da energia. Por meio do Programa Mundial Ecosteps®, contribuímos para o descarte correto de baterias automotivas e para a reciclagem de até 99% de seus componentes.</p><p>A logística reversa permite que materiais como chumbo, plástico e ácido sejam encaminhados para reaproveitamento, reduzindo o descarte inadequado e ajudando a preservar os recursos naturais.</p><aside><strong>Até 99%</strong><span>dos componentes podem ser reciclados</span><p>O descarte correto ajuda a transformar baterias esgotadas em matéria-prima para novas soluções.</p></aside></div>
-      <div className="circular-economy-image"><img src="/economia-circular-baterias-v1.webp" alt="Economia circular e reaproveitamento de baterias" /></div>
+      <div className="circular-economy-image"><img src="/economia-circular-baterias-v1.webp" alt="Economia circular e reaproveitamento de baterias" loading="lazy" decoding="async" /></div>
     </section>
     <section className="battery-cycle">
       <div className="battery-cycle-heading"><span className="eyebrow">O ciclo sustentável da bateria</span><h2>Um ciclo que gera<br /><em>impacto positivo.</em></h2><p>O ciclo sustentável começa com o consumidor, que devolve a bateria usada ao adquirir uma nova. A Sol Distribuidora e seus parceiros encaminham esse material aos pontos de coleta e reciclagem, onde seus componentes são reaproveitados na fabricação de novas baterias.</p><p>Esse processo conecta consumidores, distribuidores, revendas e fabricantes em uma cadeia mais responsável, que reduz resíduos e mantém materiais importantes em circulação.</p></div>
-      <figure className="battery-cycle-visual"><img src="/sustentabilidade-oficial.png" alt="Ciclo de logística reversa de baterias" /></figure>
+      <figure className="battery-cycle-visual"><img src="/sustentabilidade-oficial.webp" alt="Ciclo de logística reversa de baterias" width={1400} height={988} loading="lazy" decoding="async" /></figure>
       <ol className="battery-cycle-steps"><li><b>01</b><strong>Consumidor</strong><span>Compra uma bateria nova e devolve a usada.</span></li><li><b>02</b><strong>Distribuidor ou revenda</strong><span>Recebe e direciona a bateria esgotada.</span></li><li><b>03</b><strong>Coleta</strong><span>As baterias são recolhidas para reciclagem.</span></li><li><b>04</b><strong>Reciclagem</strong><span>Os materiais são separados e reaproveitados.</span></li><li><b>05</b><strong>Fabricação</strong><span>A matéria-prima retorna à produção de novas baterias.</span></li><li><b>06</b><strong>Distribuição</strong><span>Novas baterias chegam novamente ao mercado.</span></li></ol>
     </section>
     <section className="clean-energy"><div><span className="eyebrow">Energia para um futuro mais limpo</span><h2>Escolhas que geram<br /><em>impacto positivo.</em></h2><p>Além da logística reversa, a Sol Distribuidora investe em práticas que apoiam uma matriz energética mais limpa. Utilizamos energia solar e contamos com estação de carregamento para carros elétricos, reforçando nosso compromisso com escolhas que geram impacto positivo hoje e no futuro.</p></div><div className="clean-energy-cards"><article><Icon name="energy" /><h3>Energia solar</h3><p>Aproveitamos a energia do sol para tornar nossa operação mais eficiente.</p></article><article><Icon name="energy" /><h3>Mobilidade elétrica</h3><p>Contamos com estação de carregamento para veículos elétricos em nossa estrutura.</p></article></div></section>
@@ -1477,6 +1350,14 @@ function Sustainability() {
 function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionError, setSubmissionError] = useState("");
+
+  // Coming back from WhatsApp via the back button restores the page from the
+  // back/forward cache with the button still disabled; re-enable it.
+  useEffect(() => {
+    const reset = (event: PageTransitionEvent) => { if (event.persisted) setIsSubmitting(false); };
+    window.addEventListener("pageshow", reset);
+    return () => window.removeEventListener("pageshow", reset);
+  }, []);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -1530,7 +1411,7 @@ function Contact() {
   return <Shell>
     <section className="page-hero compact"><span className="eyebrow light">Contato</span><h1>Como podemos ajudar?</h1><p>Converse com a nossa equipe comercial e encontre a solução ideal para a sua revenda ou empresa.</p></section>
     <section className="contact section"><div className="contact-info"><span className="eyebrow">Fale com a Sol</span><h2>Atendimento próximo,<br /><em>resposta objetiva.</em></h2><a href="tel:+554132775080"><Icon name="phone" /><span><small>Telefone</small>(41) 3277-5080</span></a><a href="mailto:atendimento@distribuidorasol.com.br"><Icon name="mail" /><span><small>E-mail</small>atendimento@distribuidorasol.com.br</span></a><div><Icon name="pin" /><span><small>Endereço</small>Rua das Carmelitas, 1581<br />Curitiba · PR · CEP 81650-060</span></div></div>
-      <form className="contact-form" onSubmit={handleSubmit}><div><label>Nome completo<input name="nome" required /></label><label>Empresa<input name="empresa" /></label></div><div><label>Telefone<input name="telefone" type="tel" required /></label><label>E-mail<input name="email" type="email" required /></label></div><label>Como podemos ajudar?<textarea name="mensagem" rows={5} required /></label><label className="contact-trap" aria-hidden="true">Site<input name="website" tabIndex={-1} autoComplete="off" /></label><label className="consent"><input name="consentimento" type="checkbox" required /> Li e aceito a <Link href="/politica-de-privacidade">Política de Privacidade</Link>.</label>{submissionError && <p className="contact-form-error" role="alert">{submissionError}</p>}<button className="button blue" type="submit" disabled={isSubmitting}>{isSubmitting ? "Enviando..." : "Enviar mensagem"} <Icon name="arrow" /></button></form>
+      <form className="contact-form" onSubmit={handleSubmit}><div><label>Nome completo<input name="nome" autoComplete="name" required /></label><label>Empresa<input name="empresa" autoComplete="organization" /></label></div><div><label>Telefone<input name="telefone" type="tel" inputMode="tel" autoComplete="tel" required /></label><label>E-mail<input name="email" type="email" autoComplete="email" required /></label></div><label>Como podemos ajudar?<textarea name="mensagem" rows={5} required /></label><label className="contact-trap" aria-hidden="true">Site<input name="website" tabIndex={-1} autoComplete="off" /></label><label className="consent"><input name="consentimento" type="checkbox" required /> Li e aceito a <Link href="/politica-de-privacidade">Política de Privacidade</Link>.</label>{submissionError && <p className="contact-form-error" role="alert">{submissionError}</p>}<button className="button blue" type="submit" disabled={isSubmitting}>{isSubmitting ? "Enviando..." : "Enviar mensagem"} <Icon name="arrow" /></button></form>
     </section>
   </Shell>;
 }
@@ -1567,8 +1448,8 @@ export function SitePage({ slug }: { slug: string }) {
   if (resolved === "bluetti-estacoes-de-energia") return <BluettiCatalog />;
   if (resolved === "heliar-baterias-automotivas") return <HeliarCatalog />;
   if (resolved === "econ-baterias-automotivas") return <EconCatalog />;
-  if (resolved === "freedom-baterias-estacionarias") return <BrandGridCatalog brand="Freedom" eyebrow="Portfólio Freedom" title="Baterias estacionárias" intro="Portfólio de baterias estacionárias para aplicações profissionais." />;
-  if (resolved === "econ-vrla-baterias-estacionarias") return <BrandGridCatalog brand="eCON VRLA" eyebrow="Portfólio eCON VRLA" title="Baterias estacionárias" intro="Baterias seladas para energia de emergência, telecom e outras aplicações." />;
+  if (resolved === "freedom-baterias-estacionarias") return <BrandGridCatalog brand="Freedom" eyebrow="Portfólio Freedom" title="Baterias estacionárias Freedom" intro="Portfólio de baterias estacionárias para aplicações profissionais." />;
+  if (resolved === "econ-vrla-baterias-estacionarias") return <BrandGridCatalog brand="eCON VRLA" eyebrow="Portfólio eCON VRLA" title="Baterias VRLA eCON" intro="Baterias seladas para energia de emergência, telecom e outras aplicações." />;
   const meta = CATEGORY_META[resolved as keyof typeof CATEGORY_META];
   if (meta) return <Catalog title={meta[0]} intro={meta[1]} filter={meta[2]} heroVideoSrc={resolved === "baterias-automotivas" ? "/hero-baterias-automotivas.mp4" : undefined} />;
   const product = PRODUCTS.find((p) => p.slug === resolved);

@@ -1,38 +1,65 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
+import { SITE_NAME, SITE_URL } from "./catalog-meta";
 import "./globals.css";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const requestHeaders = await headers();
-  const host = requestHeaders.get("x-forwarded-host") || requestHeaders.get("host") || "www.distribuidorasol.com.br";
-  const protocol = requestHeaders.get("x-forwarded-proto") || (host.includes("localhost") ? "http" : "https");
-  const origin = `${protocol}://${host}`;
-  const title = "Sol Distribuidora | Energia para quem não pode parar";
-  const description = "Soluções B2B em baterias automotivas e estacionárias, estações de energia e backup, com suporte técnico e pós-venda.";
-  return {
-    metadataBase: new URL(origin),
+const title = "Sol Distribuidora | Energia para quem não pode parar";
+const description = "Soluções B2B em baterias automotivas e estacionárias, estações de energia e backup, com suporte técnico e pós-venda.";
+
+// Fixed canonical origin: every address and share image points to the official
+// domain, whatever host served the request.
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  title,
+  description,
+  alternates: { canonical: "/" },
+  icons: { icon: "/Sol-Icon-favicon.webp", shortcut: "/Sol-Icon-favicon.webp" },
+  openGraph: {
     title,
     description,
-    alternates: { canonical: "/" },
-    icons: { icon: "/Sol-Icon-favicon.webp", shortcut: "/Sol-Icon-favicon.webp" },
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      locale: "pt_BR",
-      siteName: "Sol Distribuidora",
-      images: [{ url: `${origin}/og.png`, width: 1733, height: 909, alt: "Sol Distribuidora — Energia para quem não pode parar." }],
-    },
-    twitter: { card: "summary_large_image", title, description, images: [`${origin}/og.png`] },
-  };
-}
+    type: "website",
+    url: "/",
+    locale: "pt_BR",
+    siteName: SITE_NAME,
+    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Sol Distribuidora — Energia para quem não pode parar." }],
+  },
+  twitter: { card: "summary_large_image", title, description, images: ["/og.jpg"] },
+};
+
+const ORGANIZATION_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": ["Organization", "LocalBusiness"],
+  name: SITE_NAME,
+  url: SITE_URL,
+  logo: `${SITE_URL}/sol-logo-blue-crop.png`,
+  image: `${SITE_URL}/og.jpg`,
+  description,
+  telephone: "+55 41 3277-5080",
+  email: "atendimento@distribuidorasol.com.br",
+  foundingDate: "1999",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Rua das Carmelitas, 1581",
+    addressLocality: "Curitiba",
+    addressRegion: "PR",
+    postalCode: "81650-060",
+    addressCountry: "BR",
+  },
+  areaServed: "BR",
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-BR">
-      <body>{children}</body>
+      <head>
+        <link rel="preload" href="/fonts/Panton-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/fonts/Panton-ExtraBold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+      </head>
+      <body>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_JSON_LD) }} />
+        {children}
+      </body>
     </html>
   );
 }
