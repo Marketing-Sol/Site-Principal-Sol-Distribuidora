@@ -7,7 +7,6 @@ import { CATEGORY_META, PAGE_IDS, PRODUCTS, type Product } from "./data";
 import { PRODUCT_SPECS, productSpecKey, type ProductSpec } from "./product-specs";
 
 const WHATSAPP = "https://api.whatsapp.com/send?phone=5541998220358&text=Ol%C3%A1%2C%20quero%20falar%20com%20um%20especialista%20da%20Sol.";
-const CONTACT_LEADS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwN1U6lRr3ZYtpF8mlgUeQGr7FpC9YculkBb67sDmMdF9bMgMDCPtmNd9e_iDBwLXmr/exec";
 
 export const PRODUCT_IMAGES: Record<string, string> = {
   "freedom-df300": "/freedom-df300.png",
@@ -1436,48 +1435,21 @@ function About() {
   return <Shell>
     <section className="page-hero about-hero"><span className="eyebrow light">A Sol Distribuidora</span><h1>Experiência que gera<br /><em>confiança e movimento.</em></h1><p>Desde 1999, construímos relações duradouras oferecendo soluções em armazenamento e geração de energia para todo o Brasil.</p></section>
     <section className="story section"><div><span className="eyebrow">Nossa história</span><h2 className="story-title">Há mais de 27 anos oferecendo<br />soluções em armazenamento<br />e <em>geração de energia.</em></h2></div><div className="story-copy"><p>A Distribuidora Sol surgiu em 1999, com sede em Curitiba (PR), para fornecer baterias de qualidade com rapidez e eficiência.</p><p>Com uma equipe capacitada e experiente em processos logísticos, hoje atendemos todo o Brasil em parceria com as principais transportadoras do país, além de trabalhar com frota própria.</p><p>A Sol tem estrutura, pessoas e experiência.</p></div></section>
-    <section className="why-sol section"><div className="why-sol-heading"><span className="eyebrow">Veja porque escolher a</span><h2>Distribuidora <em>Sol</em></h2><div className="why-sol-value-cards"><Value icon="truck" title="Logística nacional" text="Frota própria e parceria com transportadoras para atender todo o Brasil." /><Value icon="people" title="Equipe especializada" text="Atendimento próximo, consultivo e preparado para cada etapa da venda." /><Value icon="shield" title="Pós-venda presente" text="Suporte que continua depois da comercialização do produto." /></div></div><ol className="why-sol-list"><li><strong>01</strong><p>Distribuidora autorizada das principais marcas de baterias.</p></li><li><strong>02</strong><p>Envio ágil em até 1 dia útil*, a partir da data de pagamento confirmada.<small>* Para pedidos faturados até 11 am.</small></p></li><li><strong>03</strong><p>Descontos exclusivos para compras corporativas ou por atacado.</p></li><li><strong>04</strong><p>Comprometimento com a sustentabilidade, a partir do programa Ecosteps.</p></li></ol></section>
+    <section className="why-sol section"><div className="why-sol-heading"><span className="eyebrow">Por que escolher a</span><h2>Distribuidora <em>Sol</em></h2><div className="why-sol-value-cards"><Value icon="truck" title="Logística nacional" text="Frota própria e parceria com transportadoras para atender todo o Brasil." /><Value icon="people" title="Equipe especializada" text="Atendimento próximo, consultivo e preparado para cada etapa da venda." /><Value icon="shield" title="Pós-venda presente" text="Suporte que continua depois da comercialização do produto." /></div></div><ol className="why-sol-list"><li><strong>01</strong><p>Distribuidora autorizada das principais marcas de baterias.</p></li><li><strong>02</strong><p>Envio ágil em até 1 dia útil*, a partir da data de pagamento confirmada.<small>* Para pedidos faturados até as 11h.</small></p></li><li><strong>03</strong><p>Descontos exclusivos para compras corporativas ou por atacado.</p></li><li><strong>04</strong><p>Compromisso com a sustentabilidade por meio do Programa Mundial Ecosteps®. <Link className="why-sol-link" href="/sustentabilidade">Conheça nossas ações</Link></p></li></ol></section>
     <StructureExperience />
     <Cta />
   </Shell>;
 }
 
+// Both distribution centres side by side, dimmed; hovering one (or focusing its
+// map link) widens it and shows the photo at full brightness while the other
+// shrinks.
 function StructureExperience() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    let frame = 0;
-    const updateProgress = () => {
-      frame = 0;
-      const section = sectionRef.current;
-      if (!section || window.innerWidth <= 780) return setProgress(1);
-      const distance = section.offsetHeight - window.innerHeight;
-      setProgress(Math.min(1, Math.max(0, -section.getBoundingClientRect().top / distance)));
-    };
-    const requestUpdate = () => { if (!frame) frame = window.requestAnimationFrame(updateProgress); };
-    updateProgress();
-    window.addEventListener("scroll", requestUpdate, { passive: true });
-    window.addEventListener("resize", requestUpdate);
-    return () => { window.cancelAnimationFrame(frame); window.removeEventListener("scroll", requestUpdate); window.removeEventListener("resize", requestUpdate); };
-  }, []);
-
-  const cardStyle = (index: number) => {
-    const transition = Math.min(1, Math.max(0, (progress - 0.14) / 0.72));
-    const eased = transition * transition * transition * (transition * (transition * 6 - 15) + 10);
-    if (!index) {
-      return { opacity: 1, transform: "none" };
-    }
-    return { opacity: 1, transform: `translateY(calc(${(1 - eased) * 125}% + ${eased * 10}px))` };
-  };
-
-  return <section ref={sectionRef} className="structure-scroll">
-    <div className="structure-scroll-sticky">
-      <div className="structure-scroll-heading"><span className="eyebrow">Nossa estrutura</span><h2>Capacidade para<br /><em>ir mais longe.</em></h2></div>
-      <div className="structure-cards">
-        <article className="structure-card" style={cardStyle(0)}><img src="/cd-curitiba-2.png" alt="Centro de distribuição 1 da Sol em Curitiba" /><div><b>Curitiba · CD 1</b><span>Escritório comercial, testes de garantia e capacidade para mais de 60 mil baterias.</span></div></article>
-        <article className="structure-card" style={cardStyle(1)}><img src="/cd-sao-paulo.png" alt="Centro de distribuição 2 da Sol em Curitiba" /><div><b>Curitiba · CD 2</b><span>Centro de distribuição que amplia nossa capacidade logística e atendimento.</span></div></article>
-      </div>
+  return <section className="structure-section section">
+    <div className="structure-heading"><span className="eyebrow">Nossa estrutura</span><h2>Capacidade para<br /><em>ir mais longe.</em></h2></div>
+    <div className="structure-cards">
+      <article className="structure-card"><img src="/cd-curitiba-2.png" alt="Fachada do centro de distribuição 1 da Sol em Curitiba, com veículos Heliar e eCON" /><div><b>Curitiba · CD 1</b><span>Escritório comercial, testes de garantia e capacidade para mais de 60 mil baterias.</span><a className="structure-map-link" href="https://maps.app.goo.gl/HPbCUKdtAxa5Mkxw6" target="_blank" rel="noreferrer"><Icon name="pin" />Ver localização do CD 1</a></div></article>
+      <article className="structure-card"><img src="/cd-sao-paulo.png" alt="Estoque de baterias no centro de distribuição 2 da Sol em Curitiba" /><div><b>Curitiba · CD 2</b><span>Armazenagem e expedição que ampliam nossa capacidade logística e agilizam o atendimento.</span><a className="structure-map-link" href="https://maps.app.goo.gl/j1LRUpFonGCF8Mg89" target="_blank" rel="noreferrer"><Icon name="pin" />Ver localização do CD 2</a></div></article>
     </div>
   </section>;
 }
@@ -1524,12 +1496,17 @@ function Contact() {
     setSubmissionError("");
 
     try {
-      await fetch(CONTACT_LEADS_ENDPOINT, {
+      const response = await fetch("/api/contato", {
         method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      if (!response.ok) {
+        const { error } = await response.json().catch(() => ({ error: "" })) as { error?: string };
+        setSubmissionError(error || "Não foi possível enviar seus dados agora. Tente novamente em instantes.");
+        setIsSubmitting(false);
+        return;
+      }
 
       const whatsappMessage = [
         "Olá, gostaria de falar com a Sol.",
@@ -1559,7 +1536,7 @@ function Contact() {
 }
 
 function Privacy() {
-  return <Shell><section className="page-hero compact"><span className="eyebrow light">Privacidade</span><h1>Política de Privacidade</h1><p>Transparência também faz parte das nossas relações digitais.</p></section><article className="legal section"><h2>Como tratamos seus dados</h2><p>A Sol Distribuidora utiliza os dados informados em seus canais de contato exclusivamente para responder solicitações, preparar atendimentos comerciais e manter o relacionamento com clientes e parceiros.</p><h3>Dados coletados</h3><p>Podemos receber nome, empresa, telefone, e-mail e informações enviadas voluntariamente em formulários ou conversas.</p><h3>Finalidade e segurança</h3><p>Os dados são usados para atendimento, cotações e comunicações relacionadas aos serviços solicitados. Aplicamos medidas razoáveis de segurança e não comercializamos informações pessoais.</p><h3>Seus direitos</h3><p>Você pode solicitar acesso, correção ou exclusão de seus dados pelo e-mail <a href="mailto:atendimento@distribuidorasol.com.br">atendimento@distribuidorasol.com.br</a>.</p></article></Shell>;
+  return <Shell><section className="page-hero compact"><span className="eyebrow light">Privacidade</span><h1>Política de Privacidade</h1><p>Transparência também faz parte das nossas relações digitais.</p></section><article className="legal section"><h2>Como tratamos seus dados</h2><p>A Sol Distribuidora utiliza os dados informados em seus canais de contato exclusivamente para responder solicitações, preparar atendimentos comerciais e manter o relacionamento com clientes e parceiros.</p><h3>Dados coletados</h3><p>Podemos receber nome, empresa, telefone, e-mail e informações enviadas voluntariamente em formulários ou conversas.</p><h3>Finalidade e segurança</h3><p>Os dados são usados para atendimento, cotações e comunicações relacionadas aos serviços solicitados. Aplicamos medidas razoáveis de segurança e não comercializamos informações pessoais.</p><h3>Formulário de contato e compartilhamento</h3><p>As informações enviadas pelo formulário de contato trafegam de forma criptografada (HTTPS) e são registradas em uma planilha do Google, com acesso restrito à equipe da Sol Distribuidora. Após o envio, a conversa continua no WhatsApp: a mensagem é aberta já preenchida com os dados informados, e o envio só acontece quando você a confirma no aplicativo. Google e WhatsApp tratam esses dados conforme suas próprias políticas de privacidade.</p><h3>Seus direitos</h3><p>Você pode solicitar acesso, correção ou exclusão de seus dados pelo e-mail <a href="mailto:atendimento@distribuidorasol.com.br">atendimento@distribuidorasol.com.br</a>.</p></article></Shell>;
 }
 
 function NotFoundPage() {
