@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { permanentRedirect } from "next/navigation";
-import { CATEGORY_META, LEGACY_URLS, PAGE_IDS, PRODUCTS, type Product } from "../data";
+import { notFound, permanentRedirect, redirect } from "next/navigation";
+import { CATEGORY_META, HIDDEN_PRODUCTS, LEGACY_URLS, PAGE_IDS, PRODUCTS, type Product } from "../data";
 import { CATEGORY_SEO, PRODUCT_IMAGES, SITE_NAME, SITE_URL, productSeo } from "../catalog-meta";
 import { SitePage } from "../site";
 
@@ -105,10 +105,14 @@ export default async function DynamicPage({
 }) {
   const { slug } = await params;
   if (LEGACY_URLS[slug]) permanentRedirect(`/${LEGACY_URLS[slug]}`);
+  // Hidden products may come back, so their address redirects only temporarily.
+  if (HIDDEN_PRODUCTS[slug]) redirect(`/${HIDDEN_PRODUCTS[slug]}`);
   // Old WordPress ids (/979, /elementor-601…) move permanently to the current address.
   const resolved = PAGE_IDS[slug];
   if (resolved && resolved !== slug) permanentRedirect(resolved === "home" ? "/" : `/${resolved}`);
   const product = PRODUCTS.find((item) => item.slug === slug);
+  // Unknown addresses answer with a real 404 status (app/not-found.tsx).
+  if (!product && !PAGE_METADATA[slug] && !(slug in CATEGORY_META)) notFound();
   return <>
     {product && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd(product)).replace(/</g, "\\u003c") }} />}
     <SitePage slug={slug} />

@@ -46,3 +46,6 @@ next-env.d.ts
 # Windows e Google Drive
 desktop.ini
 *.tsbuildinfo
+
+# Cloudflare local secrets
+.dev.vars*

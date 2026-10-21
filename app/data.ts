@@ -92,10 +92,20 @@ const products: Product[] = [
   [4982,"bluetti-sora-60","Bluetti","Sora 60","solar"],
   [4983,"bluetti-pv100","Bluetti","PV100","solar"],
   [4984,"bluetti-sora-130","Bluetti","Sora 130","solar"],
+  [99001,"bluetti-pv200","Bluetti","PV200","solar"],
   [4985,"bluetti-sora-220","Bluetti","Sora 220","solar"],
+  [99002,"bluetti-pv350","Bluetti","PV350","solar"],
 ].map(([id,slug,brand,model,segment]) => ({id,slug,brand,model,segment})) as Product[];
 
-export const PRODUCTS = products;
+// Products whose data stays here but whose pages are off the site for now:
+// they leave the catalog, search, comparison and sitemap, and their address
+// leads to the page named here. Remove an entry to bring the page back.
+export const HIDDEN_PRODUCTS: Record<string, string> = {
+  "bluetti-ac50": "bluetti-estacoes-de-energia",
+  "bluetti-elite-200-v2": "bluetti-estacoes-de-energia",
+};
+
+export const PRODUCTS = products.filter((product) => !(product.slug in HIDDEN_PRODUCTS));
 
 export const LEGACY_URLS: Record<string, string> = {
   "secpower-baterias-estacionarias": "econ-vrla-baterias-estacionarias",
@@ -120,7 +130,7 @@ export const PAGE_IDS: Record<string, string> = {
 
 export const CATEGORY_META = {
   "baterias-automotivas": ["Baterias automotivas","Partida confiável para diferentes perfis de frota e revenda.","automotiva"],
-  "baterias-estacionarias": ["Baterias estacionárias","Energia contínua para aplicações críticas e operações que não podem parar.","estacionaria"],
+  "baterias-estacionarias": ["Baterias estacionárias","Energia contínua para nobreak, sistemas de energia solar e operações que não podem parar.","estacionaria"],
   "heliar-baterias-de-motos": ["Baterias para motos","Soluções para duas rodas com atendimento especializado para revendas.","moto"],
   "bluetti-estacoes-de-energia": ["Bluetti","Estações de energia e painéis solares para novas oportunidades de negócio.","Bluetti"],
   "freedom-baterias-estacionarias": ["Freedom","Portfólio de baterias estacionárias para aplicações profissionais.","Freedom"],

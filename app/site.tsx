@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ComponentProps } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ComponentProps } from "react";
 import Link from "next/link";
 import NextImage, { getImageProps } from "next/image";
 import { CATEGORY_META, PAGE_IDS, PRODUCTS, type Product } from "./data";
@@ -15,6 +15,7 @@ const BLUETTI_GALLERY_COUNTS: Record<string, number> = {
   "bluetti-ac180p": 7, "bluetti-premium-100-v2": 6, "bluetti-ac200pl": 10, "bluetti-elite-200-v2": 9,
   "bluetti-premium-200-v2": 13, "bluetti-elite-300": 2, "bluetti-apex-300": 6, "bluetti-sora-60": 7,
   "bluetti-pv100": 5, "bluetti-sora-130": 7, "bluetti-sora-220": 9,
+  "bluetti-pv200": 4, "bluetti-pv350": 7,
 };
 
 const BLUETTI_GALLERIES = Object.fromEntries(
@@ -85,6 +86,11 @@ function Icon({ name }: { name: "arrow" | "check" | "phone" | "pin" | "mail" | "
   return <span className={`icon icon-${name}`} aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{glyphs[name]}</svg></span>;
 }
 
+// WhatsApp logo (filled, unlike the line icons above) for the floating chat button.
+function WhatsAppIcon() {
+  return <span className="icon icon-whatsapp" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" /></svg></span>;
+}
+
 function Brand({ variant = "blue" }: { variant?: "blue" | "white" }) {
   return <Link href="/" className="brand" aria-label="Sol Distribuidora — página inicial"><img src={`/sol-logo-${variant}-crop.png`} alt="Sol Distribuidora" /></Link>;
 }
@@ -121,30 +127,7 @@ function Header() {
     setOpen(false);
     setSolutionsOpen(false);
   };
-  useEffect(() => {
-    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let previousPosition = window.scrollY;
-    const updateHeader = () => {
-      if (reducedMotionQuery.matches) {
-        document.body.classList.remove("site-header-hidden");
-        previousPosition = window.scrollY;
-        return;
-      }
-      const currentPosition = window.scrollY;
-      const isScrollingDown = currentPosition > previousPosition && currentPosition > 86;
-      document.body.classList.toggle("site-header-hidden", isScrollingDown);
-      previousPosition = currentPosition;
-    };
-    window.addEventListener("scroll", updateHeader, { passive: true });
-    reducedMotionQuery.addEventListener("change", updateHeader);
-    return () => {
-      window.removeEventListener("scroll", updateHeader);
-      reducedMotionQuery.removeEventListener("change", updateHeader);
-      document.body.classList.remove("site-header-hidden");
-    };
-  }, []);
-  // A keyboard user tabbing into the header must see it even if it slid away on scroll.
-  return <header className="header" onFocus={() => document.body.classList.remove("site-header-hidden")}>
+  return <header className="header">
     <div className="nav-wrap">
       <Brand />
       <button ref={menuButtonRef} className="menu-button" onClick={() => { setOpen(!open); setSolutionsOpen(false); }} aria-expanded={open} aria-controls="primary-navigation" aria-label={open ? "Fechar menu" : "Abrir menu"}><span /><span /></button>
@@ -179,7 +162,7 @@ function Footer() {
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
-  return <><Header /><main>{children}</main><Footer /><a className="whatsapp" href={WHATSAPP} target="_blank" rel="noreferrer" aria-label="Fale com a Sol pelo WhatsApp">WhatsApp <Icon name="arrow" /></a></>;
+  return <><Header /><main>{children}</main><Footer /><a className="whatsapp" href={WHATSAPP} target="_blank" rel="noreferrer" aria-label="Fale com a Sol pelo WhatsApp">WhatsApp <WhatsAppIcon /></a></>;
 }
 
 function SectionTitle({ eyebrow, title, text }: { eyebrow: string; title: React.ReactNode; text?: string }) {
@@ -324,7 +307,7 @@ function HomeLayers() {
   return <section ref={sectionRef} className="home-layers" aria-labelledby="home-layers-title">
     <div className="home-layers-background" aria-hidden="true"><img src="/home-camadas/fundo-fachada.webp" alt="" width={1920} height={1080} loading="lazy" decoding="async" /></div>
     <div className="home-layers-products"><div className="home-layers-products-entry"><img src="/home-camadas/produtos-mesa.webp" alt="Bateria automotiva Heliar SLI, estação de energia Bluetti Premium 100 e bateria estacionária Freedom DF1000 sobre uma mesa expositora" width={1920} height={1080} loading="lazy" decoding="async" /></div></div>
-    <div className="home-layers-copy"><h2 id="home-layers-title">A Distribuidora Sol</h2><p>Posicionada para atuar no ramo atacadista de todas as linhas de baterias, a Distribuidora Sol vem, a cada ano, incrementando resultados e crescendo juntamente de nossos clientes e parceiros.</p><p>Graças à filosofia de trabalho de procurar exceder às expectativas de nossos clientes, a Distribuidora Sol hoje é reconhecida no mercado em que atua pela seriedade e competência em oferecer produtos de alta tecnologia que atendam satisfatoriamente às necessidades dos seus clientes, desde pequenas revendas à grandes corporações.</p></div>
+    <div className="home-layers-copy"><h2 id="home-layers-title">A Distribuidora Sol</h2><p>Posicionada para atuar no ramo atacadista de todas as linhas de baterias, a Distribuidora Sol vem, a cada ano, incrementando resultados e crescendo junto com nossos clientes e parceiros.</p><p>Graças à filosofia de trabalho de procurar exceder as expectativas de nossos clientes, a Distribuidora Sol hoje é reconhecida no mercado em que atua pela seriedade e competência em oferecer produtos de alta tecnologia que atendam satisfatoriamente às necessidades dos seus clientes, desde pequenas revendas a grandes corporações.</p></div>
   </section>;
 }
 
@@ -335,7 +318,7 @@ function Home() {
         <div className="hero-copy">
           <span className="eyebrow light">Distribuição B2B · Desde 1999</span>
           <h1><span>Energia para o presente.</span><em>Soluções para <br className="home-mobile-break" />o futuro.</em></h1>
-          <p>Baterias Automotivas<br className="home-mobile-break" /> e Estacionárias, estações de<br className="home-mobile-break" /> energia e suporte especializado<br className="home-mobile-break" /> para fortalecer o seu negócio.</p>
+          <p>Conte com nosso portfólio completo de produtos para abastecer o seu estoque!</p>
           <div className="hero-actions"><a className="button yellow" href={WHATSAPP} target="_blank" rel="noreferrer">Seja um parceiro Sol <Icon name="arrow" /></a><Link className="text-link light" href="/produtos">Conheça o portfólio <Icon name="arrow" /></Link></div>
           <div className="hero-proof-label"><i /> Soluções para revendas e empresas</div>
           <div className="hero-proof"><div><strong>+27</strong><span>anos de mercado</span></div><div><strong>Envios</strong><span>para todo o Brasil</span></div><div><strong>+3 milhões</strong><span>de baterias vendidas</span></div></div>
@@ -351,8 +334,8 @@ function Home() {
           <div className="home-about-mobile-card">
             <span className="eyebrow light">A Distribuidora Sol</span>
             <h2>Energia, parceria e crescimento.</h2>
-            <p>Posicionada para atuar no ramo atacadista de todas as linhas de baterias, a Distribuidora Sol vem, a cada ano, incrementando resultados e crescendo juntamente de nossos clientes e parceiros.</p>
-            <p>Graças à filosofia de trabalho de procurar exceder às expectativas de nossos clientes, a Distribuidora Sol hoje é reconhecida no mercado em que atua pela seriedade e competência em oferecer produtos de alta tecnologia que atendam satisfatoriamente às necessidades dos seus clientes, desde pequenas revendas a grandes corporações.</p>
+            <p>Posicionada para atuar no ramo atacadista de todas as linhas de baterias, a Distribuidora Sol vem, a cada ano, incrementando resultados e crescendo junto com nossos clientes e parceiros.</p>
+            <p>Graças à filosofia de trabalho de procurar exceder as expectativas de nossos clientes, a Distribuidora Sol hoje é reconhecida no mercado em que atua pela seriedade e competência em oferecer produtos de alta tecnologia que atendam satisfatoriamente às necessidades dos seus clientes, desde pequenas revendas a grandes corporações.</p>
           </div>
         </section>
 
@@ -367,10 +350,10 @@ function Home() {
 
         <section className="partnership section">
           <span className="partnership-mobile-eyebrow eyebrow">Parceria de verdade</span>
-          <div className="partnership-art"><NextImage src="/sol-drive-02.jpg" alt="Fachada da Sol Distribuidora e frota própria" fill sizes="(max-width: 780px) 100vw, 50vw" unoptimized /><div className="photo-caption"><NextImage src="/sol-symbol-white-crop.png" alt="" width={695} height={166} sizes="92px" unoptimized /><span>Estrutura e Logística Própria</span></div></div>
+          <div className="partnership-art"><NextImage src="/sol-drive-02.jpg" alt="Fachada da Sol Distribuidora e frota própria" fill sizes="(max-width: 780px) 100vw, 50vw" unoptimized /><div className="photo-caption"><NextImage src="/sol-symbol-white-crop.png" alt="" width={695} height={166} sizes="92px" unoptimized /><span>Estrutura e logística própria</span></div></div>
           <div className="partnership-copy"><SectionTitle eyebrow="Parceria de verdade" title={<>Mais do que distribuir.<br /><em>Impulsionamos os seus resultados.</em></>} />
             <p>Da escolha do produto ao pós-venda, nossa equipe está ao lado da sua empresa com conhecimento técnico, agilidade e transparência.</p>
-            <ul><li><Icon name="check" /> Consultoria comercial especializada</li><li><Icon name="check" /> Suporte depois da compra</li><li><Icon name="check" /> Estrutura e Logística Própria</li></ul>
+            <ul><li><Icon name="check" /> Consultoria comercial especializada</li><li><Icon name="check" /> Suporte depois da compra</li><li><Icon name="check" /> Estrutura e logística própria</li></ul>
             <Link className="button blue" href="/sobre-nos">Conheça a Sol <Icon name="arrow" /></Link>
           </div>
         </section>
@@ -413,9 +396,9 @@ function Cta() {
 
 function PartnerTestimonials() {
   const testimonials = [
-    "/Avaliações/Avaliação Auto Bats.webp",
-    "/Avaliações/Avaliação Euro.webp",
-    "/Avaliações/Avaliação Toninho.webp",
+    "/depoimentos/auto-bats.webp",
+    "/depoimentos/euro.webp",
+    "/depoimentos/toninho.webp",
   ];
   return <section className="testimonials section">
     <span className="eyebrow testimonial-heading">O que nossos parceiros falam sobre nós</span>
@@ -518,8 +501,10 @@ function CatalogHeroVideo({ src, loop = true }: { src: string; loop?: boolean })
     sync();
     reducedMotion.addEventListener("change", sync);
     return () => reducedMotion.removeEventListener("change", sync);
-  }, []);
-  return <video ref={videoRef} className="solutions-hero-video" loop={loop} muted playsInline preload="metadata" aria-hidden="true"><source src={src} type="video/mp4" media="(min-width: 781px)" /></video>;
+  }, [src]);
+  // Catalog pages reuse this element; changing only <source> does not reload a
+  // <video>, so a new src gets a fresh element.
+  return <video key={src} ref={videoRef} className="solutions-hero-video" loop={loop} muted playsInline preload="metadata" aria-hidden="true"><source src={src} type="video/mp4" media="(min-width: 781px)" /></video>;
 }
 
 function Catalog({ title = "Nosso portfólio", intro = "Encontre a solução certa para o seu negócio.", filter, heroVideo = false, heroVideoSrc }: { title?: string; intro?: string; filter?: string; heroVideo?: boolean; heroVideoSrc?: string }) {
@@ -536,7 +521,7 @@ function Catalog({ title = "Nosso portfólio", intro = "Encontre a solução cer
       <CatalogSearchTools count={list.length} search={search} setSearch={setSearch} placeholder={filter === "automotiva" ? "Ex.: Heliar, eCON, E60DD-18…" : filter === "estacionaria" ? "Ex.: Freedom, DF1500, EP12-7…" : "Ex.: Heliar, DF1500, Bluetti…"} />
       {heroVideo ? <div className="catalog-category-sections">
         <CatalogCategorySection id="catalogo-automotivo" eyebrow="Mobilidade" title="Baterias automotivas" text="Soluções para veículos leves e pesados." products={automotiveProducts} />
-        <CatalogCategorySection id="catalogo-estacionario" eyebrow="Energia contínua" title="Baterias estacionárias" text="Soluções para backup, telecom, nobreaks e aplicações críticas." products={stationaryProducts} />
+        <CatalogCategorySection id="catalogo-estacionario" eyebrow="Energia contínua" title="Baterias estacionárias" text="Soluções para nobreak, energia solar, backup, telecom e aplicações críticas." products={stationaryProducts} />
         <CatalogCategorySection id="catalogo-energia" eyebrow="Autonomia" title="Estações de energia" text="Estações portáteis e painéis solares para uso dentro e fora da rede." products={energyProducts} />
       </div> : <ProductCarousels products={list} />}
     </section>
@@ -545,7 +530,7 @@ function Catalog({ title = "Nosso portfólio", intro = "Encontre a solução cer
 }
 
 function StationaryCatalog() {
-  return <Catalog title="Baterias estacionárias" intro="Linhas profissionais organizadas por marca para facilitar a escolha da solução ideal." filter="estacionaria" heroVideoSrc="/hero-baterias-estacionarias.mp4" />;
+  return <Catalog title="Baterias estacionárias" intro="Baterias para nobreak, energia solar e telecom, organizadas por marca para facilitar a escolha da solução ideal." filter="estacionaria" heroVideoSrc="/hero-baterias-estacionarias.mp4" />;
 }
 
 
@@ -557,11 +542,14 @@ function ComparisonMetric({ label, metric, unit, first, second }: { label: strin
   const hasComparison = secondValue !== undefined;
   const maximum = hasComparison ? Math.max(firstValue, secondValue) : firstValue;
   const absolute = hasComparison ? secondValue - firstValue : 0;
-  const percentage = firstValue ? (absolute / firstValue) * 100 : 0;
-  const direction = absolute === 0 ? "igual" : absolute > 0 ? "mais" : "menos";
+  // Always told from the stronger station: "X% mais potente" over the smaller value.
+  const [stronger, weaker] = absolute > 0 && second ? [second, first] : [first, second];
+  const smallerValue = hasComparison ? Math.min(firstValue, secondValue) : firstValue;
+  const percentage = smallerValue ? (Math.abs(absolute) / smallerValue) * 100 : 0;
+  const advantage = metric === "wattHours" ? "mais capacidade" : "mais potente";
 
   return <article className={`comparison-metric ${hasComparison ? "is-complete" : "is-single"}`}>
-    <div className="comparison-metric-heading"><span>{label}</span>{hasComparison && <strong>{absolute === 0 ? "Mesma medida" : `${formatEnergy(Math.abs(percentage))}% ${direction}`}</strong>}</div>
+    <div className="comparison-metric-heading"><span>{label}</span>{hasComparison && <strong>{absolute === 0 ? "Mesma medida" : `${stronger.model}: ${formatEnergy(Math.round(percentage))}% ${advantage}`}</strong>}</div>
     <div className="comparison-row">
       <div><b>{first.model}</b><span>{formatEnergy(firstValue)} {unit}</span></div>
       <div className="comparison-bar" aria-hidden="true"><i style={{ width: `${(firstValue / maximum) * 100}%` }} /></div>
@@ -573,7 +561,7 @@ function ComparisonMetric({ label, metric, unit, first, second }: { label: strin
             <div><b>{second.model}</b><span>{formatEnergy(secondValue)} {unit}</span></div>
             <div className="comparison-bar" aria-hidden="true"><i style={{ width: `${(secondValue / maximum) * 100}%` }} /></div>
           </div>
-          <p className="comparison-detail-reveal">{absolute === 0 ? `As duas estações entregam ${formatEnergy(firstValue)} ${unit}.` : <><b>{second.model}</b> tem {formatEnergy(Math.abs(absolute))} {unit} {direction} que <b>{first.model}</b>.</>}</p>
+          <p className="comparison-detail-reveal">{absolute === 0 ? `As duas estações entregam ${formatEnergy(firstValue)} ${unit}.` : <><b>{stronger.model}</b> tem {formatEnergy(Math.abs(absolute))} {unit} a mais que <b>{weaker?.model}</b>.</>}</p>
         </>}
       </div>
     </div>
@@ -602,7 +590,7 @@ function BluettiComparison({ initialSlug }: { initialSlug: string }) {
       <ComparisonMetric label="Power Lifting" metric="powerLiftingWatts" unit="W" first={first} second={second} />
       <ComparisonMetric label="Capacidade de energia" metric="wattHours" unit="Wh" first={first} second={second} />
     </div>
-    {second ? <p className="comparison-note">A porcentagem usa a primeira estação como base. O Power Lifting é um modo para cargas resistivas compatíveis; não equivale à potência contínua nem ao surto instantâneo. A capacidade em Wh representa energia armazenada, não autonomia. {first.modeNote} {second.modeNote}</p> : <p className="comparison-note comparison-prompt">Escolha a segunda estação para completar a comparação. O Power Lifting não altera a saída contínua e depende da carga compatível.{first.modeNote ? ` ${first.modeNote}` : ""}</p>}
+    {second ? <p className="comparison-note">A porcentagem mostra quanto a estação de maior valor supera a de menor valor. O Power Lifting é um modo para cargas resistivas compatíveis; não equivale à potência contínua nem ao surto instantâneo. A capacidade em Wh representa energia armazenada, não autonomia. {first.modeNote} {second.modeNote}</p> : <p className="comparison-note comparison-prompt">Escolha a segunda estação para completar a comparação. O Power Lifting não altera a saída contínua e depende da carga compatível.{first.modeNote ? ` ${first.modeNote}` : ""}</p>}
   </section>;
 }
 
@@ -754,27 +742,115 @@ const BLUETTI_CONTENT: Partial<Record<string, BluettiContent>> = {
   "bluetti-pv100": { datasheet: [["Potência máxima", "100 W."], ["Eficiência", "até 23,4%."], ["Potência / capacidade", "100 W; Vmp 20,5 V; Imp 4,9 A; Voc 24,6 V; Isc 5,8 A."], ["Entradas e recarga", "Converte luz solar em energia CC; não possui entrada de recarga própria."], ["Saídas / compatibilidade", "Conector MC4 padrão e cabo de 3 m; compatível com a maioria dos geradores solares que aceitam a faixa elétrica do painel."], ["Tecnologia e segurança", "Silício monocristalino, revestimento ETFE, eficiência de até 23,4% e certificações CE, RoHS, PSE, FCC e UKCA."], ["Dimensões e peso", "Aberto: 1.135 x 600 x 4 mm. Fechado: 595 x 565 x 35 mm. Peso: 4,9 kg."], ["Garantia", "2 anos."]], intro: "O PV100D entrega 100 W em um painel dobrável com conector MC4, adequado para camping, viagens, uso diário e recarga solar de estações compatíveis.", advantages: [["Conector MC4", "facilita a integração com diferentes estações e sistemas solares portáteis."], ["ETFE durável", "resiste melhor a UV e ao desgaste do uso externo."], ["Células monocristalinas", "oferecem boa eficiência em uma área compacta."], ["Suportes ajustáveis", "ajudam a posicionar o painel no ângulo mais favorável ao sol."], ["Cabo de 3 metros", "aumenta a flexibilidade para manter a estação à sombra e o painel ao sol."]], summary: "O PV100D é uma opção equilibrada para quem deseja 100 W, conexão padronizada e construção portátil para geração renovável." },
   "bluetti-sora-130": { datasheet: [["Potência máxima", "130 W."], ["Eficiência", "até 25%."], ["Potência / capacidade", "130 W; Vmp 21,6 V; Imp 6,0 A; Voc 25,9 V; Isc 6,9 A."], ["Entradas e recarga", "Converte luz solar em energia CC; não possui entrada de recarga própria."], ["Saídas / compatibilidade", "Conector MC4, compatível com estações portáteis e sistemas que aceitam a tensão e a corrente informadas."], ["Tecnologia e segurança", "Células monocristalinas N-Type, laminação ETFE, eficiência de até 25%, proteção IP67 e operação de -25°C a 65°C."], ["Dimensões e peso", "Aberto: 1.378 x 660 x 3 mm. Fechado: 326 x 352 x 50 mm. Peso: 3,6 kg."], ["Garantia", "12 meses."]], intro: "O SORA 130 combina 130 W, eficiência de até 25% e apenas 3,6 kg. É adequado para camping, veículos, pesca, viagens e apoio solar em emergências domésticas.", advantages: [["Células N-Type", "oferecem alta conversão, menor degradação e desempenho mais estável ao longo do tempo."], ["Baixo peso", "3,6 kg simplificam transporte e montagem."], ["Proteção IP67", "aumenta a confiança em ambientes externos com poeira e respingos."], ["Conexão MC4", "amplia a compatibilidade com estações de energia e sistemas solares."], ["Formato compacto", "fecha em dimensões próximas às de uma caixa de pizza, facilitando armazenamento."]], summary: "O SORA 130 entrega um equilíbrio muito eficiente entre potência, peso, resistência e compatibilidade para geração solar móvel." },
   "bluetti-sora-220": { datasheet: [["Potência máxima", "220 W."], ["Eficiência", "até 25%."], ["Potência / capacidade", "220 W; Vmp 21,6 V; Imp 10,2 A; Voc 25,9 V; Isc 11 A."], ["Entradas e recarga", "Converte luz solar em energia CC; não possui entrada de recarga própria."], ["Saídas / compatibilidade", "Conector MC4 com cabo de extensão de 1,5 m; compatível com estações e sistemas que aceitam seus parâmetros elétricos."], ["Tecnologia e segurança", "Painel monocristalino N-Type/TOPCon com acabamento ETFE, eficiência de até 25%, IP67 e operação de -25°C a 65°C."], ["Dimensões e peso", "Aberto: 1.723 x 838 x 3 mm. Fechado: 415 x 302 x 87 mm. Peso: 5,9 kg."], ["Garantia", "12 meses."]], intro: "O SORA 220 fornece 220 W com até 25% de eficiência em um conjunto dobrável de 5,9 kg, indicado para camping, barcos, quintais, RVs e recarga mais rápida de estações portáteis.", advantages: [["Alta potência por peso", "entrega 220 W mantendo transporte e armazenamento simples."], ["Tecnologia N-Type/TOPCon", "favorece maior conversão e menor degradação do painel."], ["Proteção IP67", "suporta poeira e respingos em uso externo, com conectores mantidos fora d'água."], ["Suporte ajustável", "ângulos entre 30° e 45° ajudam a melhorar a captação solar."], ["MC4 universal", "facilita a conexão com diferentes estações e sistemas de armazenamento."]], summary: "É uma solução de maior potência para quem busca recarga solar eficiente, portátil e resistente sem carregar um painel tradicional pesado." },
+  "bluetti-pv200": { datasheet: [["Potência máxima", "200 W."], ["Eficiência", "até 23,4%."], ["Potência / capacidade", "200 W; Vmp 20,5 V; Imp 9,7 A; Voc 26,1 V; Isc 10,3 A."], ["Entradas e recarga", "Converte luz solar em energia CC; não possui entrada de recarga própria."], ["Saídas / compatibilidade", "Conector MC4 padrão e cabo de 3 m; compatível com estações que aceitam a tensão e a corrente do painel."], ["Tecnologia e segurança", "Silício monocristalino, laminação ETFE, eficiência de até 23,4%, caixa de junção IP65 e certificações FCC, CE e RoHS. Operação de -10 °C a 65 °C."], ["Dimensões e peso", "Aberto: 2.265 x 590 mm. Fechado: 630 x 590 mm. Peso: 7,3 kg."], ["Garantia", "24 meses."]], intro: "O PV200 entrega 200 W em um painel dobrável de quatro folhas, com conector MC4 e suporte ajustável, para recarregar estações portáteis em camping, viagens e situações sem rede elétrica.", advantages: [["Conector MC4", "facilita a conexão com estações BLUETTI e outros sistemas compatíveis."], ["Laminação ETFE", "protege a superfície das células e facilita a limpeza no uso externo."], ["Células monocristalinas", "alcançam eficiência de até 23,4%."], ["Dobrável em quatro partes", "fecha em cerca de 63 x 59 cm para transporte e armazenamento."], ["Cabo de 3 metros", "permite deixar a estação à sombra enquanto o painel fica ao sol."]], summary: "O PV200 é uma opção portátil de 200 W para quem precisa de recarga solar com conexão padronizada e montagem simples." },
+  "bluetti-pv350": { datasheet: [["Potência máxima", "350 W."], ["Eficiência", "até 23,4%."], ["Potência / capacidade", "350 W; Vmp 37,5 V; Imp 9,2 A; Voc 46,5 V; Isc 10,8 A."], ["Entradas e recarga", "Converte luz solar em energia CC; não possui entrada de recarga própria."], ["Saídas / compatibilidade", "Conector MC4 padrão e cabo de 3 m; indicado para estações cuja entrada solar aceite a tensão de circuito aberto de 46,5 V e a corrente do painel."], ["Tecnologia e segurança", "Células monocristalinas, laminação ETFE, eficiência de até 23,4%, caixa de junção IP65 e certificações FCC, CE e RoHS. Operação de -10 °C a 65 °C."], ["Dimensões e peso", "Aberto: 2.400 x 905 mm. Fechado: 905 x 613 x 65 mm. Peso: 13,9 kg."], ["Garantia", "24 meses."]], intro: "O PV350 fornece 350 W em um painel dobrável de quatro folhas, com quatro suportes fixos e conector MC4, para recargas solares mais rápidas de estações de maior capacidade.", advantages: [["Alta potência", "350 W por painel reduzem o tempo de recarga solar de estações maiores."], ["Laminação ETFE", "superfície resistente a riscos e fácil de limpar."], ["Suportes integrados", "quatro suportes fixos ajudam a manter o painel inclinado em direção ao sol."], ["Dobrável em quatro partes", "fecha em 905 x 613 x 65 mm, com alça para transporte."], ["Cabo MC4 de 3 metros", "simplifica a conexão e o posicionamento da estação."]], summary: "O PV350 é a escolha para quem quer mais potência solar portátil por painel, com conexão MC4 e montagem rápida para recarregar estações de maior porte." },
 };
 
 function ProductGallery({ product, images }: { product: Product; images: string[] }) {
-  const [activeImage, setActiveImage] = useState(0);
+  const count = images.length;
+  const looping = count > 1;
+  // Infinite loop: the track holds a copy of the last photo before the first and
+  // of the first after the last. Sliding onto a copy, the track jumps (without
+  // animation) to the real photo it shows, so the carousel never runs backwards.
+  // Clicks and drags are never blocked while that happens.
+  const [position, setPosition] = useState(looping ? 1 : 0);
+  const [jumping, setJumping] = useState(false);
+  const activeImage = looping ? (position - 1 + count) % count : 0;
   const [paused, setPaused] = useState(false);
+  const [drag, setDrag] = useState<{ startX: number; offset: number } | null>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const onCopy = looping && (position === 0 || position === count + 1);
+  // Photos load as the carousel reaches them: the current one and its neighbours
+  // (the browser keeps the ones already seen in its cache).
+  const isNear = (index: number) => Math.min(Math.abs(index - activeImage), count - Math.abs(index - activeImage)) <= 1;
 
-  useEffect(() => {
-    if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const timer = window.setTimeout(() => setActiveImage((current) => (current + 1) % images.length), 5000);
-    return () => window.clearTimeout(timer);
-  }, [activeImage, images.length, paused]);
-
-  const showImage = (direction: 1 | -1) => {
-    setActiveImage((current) => (current + direction + images.length) % images.length);
+  // A step taken while a copy is showing first jumps (without animation) to the
+  // real photo and slides from there on the next painted frame: no waiting.
+  const [pending, setPending] = useState<number | null>(null);
+  const realPosition = position === 0 ? count : position === count + 1 ? 1 : position;
+  const step = useCallback((delta: number) => {
+    if (!looping) return;
+    if (jumping && pending !== null) setPending(pending + delta);
+    else if (onCopy) {
+      setJumping(true);
+      setPosition(realPosition);
+      setPending(realPosition + delta);
+    } else setPosition(position + delta);
+  }, [looping, jumping, pending, onCopy, position, realPosition]);
+  const goNext = useCallback(() => step(1), [step]);
+  const goPrev = useCallback(() => step(-1), [step]);
+  const showImage = (index: number) => {
+    setPending(null);
+    setPosition(index + 1);
   };
 
+  // After a jump, let the browser paint the new position before animating again.
+  useEffect(() => {
+    if (!jumping) return;
+    let frame = requestAnimationFrame(() => {
+      frame = requestAnimationFrame(() => {
+        setJumping(false);
+        if (pending !== null) {
+          setPosition(pending);
+          setPending(null);
+        }
+      });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [jumping, pending]);
+
+  const settle = useCallback(() => {
+    setJumping(true);
+    setPosition((current) => (current === 0 ? count : current === count + 1 ? 1 : current));
+  }, [count]);
+
+  // Safety net in case the transitionend event never arrives (e.g. a background tab).
+  useEffect(() => {
+    if (!onCopy || drag) return;
+    const timer = window.setTimeout(settle, 700);
+    return () => window.clearTimeout(timer);
+  }, [onCopy, drag, settle]);
+
+  useEffect(() => {
+    if (!looping || paused || drag || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setTimeout(goNext, 5000);
+    return () => window.clearTimeout(timer);
+  }, [position, looping, paused, drag, goNext]);
+
+  // Swipe or drag like an Instagram carousel: past a fifth of the width, it moves on.
+  const endDrag = () => {
+    if (!drag) return;
+    const width = viewportRef.current?.offsetWidth ?? 1;
+    if (Math.abs(drag.offset) > width / 5) {
+      if (drag.offset < 0) goNext();
+      else goPrev();
+    }
+    setDrag(null);
+  };
+
+  const slides = looping ? [count - 1, ...images.map((_, index) => index), 0] : [0];
   return <div className={`product-gallery product-gallery-${product.segment}`} data-product-slug={product.slug} aria-roledescription="carrossel" aria-label={`Galeria da ${product.brand} ${product.model}`}>
-    <img className="product-gallery-image" style={product.slug === "bluetti-premium-100-v2" ? ({ "--premium-100-scale": [1.4, 1.6, 1.7, 1.6, 1.7, 1.6][activeImage] ?? 1.4 } as React.CSSProperties) : undefined} src={images[activeImage]} alt={`${product.brand} ${product.model} — imagem ${activeImage + 1} de ${images.length}`} />
-    {images.length > 1 && <><button className="gallery-arrow gallery-arrow-prev" type="button" onClick={() => showImage(-1)} aria-label="Imagem anterior"><span aria-hidden="true">{"\u2190"}</span></button><button className="gallery-arrow gallery-arrow-next" type="button" onClick={() => showImage(1)} aria-label="Próxima imagem"><span aria-hidden="true">{"\u2192"}</span></button><span className="gallery-count">{activeImage + 1} / {images.length}</span><button className="gallery-pause" type="button" onClick={() => setPaused((current) => !current)}>{paused ? "Retomar" : "Pausar"}</button></>}
+    <div ref={viewportRef} className="product-gallery-viewport"
+      onPointerDown={(event) => { if (!looping || event.button !== 0) return; if (onCopy) { setJumping(true); setPosition(realPosition); setPending(null); } event.currentTarget.setPointerCapture(event.pointerId); setDrag({ startX: event.clientX, offset: 0 }); }}
+      onPointerMove={(event) => { if (drag) setDrag({ ...drag, offset: event.clientX - drag.startX }); }}
+      onPointerUp={endDrag} onPointerCancel={endDrag}>
+      <div className={`product-gallery-track${drag || jumping ? " is-dragging" : ""}`} style={{ transform: `translateX(calc(${-position * 100}% + ${drag?.offset ?? 0}px))` }} onTransitionEnd={(event) => { if (event.target === event.currentTarget && onCopy) settle(); }}>
+        {slides.map((index, slot) => {
+          const isCopy = looping && (slot === 0 || slot === count + 1);
+          return <div className="product-gallery-slide" key={isCopy ? `copy-${slot}` : images[index]} aria-hidden={isCopy || index !== activeImage}>
+            {isNear(index) && <img className="product-gallery-image" draggable={false} style={product.slug === "bluetti-premium-100-v2" ? ({ "--premium-100-scale": [1.4, 1.6, 1.7, 1.6, 1.7, 1.6][index] ?? 1.4 } as React.CSSProperties) : undefined} src={images[index]} alt={isCopy ? "" : `${product.brand} ${product.model} — imagem ${index + 1} de ${count}`} />}
+          </div>;
+        })}
+      </div>
+    </div>
+    {looping && <><button className="gallery-arrow gallery-arrow-prev" type="button" onClick={goPrev} aria-label="Imagem anterior"><span aria-hidden="true">{"←"}</span></button><button className="gallery-arrow gallery-arrow-next" type="button" onClick={goNext} aria-label="Próxima imagem"><span aria-hidden="true">{"→"}</span></button>
+      <div className="gallery-dots">{images.map((src, index) => <button type="button" key={src} className={index === activeImage ? "is-active" : undefined} onClick={() => showImage(index)} aria-label={`Ver imagem ${index + 1}`} aria-current={index === activeImage} />)}</div>
+      <span className="gallery-count">{activeImage + 1} / {count}</span><button className="gallery-pause" type="button" onClick={() => setPaused((current) => !current)}>{paused ? "Retomar" : "Pausar"}</button></>}
   </div>;
 }
+
+
+
 
 function PowerFrameDiagram() {
   return <figure className="powerframe-diagram">
@@ -1321,8 +1397,8 @@ function StructureExperience() {
   return <section className="structure-section section">
     <div className="structure-heading"><span className="eyebrow">Nossa estrutura</span><h2>Capacidade para<br /><em>ir mais longe.</em></h2></div>
     <div className="structure-cards">
-      <article className="structure-card"><img src="/cd-curitiba-2.webp" alt="Fachada do centro de distribuição 1 da Sol em Curitiba, com veículos Heliar e eCON" width={800} height={500} loading="lazy" decoding="async" /><div><b>Curitiba · CD 1</b><span>Escritório comercial, testes de garantia e capacidade para mais de 60 mil baterias.</span><a className="structure-map-link" href="https://maps.app.goo.gl/HPbCUKdtAxa5Mkxw6" target="_blank" rel="noreferrer"><Icon name="pin" />Ver localização do CD 1</a></div></article>
-      <article className="structure-card"><img src="/cd-sao-paulo.webp" alt="Estoque de baterias no centro de distribuição 2 da Sol em Curitiba" width={800} height={500} loading="lazy" decoding="async" /><div><b>Curitiba · CD 2</b><span>Armazenagem e expedição que ampliam nossa capacidade logística e agilizam o atendimento.</span><a className="structure-map-link" href="https://maps.app.goo.gl/j1LRUpFonGCF8Mg89" target="_blank" rel="noreferrer"><Icon name="pin" />Ver localização do CD 2</a></div></article>
+      <article className="structure-card"><img src="/cd-curitiba-2.webp" alt="Fachada do centro de distribuição 1 da Sol em Curitiba, com veículos Heliar e eCON" width={800} height={500} loading="lazy" decoding="async" /><div><b>Curitiba · CD 1</b><span>Escritório comercial, testes de garantia e capacidade para mais de 60 mil baterias.</span></div></article>
+      <article className="structure-card"><img src="/cd-sao-paulo.webp" alt="Estoque de baterias no centro de distribuição 2 da Sol em Curitiba" width={800} height={500} loading="lazy" decoding="async" /><div><b>Curitiba · CD 2</b><span>Armazenagem e expedição que ampliam nossa capacidade logística e agilizam o atendimento.</span></div></article>
     </div>
   </section>;
 }
@@ -1389,15 +1465,11 @@ function Contact() {
         return;
       }
 
+      // Contact details already reached the spreadsheet; the WhatsApp link only
+      // carries the visitor's own message, so no personal data goes in the URL.
       const whatsappMessage = [
-        "Olá, gostaria de falar com a Sol.",
+        "Olá, acabei de enviar meu contato pelo site da Sol.",
         "",
-        `Nome: ${payload.nome}`,
-        `Empresa: ${payload.empresa || "Não informada"}`,
-        `Telefone: ${payload.telefone}`,
-        `E-mail: ${payload.email}`,
-        "",
-        "Mensagem:",
         payload.mensagem,
       ].join("\n");
 
@@ -1417,10 +1489,10 @@ function Contact() {
 }
 
 function Privacy() {
-  return <Shell><section className="page-hero compact"><span className="eyebrow light">Privacidade</span><h1>Política de Privacidade</h1><p>Transparência também faz parte das nossas relações digitais.</p></section><article className="legal section"><h2>Como tratamos seus dados</h2><p>A Sol Distribuidora utiliza os dados informados em seus canais de contato exclusivamente para responder solicitações, preparar atendimentos comerciais e manter o relacionamento com clientes e parceiros.</p><h3>Dados coletados</h3><p>Podemos receber nome, empresa, telefone, e-mail e informações enviadas voluntariamente em formulários ou conversas.</p><h3>Finalidade e segurança</h3><p>Os dados são usados para atendimento, cotações e comunicações relacionadas aos serviços solicitados. Aplicamos medidas razoáveis de segurança e não comercializamos informações pessoais.</p><h3>Formulário de contato e compartilhamento</h3><p>As informações enviadas pelo formulário de contato trafegam de forma criptografada (HTTPS) e são registradas em uma planilha do Google, com acesso restrito à equipe da Sol Distribuidora. Após o envio, a conversa continua no WhatsApp: a mensagem é aberta já preenchida com os dados informados, e o envio só acontece quando você a confirma no aplicativo. Google e WhatsApp tratam esses dados conforme suas próprias políticas de privacidade.</p><h3>Seus direitos</h3><p>Você pode solicitar acesso, correção ou exclusão de seus dados pelo e-mail <a href="mailto:atendimento@distribuidorasol.com.br">atendimento@distribuidorasol.com.br</a>.</p></article></Shell>;
+  return <Shell><section className="page-hero compact"><span className="eyebrow light">Privacidade</span><h1>Política de Privacidade</h1><p>Transparência também faz parte das nossas relações digitais.</p></section><article className="legal section"><h2>Como tratamos seus dados</h2><p>A Sol Distribuidora utiliza os dados informados em seus canais de contato exclusivamente para responder solicitações, preparar atendimentos comerciais e manter o relacionamento com clientes e parceiros.</p><h3>Dados coletados</h3><p>Podemos receber nome, empresa, telefone, e-mail e informações enviadas voluntariamente em formulários ou conversas.</p><h3>Finalidade e segurança</h3><p>Os dados são usados para atendimento, cotações e comunicações relacionadas aos serviços solicitados. Aplicamos medidas razoáveis de segurança e não comercializamos informações pessoais.</p><h3>Formulário de contato e compartilhamento</h3><p>As informações enviadas pelo formulário de contato trafegam de forma criptografada (HTTPS) e são registradas em uma planilha do Google, com acesso restrito à equipe da Sol Distribuidora. Após o envio, a conversa continua no WhatsApp: a mensagem é aberta já preenchida apenas com o texto escrito no formulário (sem nome, telefone ou e-mail), e o envio só acontece quando você a confirma no aplicativo. Google e WhatsApp tratam esses dados conforme suas próprias políticas de privacidade.</p><h3>Seus direitos</h3><p>Você pode solicitar acesso, correção ou exclusão de seus dados pelo e-mail <a href="mailto:atendimento@distribuidorasol.com.br">atendimento@distribuidorasol.com.br</a>.</p></article></Shell>;
 }
 
-function NotFoundPage() {
+export function NotFoundPage() {
   return <Shell><section className="not-found section"><span className="eyebrow">Página não encontrada</span><h1>A energia continua por aqui.</h1><p>O endereço acessado mudou ou não está disponível.</p><Link className="button blue" href="/">Voltar ao início <Icon name="arrow" /></Link></section></Shell>;
 }
 

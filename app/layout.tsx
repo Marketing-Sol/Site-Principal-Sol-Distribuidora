@@ -1,17 +1,14 @@
 import type { Metadata } from "next";
-import { SITE_NAME, SITE_URL } from "./catalog-meta";
+import { HOME_DESCRIPTION as description, HOME_TITLE as title, IS_PREVIEW, SITE_NAME, SITE_URL } from "./catalog-meta";
 import "./globals.css";
 
-const title = "Sol Distribuidora | Energia para quem não pode parar";
-const description = "Soluções B2B em baterias automotivas e estacionárias, estações de energia e backup, com suporte técnico e pós-venda.";
-
 // Fixed canonical origin: every address and share image points to the official
-// domain, whatever host served the request.
+// domain, whatever host served the request. Title, description and canonical
+// come from each page (home: app/page.tsx), so the 404 page does not inherit
+// the home page ones.
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title,
-  description,
-  alternates: { canonical: "/" },
+  ...(IS_PREVIEW ? { robots: { index: false, follow: false } } : {}),
   icons: { icon: "/Sol-Icon-favicon.webp", shortcut: "/Sol-Icon-favicon.webp" },
   openGraph: {
     title,

@@ -1,6 +1,6 @@
 // Product images, BLUETTI comparison data and search metadata. Kept out of the
 // "use client" site module so server code (page metadata, sitemap) can read them.
-import type { Product } from "./data";
+import { HIDDEN_PRODUCTS, type Product } from "./data";
 import { PRODUCT_SPECS, productSpecKey } from "./product-specs";
 
 export const PRODUCT_IMAGES: Record<string, string> = {
@@ -90,10 +90,12 @@ export const PRODUCT_IMAGES: Record<string, string> = {
   "bluetti-pv100": "/bluetti-pv100.webp",
   "bluetti-sora-130": "/bluetti-sora-130.webp",
   "bluetti-sora-220": "/bluetti-sora-220.webp",
+  "bluetti-pv200": "/bluetti-pv200.webp",
+  "bluetti-pv350": "/bluetti-pv350.webp",
 };
 
 export type BluettiComparisonModel = { slug: string; model: string; watts: number; wattHours: number; powerLiftingWatts: number; surgeWatts?: number; modeNote?: string };
-export const BLUETTI_COMPARISON: BluettiComparisonModel[] = [
+const BLUETTI_STATIONS: BluettiComparisonModel[] = [
   { slug: "bluetti-premium-30-v2", model: "Premium 30 v2", watts: 600, wattHours: 320, powerLiftingWatts: 1500, modeNote: "Power Lifting atende cargas puramente resistivas; potência CA+CC combinada limitada a 600 W." },
   { slug: "bluetti-ac50", model: "AC50", watts: 700, wattHours: 448, powerLiftingWatts: 1000 },
   { slug: "bluetti-ac50p", model: "AC50P", watts: 700, wattHours: 504, powerLiftingWatts: 1200 },
@@ -107,8 +109,16 @@ export const BLUETTI_COMPARISON: BluettiComparisonModel[] = [
   { slug: "bluetti-apex-300", model: "Apex 300", watts: 3840, wattHours: 2764.8, powerLiftingWatts: 7680 },
 ];
 
+// Stations whose pages are hidden stay in the list above but out of the comparison.
+export const BLUETTI_COMPARISON = BLUETTI_STATIONS.filter((station) => !(station.slug in HIDDEN_PRODUCTS));
+
 export const SITE_URL = "https://www.distribuidorasol.com.br";
 export const SITE_NAME = "Sol Distribuidora";
+// Preview builds (SITE_PREVIEW=1) are for internal review: no tracking, no
+// leads sent to the spreadsheet and nothing indexed by search engines.
+export const IS_PREVIEW = typeof process !== "undefined" && process.env.SITE_PREVIEW === "1";
+export const HOME_TITLE = "Sol Distribuidora | Energia para quem não pode parar";
+export const HOME_DESCRIPTION = "Soluções B2B em baterias automotivas e estacionárias, estações de energia e backup, com suporte técnico e pós-venda.";
 
 const formatNumber = (value: number) => value.toLocaleString("pt-BR", { maximumFractionDigits: 1 });
 const firstAmount = (text: string | undefined, unit: string) => text?.match(new RegExp(`[\\d.,]+\\s*${unit}`))?.[0].replace(/\s+/, " ");
@@ -196,7 +206,7 @@ export const CATEGORY_SEO: Record<string, { title: string; description: string }
   "baterias-automotivas": { title: "Baterias automotivas Heliar e eCON", description: "Baterias automotivas Heliar e eCON nas linhas SLI, EFB, AGM e Frota, para veículos leves e pesados. Distribuição B2B para revendas e frotas em todo o Brasil." },
   "baterias-estacionarias": { title: "Baterias estacionárias Freedom e eCON VRLA", description: "Baterias estacionárias Freedom (ventiladas, 26 a 220 Ah) e eCON VRLA AGM (5 a 18 Ah) para nobreak, telecom, energia solar e sistemas de emergência." },
   "heliar-baterias-de-motos": { title: "Baterias para motos", description: "Baterias para motocicletas com atendimento especializado da Sol Distribuidora para revendas." },
-  "bluetti-estacoes-de-energia": { title: "Estações de energia e painéis solares BLUETTI", description: "Estações de energia portáteis BLUETTI de 320 a 3.014 Wh e painéis solares de 60 a 220 W, para backup, mobilidade e uso fora da rede. Distribuição B2B Sol." },
+  "bluetti-estacoes-de-energia": { title: "Estações de energia e painéis solares BLUETTI", description: "Estações de energia portáteis BLUETTI de 320 a 3.014 Wh e painéis solares de 60 a 350 W, para backup, mobilidade e uso fora da rede. Distribuição B2B Sol." },
   "freedom-baterias-estacionarias": { title: "Baterias estacionárias Freedom 12 V", description: "Linha Freedom de baterias estacionárias ventiladas 12 V, de 26 a 220 Ah (C20), para nobreak, telecom e energia solar. Fichas técnicas e atendimento B2B." },
   "heliar-baterias-automotivas": { title: "Baterias automotivas Heliar SLI, EFB, AGM e Frota", description: "Baterias Heliar SLI, EFB, AGM e Frota, de 40 a 225 Ah, para carros, start-stop e veículos pesados. Distribuição para revendas com a Sol Distribuidora." },
   "econ-baterias-automotivas": { title: "Baterias automotivas eCON", description: "Baterias automotivas eCON nas linhas Convencional, EFB, AGM e Frota, de 45 a 180 Ah. Distribuição para revendas e frotas com a Sol Distribuidora." },

@@ -3,7 +3,14 @@
 // browser no longer talks to it directly, and failures are reported back to
 // the visitor instead of being lost.
 
+import { IS_PREVIEW } from "../../catalog-meta";
+
 const LEADS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwN1U6lRr3ZYtpF8mlgUeQGr7FpC9YculkBb67sDmMdF9bMgMDCPtmNd9e_iDBwLXmr/exec";
+// Shared secret the Apps Script checks before writing to the spreadsheet. It is
+// set as the LEADS_TOKEN secret on the hosting (and in .dev.vars locally), never
+// in the code; Cloudflare exposes secrets on process.env with nodejs_compat.
+// While it is not set, leads are sent without it.
+const leadsToken = () => process.env.LEADS_TOKEN ?? "";
 const MAX_BODY_BYTES = 10_000;
 const FORWARD_TIMEOUT_MS = 10_000;
 const RATE_LIMIT = 5;
@@ -105,11 +112,13 @@ export async function POST(request: Request) {
     return error("Recebemos várias mensagens em sequência. Tente novamente em alguns minutos.", 429);
   }
 
+  if (IS_PREVIEW) return error("Versão de prévia: o formulário está desativado e nenhum dado foi enviado.", 503);
+
   try {
     const response = await fetch(LEADS_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({ ...payload, consentimento: true }),
+      body: JSON.stringify({ ...payload, consentimento: true, token: leadsToken() }),
       redirect: "follow",
       signal: AbortSignal.timeout(FORWARD_TIMEOUT_MS),
     });
