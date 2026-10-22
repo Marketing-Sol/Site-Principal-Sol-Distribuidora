@@ -53,8 +53,8 @@ const HELIAR_IMAGE_SCALES: Record<string, number> = {
   "heliar-hefb50gd": 1.52,
   "heliar-hefb60hd": 1.3,
   "heliar-hefb72pd": 1.2,
-  "heliar-hefb225td": 0.89,
-  "heliar-hefb225te": 0.89,
+  "heliar-hefb230td": 0.89,
+  "heliar-hefb230te": 0.89,
   "heliar-h100le": 1.04,
   "heliar-hs100le": 1.04,
   "heliar-h150td": 0.93,
@@ -439,7 +439,7 @@ const BRAND_ORDER: Product["brand"][] = ["Freedom", "Heliar", "eCON", "eCON VRLA
 
 function productNiche(product: Product) {
   if (product.brand === "Heliar") {
-    if (product.model === "HEFB225TD" || product.model === "HEFB225TE") return "Frota";
+    if (product.model === "HEFB230TD" || product.model === "HEFB230TE") return "Frota";
     if (product.model.startsWith("HAGM")) return "AGM Tech";
     if (product.model.startsWith("HEFB")) return "EFB Tech";
     if (/^(HS?100|HS?150|HS?180|HT180)/.test(product.model)) return "Frota";
@@ -973,14 +973,14 @@ const HELIAR_LINE_CONTENT: Record<HeliarLine, HeliarLineContent> = {
     ],
     faqs: [
       ["EFB é a aplicação correta para qualquer caminhão ou ônibus?", "Não. Confirme a tecnologia e o código especificados para o veículo, além do espaço de montagem, polaridade e requisitos elétricos."],
-      ["HEFB225TD e HEFB225TE são o mesmo código?", "Não. TD e TE identificam variantes distintas. Confira o código completo da bateria instalada antes de substituir."],
+      ["HEFB230TD e HEFB230TE são o mesmo código?", "Não. TD e TE identificam variantes distintas. Confira o código completo da bateria instalada antes de substituir."],
       ["O que significa EFB?", "EFB significa Enhanced Flooded Battery, ou bateria inundada aprimorada, desenvolvida para suportar rotinas de carga e descarga mais exigentes."],
     ],
   },
 };
 
 function heliarLineFor(productSpec: ProductSpec, model?: string): HeliarLine {
-  if (model === "HEFB225TD" || model === "HEFB225TE") return "FROTA_EFB";
+  if (model === "HEFB230TD" || model === "HEFB230TE") return "FROTA_EFB";
   const technology = clean(productSpec.technology);
   if (technology.includes("agm")) return "AGM";
   if (technology.includes("efb")) return "EFB";
@@ -1358,7 +1358,7 @@ function ProductDetail({ product }: { product: Product }) {
   const brandCatalogHref: Record<Product["brand"], string> = { Freedom: "/freedom-baterias-estacionarias", Heliar: "/heliar-baterias-automotivas", eCON: "/econ-baterias-automotivas", "eCON VRLA": "/econ-vrla-baterias-estacionarias", Bluetti: "/bluetti-estacoes-de-energia" };
   return <Shell>
     <section className="product-hero" data-product-name-style={isBattery ? "code" : undefined}>
-      <div><span className="eyebrow light product-hero-label">{heliarContent ? `Heliar · ${heliarContent.label}` : econContent ? `eCON · ${econContent.label}` : `${product.brand} · ${segmentLabel(product.segment)}`}</span><h1><span className="visually-hidden">{product.brand === "Bluetti" ? "BLUETTI" : product.brand} </span>{product.model}</h1><p>{stationaryDetail ? stationaryHero : heliarContent && productSpec ? (["HEFB225TD", "HEFB225TE", "HE60HD", "HEFB60HD"].includes(product.model) ? productSpec.description : heliarContent.hero(productSpec.capacity)) : econContent && productSpec ? (confirmedEconAuto ? productSpec.description : econContent.hero(product.model)) : isPremium30 ? "Estação BLUETTI de 320 Wh com saída nominal de 600 W e Power Lifting para cargas puramente resistivas." : bluettiContent ? bluettiContent.intro : "Nossa equipe ajuda a confirmar aplicação e especificações do modelo antes da compra."}</p><a className="button yellow" href={WHATSAPP} target="_blank" rel="noreferrer">Solicite uma cotação <Icon name="arrow" /></a>{econContent && <nav className="product-hero-links" aria-label="Atalhos da página"><a href="#ficha-tecnica">Ficha técnica</a><a href="#tecnologia-econ">Conheça a linha</a></nav>}{heliarContent && <nav className="product-hero-links" aria-label="Atalhos da página"><a href="#ficha-tecnica">Ficha técnica</a><a href="#tecnologia-heliar">Conheça a tecnologia</a></nav>}{stationaryDetail && <nav className="product-hero-links" aria-label="Atalhos da página"><a href="#dados-tecnicos">Dados técnicos</a><a href="#documentos-tecnicos">Documentação</a></nav>}</div>
+      <div><span className="eyebrow light product-hero-label">{heliarContent ? `Heliar · ${heliarContent.label}` : econContent ? `eCON · ${econContent.label}` : `${product.brand} · ${segmentLabel(product.segment)}`}</span><h1><span className="visually-hidden">{product.brand === "Bluetti" ? "BLUETTI" : product.brand} </span>{product.model}</h1><p>{stationaryDetail ? stationaryHero : heliarContent && productSpec ? (["HEFB230TD", "HEFB230TE", "HE60HD", "HEFB60HD"].includes(product.model) ? productSpec.description : heliarContent.hero(productSpec.capacity)) : econContent && productSpec ? (confirmedEconAuto ? productSpec.description : econContent.hero(product.model)) : isPremium30 ? "Estação BLUETTI de 320 Wh com saída nominal de 600 W e Power Lifting para cargas puramente resistivas." : bluettiContent ? bluettiContent.intro : "Nossa equipe ajuda a confirmar aplicação e especificações do modelo antes da compra."}</p><a className="button yellow" href={WHATSAPP} target="_blank" rel="noreferrer">Solicite uma cotação <Icon name="arrow" /></a>{econContent && <nav className="product-hero-links" aria-label="Atalhos da página"><a href="#ficha-tecnica">Ficha técnica</a><a href="#tecnologia-econ">Conheça a linha</a></nav>}{heliarContent && <nav className="product-hero-links" aria-label="Atalhos da página"><a href="#ficha-tecnica">Ficha técnica</a><a href="#tecnologia-heliar">Conheça a tecnologia</a></nav>}{stationaryDetail && <nav className="product-hero-links" aria-label="Atalhos da página"><a href="#dados-tecnicos">Dados técnicos</a><a href="#documentos-tecnicos">Documentação</a></nav>}</div>
       <div className={`product-media-card${product.segment === "solar" ? " product-media-card-solar" : ""}`}>{bluettiGallery ? <><span className="eyebrow light product-stage-label">{product.brand} · {segmentLabel(product.segment)}</span><ProductGallery key={product.slug} product={product} images={bluettiGallery} /></> : <div className={`product-stage ${product.segment}`}><span className="eyebrow light product-stage-label">{heliarContent ? `Heliar · ${heliarContent.label}` : econContent ? `eCON · ${econContent.label}` : `${product.brand} · ${segmentLabel(product.segment)}`}</span>{realImage ? <div className={product.brand === "Heliar" ? "heliar-product-stage" : "product-stage-image"} style={heliarImageStyle(product)}><div className="stage-glow" /><img className="stage-real-product" src={detailImage} alt={`${product.brand} ${product.model}`} fetchPriority="high" decoding="async" /></div> : <><div className="stage-glow" /><div className="stage-product"><i /><i /><b>{product.model}</b><span>{product.brand}</span></div></>}</div>}</div>
     </section>
     {stationaryDetail && productSpec ? <StationaryProductContent product={product} productSpec={productSpec} /> : heliarLine && productSpec ? <HeliarProductContent product={product} productSpec={productSpec} line={heliarLine} /> : econLine && productSpec ? <EconProductContent product={product} productSpec={productSpec} line={econLine} /> : isPremium30 ? <section className="detail section premium-30-overview">

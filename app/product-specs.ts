@@ -445,32 +445,29 @@ export const PRODUCT_SPECS: Record<string, ProductSpec> = {
                             "warranty":  "24 meses",
                             "description":  "Produto Heliar com 72 Ah (C20) e 700 CCA, uma combinação que apoia uma indicação segura para a faixa de demanda elétrica correspondente. O HEFB72PD oferece 24 meses de garantia e permite apoiar a venda em atributos reconhecidos da marca: PowerFrame, tradição em equipamento original e ampla cobertura de aplicações. Confirme sempre a equivalência do modelo antes de fechar a venda."
                         },
-    "Heliar|HEFB225TD":  {
+    "Heliar|HEFB230TD":  {
                              "technology":  "EFB — Frota pesada",
                              "voltage":  "12 V",
-                             "capacity":  "225 Ah (C20)",
+                             "capacity":  "230 Ah (C20)",
                              "cca":  "1.050 A a −18 °C",
                              "reserveCapacity": "450 min",
+                             "dimensions":  "517 x 275 x 236 mm",
                              "weight":  "57,4 kg",
-                             "warranty":  "24 meses",
-                             "sourceNote": "Fontes técnicas para HEFB225TD.",
-                             "sourceLinks": [
-                               { "label": "Heliar — página do modelo HEFB225TD", "href": "https://www.heliar.com/produtos/detalhes-do-produto/hefb225td" },
-                               { "label": "Inmetro — registro 003848/2013, inclusão de 24/10/2024", "href": "https://registro.inmetro.gov.br/consulta/detalhe.aspx?NumeroRegistro=003848%2F2013&pag=5" }
-                             ],
-                             "description":  "A Heliar HEFB225TD é uma bateria EFB de 12 V e 225 Ah (C20) para veículos comerciais pesados compatíveis. Seus 1.050 A de CCA a −18 °C e 450 minutos de reserva de capacidade são referências para conferir a exigência elétrica da aplicação."
+                             "warranty":  "15 meses",
+                             "sourceNote": "Fonte: catálogo Baterias Heliar da Sol Distribuidora, Linha Automotiva EFB Tech, p. 13 (outubro de 2026).",
+                             "description":  "A Heliar HEFB230TD é uma bateria EFB de 12 V e 230 Ah (C20) para veículos comerciais pesados compatíveis. Entrega 1.050 A de CCA a −18 °C e 450 minutos de reserva de capacidade, com dimensões de 517 × 275 × 236 mm e peso de 57,4 kg. Confirme montagem e requisitos do veículo pelo código completo antes da substituição."
                          },
-    "Heliar|HEFB225TE":  {
+    "Heliar|HEFB230TE":  {
                              "technology":  "EFB — Frota pesada",
                              "voltage":  "12 V",
-                             "capacity":  "225 Ah (C20)",
+                             "capacity":  "230 Ah (C20)",
                              "cca":  "1.050 A a −18 °C",
                              "reserveCapacity": "450 min",
+                             "dimensions":  "517 x 275 x 236 mm",
                              "weight":  "56 kg",
-                             "warranty":  "24 meses",
-                             "sourceNote": "Fonte: Inmetro, registro 003848/2013, inclusão de 24/10/2024 para HEFB225TE.",
-                             "sourceHref": "https://registro.inmetro.gov.br/consulta/detalhe.aspx?NumeroRegistro=003848%2F2013&pag=5",
-                             "description":  "A Heliar HEFB225TE é uma bateria EFB de 12 V e 225 Ah (C20) para veículos comerciais pesados compatíveis. A corrente de partida é de 1.050 A de CCA a −18 °C, com reserva de capacidade de 450 minutos. Confirme montagem e requisitos do veículo pelo código TE antes da substituição."
+                             "warranty":  "15 meses",
+                             "sourceNote": "Fonte: catálogo Baterias Heliar da Sol Distribuidora, Linha Automotiva EFB Tech, p. 13 (outubro de 2026).",
+                             "description":  "A Heliar HEFB230TE é uma bateria EFB de 12 V e 230 Ah (C20) para veículos comerciais pesados compatíveis. Entrega 1.050 A de CCA a −18 °C e 450 minutos de reserva de capacidade, com dimensões de 517 × 275 × 236 mm e peso de 56 kg. Confirme montagem e requisitos do veículo pelo código completo antes da substituição."
                          },
     "Heliar|H38JD":  {
                          "technology":  "SLI",

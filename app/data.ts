@@ -43,8 +43,8 @@ const products: Product[] = [
   [1177,"heliar-hefb50gd","Heliar","HEFB50GD","automotiva"],
   [1187,"heliar-hefb60hd","Heliar","HEFB60HD","automotiva"],
   [1192,"heliar-hefb72pd","Heliar","HEFB72PD","automotiva"],
-  [1197,"heliar-hefb225te","Heliar","HEFB225TE","automotiva"],
-  [1202,"heliar-hefb225td","Heliar","HEFB225TD","automotiva"],
+  [1197,"heliar-hefb230te","Heliar","HEFB230TE","automotiva"],
+  [1202,"heliar-hefb230td","Heliar","HEFB230TD","automotiva"],
   [2131,"heliar-h100le","Heliar","H100LE","automotiva"],
   [2136,"heliar-hs100le","Heliar","HS100LE","automotiva"],
   [2141,"heliar-h150td","Heliar","H150TD","automotiva"],
@@ -114,6 +114,9 @@ export const LEGACY_URLS: Record<string, string> = {
   "secpower-sp12-9": "econ-vrla-ep12-7",
   "secpower-sp12-12": "econ-vrla-ep12-9",
   "secpower-sp12-18": "econ-vrla-ep12-12",
+  // Heliar replaced HEFB225TD/TE with HEFB230TD/TE (catálogo, out/2026).
+  "heliar-hefb225td": "heliar-hefb230td",
+  "heliar-hefb225te": "heliar-hefb230te",
 };
 
 export const PAGE_IDS: Record<string, string> = {
