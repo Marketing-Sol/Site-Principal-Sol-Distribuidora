@@ -162,7 +162,7 @@ function Footer() {
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
-  return <><Header /><main>{children}</main><Footer /><a className="whatsapp" href={WHATSAPP} target="_blank" rel="noreferrer" aria-label="Fale com a Sol pelo WhatsApp">WhatsApp <WhatsAppIcon /></a></>;
+  return <><Header /><main>{children}</main><Footer /><a className="whatsapp" href={WHATSAPP} target="_blank" rel="noreferrer" aria-label="Fale com a Sol pelo WhatsApp"><WhatsAppIcon /></a></>;
 }
 
 function SectionTitle({ eyebrow, title, text }: { eyebrow: string; title: React.ReactNode; text?: string }) {
