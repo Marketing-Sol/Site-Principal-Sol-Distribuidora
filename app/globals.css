@@ -510,6 +510,7 @@ footer{background:#10143f;color:#fff;padding:70px max(6vw,24px) 25px}.footer-top
 .stationary-specs .stationary-source-note{color:var(--muted)}
 .product-source-note{display:block;margin-top:14px;color:var(--muted);font-size:12px;line-height:1.55}
 .product-source-note a{color:var(--blue);text-decoration:underline;text-underline-offset:2px}
+.bluetti-manual{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin-top:24px}.bluetti-manual small{color:var(--muted);font-size:12px}
 .related-suggestions a b{flex-shrink:0;min-width:max-content;white-space:nowrap;overflow-wrap:normal}
 .related-suggestions a span{flex-shrink:0}
 .related-suggestions a small{display:block;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:10px;text-align:right}
