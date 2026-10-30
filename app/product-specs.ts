@@ -454,7 +454,10 @@ export const PRODUCT_SPECS: Record<string, ProductSpec> = {
                              "dimensions":  "517 x 275 x 236 mm",
                              "weight":  "57,4 kg",
                              "warranty":  "15 meses",
-                             "sourceNote": "Fonte: catálogo Baterias Heliar da Sol Distribuidora, Linha Automotiva EFB Tech, p. 13 (outubro de 2026).",
+                             "sourceNote": "Fontes: página oficial da Heliar (C20, CCA, dimensões e garantia) e catálogo Baterias Heliar da Sol Distribuidora, p. 13 (reserva de capacidade e peso), outubro de 2026.",
+                             "sourceLinks": [
+                               { "label": "Heliar — página do modelo HEFB230TD", "href": "https://www.heliar.com/produtos/detalhes-do-produto/hefb230td---230-ah-bateria-heliar-efb---garantia-15-meses" }
+                             ],
                              "description":  "A Heliar HEFB230TD é uma bateria EFB de 12 V e 230 Ah (C20) para veículos comerciais pesados compatíveis. Entrega 1.050 A de CCA a −18 °C e 450 minutos de reserva de capacidade, com dimensões de 517 × 275 × 236 mm e peso de 57,4 kg. Confirme montagem e requisitos do veículo pelo código completo antes da substituição."
                          },
     "Heliar|HEFB230TE":  {
@@ -466,7 +469,10 @@ export const PRODUCT_SPECS: Record<string, ProductSpec> = {
                              "dimensions":  "517 x 275 x 236 mm",
                              "weight":  "56 kg",
                              "warranty":  "15 meses",
-                             "sourceNote": "Fonte: catálogo Baterias Heliar da Sol Distribuidora, Linha Automotiva EFB Tech, p. 13 (outubro de 2026).",
+                             "sourceNote": "Fontes: página oficial da Heliar (C20, CCA, dimensões e garantia) e catálogo Baterias Heliar da Sol Distribuidora, p. 13 (reserva de capacidade e peso), outubro de 2026.",
+                             "sourceLinks": [
+                               { "label": "Heliar — página do modelo HEFB230TE", "href": "https://www.heliar.com/produtos/detalhes-do-produto/hefb230te---230-ah-bateria-heliar-efb---garantia-15-meses" }
+                             ],
                              "description":  "A Heliar HEFB230TE é uma bateria EFB de 12 V e 230 Ah (C20) para veículos comerciais pesados compatíveis. Entrega 1.050 A de CCA a −18 °C e 450 minutos de reserva de capacidade, com dimensões de 517 × 275 × 236 mm e peso de 56 kg. Confirme montagem e requisitos do veículo pelo código completo antes da substituição."
                          },
     "Heliar|H38JD":  {
