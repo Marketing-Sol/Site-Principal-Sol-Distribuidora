@@ -5,7 +5,10 @@
 
 import { IS_PREVIEW } from "../../catalog-meta";
 
-const LEADS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwN1U6lRr3ZYtpF8mlgUeQGr7FpC9YculkBb67sDmMdF9bMgMDCPtmNd9e_iDBwLXmr/exec";
+// The script address can be replaced through the LEADS_ENDPOINT variable on the
+// hosting (for example after publishing a new deployment), without a code change.
+const DEFAULT_LEADS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwN1U6lRr3ZYtpF8mlgUeQGr7FpC9YculkBb67sDmMdF9bMgMDCPtmNd9e_iDBwLXmr/exec";
+const leadsEndpoint = () => process.env.LEADS_ENDPOINT || DEFAULT_LEADS_ENDPOINT;
 // Shared secret the Apps Script checks before writing to the spreadsheet. It is
 // set as the LEADS_TOKEN secret on the hosting (and in .dev.vars locally), never
 // in the code; Cloudflare exposes secrets on process.env with nodejs_compat.
@@ -81,8 +84,11 @@ function validate(body: Record<string, unknown>): ContactPayload | string {
 }
 
 export async function POST(request: Request) {
+  // Browsers always send Origin with this POST; requests without it or from
+  // another site are refused.
   const origin = request.headers.get("origin");
-  if (origin && new URL(origin).host !== new URL(request.url).host) {
+  const originHost = (() => { try { return origin ? new URL(origin).host : ""; } catch { return ""; } })();
+  if (!originHost || originHost !== new URL(request.url).host) {
     return error("Origem não permitida.", 403);
   }
   if (Number(request.headers.get("content-length") ?? 0) > MAX_BODY_BYTES) {
@@ -115,7 +121,7 @@ export async function POST(request: Request) {
   if (IS_PREVIEW) return error("Versão de prévia: o formulário está desativado e nenhum dado foi enviado.", 503);
 
   try {
-    const response = await fetch(LEADS_ENDPOINT, {
+    const response = await fetch(leadsEndpoint(), {
       method: "POST",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify({ ...payload, consentimento: true, token: leadsToken() }),
