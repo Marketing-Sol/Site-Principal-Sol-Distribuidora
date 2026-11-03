@@ -710,11 +710,11 @@ function BrandGridCatalog({ brand, eyebrow, title, intro }: { brand: Product["br
 // User manuals in Portuguese from the BLUETTI dealer portal (service.bluetti.com),
 // linked to the manufacturer's own files: the station manuals are 10 to 80 MB,
 // too large to serve from the site. The Brazilian edition is used where BLUETTI
-// publishes one; the SORA panels have no Portuguese manual.
+// publishes one; the SORA panels have no Portuguese manual, so they get the English one.
 // The storage honours response-content-disposition, so the download keeps the
 // manual's original file name instead of the storage id.
 const BLUETTI_MANUAL_BASE = "https://osspry.bluettipower.com/extra-b2b-marketing-materials/";
-const BLUETTI_MANUALS: Record<string, { file: string; name: string; edition: string }> = {
+const BLUETTI_MANUALS: Record<string, { file: string; name: string; edition: string; english?: boolean }> = {
   "bluetti-premium-30-v2": { file: "19f3b92fbd60421b703f26b3391.pdf", name: "Premium 30 V2 User Manual BR EN-PT.pdf", edition: "edição Brasil, PT/EN" },
   "bluetti-ac50p": { file: "19b20dbd4fa0421b755fa9bf032.pdf", name: "AC50P User Manual BR EN-PT.pdf", edition: "edição Brasil, PT/EN" },
   "bluetti-ac70p": { file: "19b07676ce14b1a2227a6a79541.pdf", name: "AC70P User Manual EU IT-ES-PT.pdf", edition: "edição EU, PT/IT/ES" },
@@ -727,12 +727,15 @@ const BLUETTI_MANUALS: Record<string, { file: string; name: string; edition: str
   "bluetti-pv100": { file: "60df0eb47a424928bcd0b654b1.pdf", name: "PV100D User Manual EN-PT.pdf", edition: "PV100D, PT/EN" },
   "bluetti-pv200": { file: "abb6250d168546639184489cac.pdf", name: "PV200 User Manual EN-PT V1.0.pdf", edition: "PT/EN" },
   "bluetti-pv350": { file: "f094d50315af4429b9e12f9bc2.pdf", name: "PV350 User Manual EN-PT.pdf", edition: "PT/EN" },
+  "bluetti-sora-60": { file: "19b6e4a42ae4b1a2227a6a7f0af.pdf", name: "SORA 60 User Manaul EN-DE.pdf", edition: "EN/DE", english: true },
+  "bluetti-sora-130": { file: "19b11e3eb304b1a2227a6a7a199.pdf", name: "SORA 130 User Manaul EN-DE.pdf", edition: "EN/DE", english: true },
+  "bluetti-sora-220": { file: "19b11e2dab94b1a2227a6a7a18e.pdf", name: "SORA 220 User Manaul EN-DE.pdf", edition: "EN/DE", english: true },
 };
 
 function BluettiManualLink({ slug }: { slug: string }) {
   const manual = BLUETTI_MANUALS[slug];
   if (!manual) return null;
-  return <div className="bluetti-manual"><a className="button blue" href={`${BLUETTI_MANUAL_BASE}${manual.file}?response-content-disposition=${encodeURIComponent(`attachment; filename="${manual.name}"`)}`} rel="noreferrer">Baixar manual do usuário (PDF) <Icon name="arrow" /></a><small>Manual oficial BLUETTI em português · {manual.edition}</small></div>;
+  return <div className="bluetti-manual"><a className="button blue" href={`${BLUETTI_MANUAL_BASE}${manual.file}?response-content-disposition=${encodeURIComponent(`attachment; filename="${manual.name}"`)}`} rel="noreferrer">Baixar manual do usuário (PDF) <Icon name="arrow" /></a><small>{manual.english ? "Manual oficial BLUETTI em inglês, sem versão em português" : "Manual oficial BLUETTI em português"} · {manual.edition}</small></div>;
 }
 
 type BluettiContent = { datasheet: [string, string][]; intro: string; advantages: [string, string][]; summary: string };
