@@ -708,8 +708,9 @@ function BrandGridCatalog({ brand, eyebrow, title, intro }: { brand: Product["br
 }
 
 // User manuals in Portuguese from the BLUETTI dealer portal (service.bluetti.com),
-// linked to the manufacturer's own files: they are 10 to 80 MB, too large to
-// serve from the site. The Brazilian edition is used where BLUETTI publishes one.
+// linked to the manufacturer's own files: the station manuals are 10 to 80 MB,
+// too large to serve from the site. The Brazilian edition is used where BLUETTI
+// publishes one; the SORA panels have no Portuguese manual.
 // The storage honours response-content-disposition, so the download keeps the
 // manual's original file name instead of the storage id.
 const BLUETTI_MANUAL_BASE = "https://osspry.bluettipower.com/extra-b2b-marketing-materials/";
@@ -723,6 +724,9 @@ const BLUETTI_MANUALS: Record<string, { file: string; name: string; edition: str
   "bluetti-premium-200-v2": { file: "19f3b8781580421b703f26b32fc.pdf", name: "Premium 200 V2 User Manual US EN-FR-ES-PT.pdf", edition: "edição US, PT/EN/FR/ES" },
   "bluetti-elite-300": { file: "19f3b9ca89e4b1a221cc1ea5f8f.pdf", name: "Elite 300 User Manual BR EN-PT.pdf", edition: "edição Brasil, PT/EN" },
   "bluetti-apex-300": { file: "19f3ba9f72e0421b703f26b3477.pdf", name: "Apex 300 User Manual EU PT.pdf", edition: "edição EU, PT" },
+  "bluetti-pv100": { file: "60df0eb47a424928bcd0b654b1.pdf", name: "PV100D User Manual EN-PT.pdf", edition: "PV100D, PT/EN" },
+  "bluetti-pv200": { file: "abb6250d168546639184489cac.pdf", name: "PV200 User Manual EN-PT V1.0.pdf", edition: "PT/EN" },
+  "bluetti-pv350": { file: "f094d50315af4429b9e12f9bc2.pdf", name: "PV350 User Manual EN-PT.pdf", edition: "PT/EN" },
 };
 
 function BluettiManualLink({ slug }: { slug: string }) {
