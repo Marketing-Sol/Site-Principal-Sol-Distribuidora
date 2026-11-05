@@ -1299,7 +1299,7 @@ function StationaryProductContent({ product, productSpec }: { product: Product; 
           <div role="row"><span role="rowheader">Peso</span><strong role="cell">{isDf4100 ? "60,3 kg" : productSpec.weight}</strong></div>
           {freedomManual && <><div role="row"><span role="rowheader">Terminal</span><strong role="cell">{freedomManual.terminal}</strong></div>{freedomManual.hole && <div role="row"><span role="rowheader">Diâmetro do furo</span><strong role="cell">{freedomManual.hole}</strong></div>}</>}
           {isDf4100 && <><div role="row"><span role="rowheader">Terminal</span><strong role="cell">{FREEDOM_DF4100_DATA.terminal}</strong></div><div role="row"><span role="rowheader">Diâmetro do furo</span><strong role="cell">{FREEDOM_DF4100_DATA.hole}</strong></div><div role="row"><span role="rowheader">Certificação Anatel</span><strong role="cell">Não possui — conforme folder Freedom</strong></div></>}
-          <div role="row"><span role="rowheader">Garantia</span><strong role="cell">{usesFreedomManual || isDf4100 ? "Confirmar política comercial vigente" : productSpec.warranty}</strong></div>
+          <div role="row"><span role="rowheader">Garantia</span><strong role="cell">{productSpec.warranty}</strong></div>
         </> : <>
           <div role="row"><span role="rowheader">Tecnologia</span><strong role="cell">{productSpec.technology}</strong></div>
           <div role="row"><span role="rowheader">Tensão nominal</span><strong role="cell">{productSpec.voltage}</strong></div>
