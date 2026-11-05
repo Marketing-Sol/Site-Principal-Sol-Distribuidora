@@ -1,0 +1,10 @@
+open ftp://distsolftp@ftp.distribuidorasol.com.br/
+option batch abort
+option confirm off
+ls /web
+ls /private
+ls /web/wp-content
+mkdir /private/site-novo
+put -transfer=binary "C:\Projetos\Site-Sol-Davet\davet-out\*" /private/site-novo/
+ls /private/site-novo
+exit

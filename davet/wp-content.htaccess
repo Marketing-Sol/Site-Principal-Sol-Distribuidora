@@ -1,0 +1,6 @@
+# Só as imagens antigas do WordPress (uploads) continuam aqui, para links antigos.
+# Nenhum script roda nesta pasta.
+Options -Indexes
+<FilesMatch "\.(php[0-9]?|phtml|phar|pl|py|cgi|sh)$">
+  Require all denied
+</FilesMatch>

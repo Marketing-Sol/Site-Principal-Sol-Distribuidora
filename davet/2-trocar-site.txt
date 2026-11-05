@@ -1,0 +1,16 @@
+open ftp://distsolftp@ftp.distribuidorasol.com.br/
+option batch abort
+option confirm off
+mkdir /private/wordpress-antigo-2026-11-05
+mv /web/* /private/wordpress-antigo-2026-11-05/
+mv /private/site-novo/* /web/
+rm /web/.assetsignore
+mkdir /web/wp-content
+mv /private/wordpress-antigo-2026-11-05/wp-content/uploads /web/wp-content/uploads
+put -transfer=binary "C:\Projetos\Site-Sol-Davet\davet\wp-content.htaccess" /web/wp-content/.htaccess
+ls /web
+ls /web/api
+ls /web/wp-content
+ls /private/wordpress-antigo-2026-11-05
+ls /private/site-novo
+exit

@@ -1,0 +1,9 @@
+open ftp://distsolftp@ftp.distribuidorasol.com.br/ -password="C:\Users\joao.silva\senha-ftp-sol.txt"
+option batch continue
+rm /web/.vite
+option batch abort
+option confirm off
+put -transfer=binary "C:\Projetos\Site-Sol-Davet\davet-out\_rsc" /web/
+put -transfer=binary "C:\Projetos\Site-Sol-Davet\davet-out\.htaccess" /web/.htaccess
+ls /web/_rsc
+exit

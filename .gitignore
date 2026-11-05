@@ -49,3 +49,7 @@ desktop.ini
 
 # Cloudflare local secrets
 .dev.vars*
+
+# Versão estática para a Davet (gerada por scripts/export-davet.mjs) e logs do WinSCP
+/davet-out/
+/davet/log-*.xml

@@ -1,0 +1,11 @@
+open ftp://distsolftp@ftp.distribuidorasol.com.br/
+option batch abort
+option confirm off
+mkdir /private/site-novo-retirado
+mv /web/wp-content/uploads /private/wordpress-antigo-2026-11-05/wp-content/uploads
+rm /web/wp-content/.htaccess
+rmdir /web/wp-content
+mv /web/* /private/site-novo-retirado/
+mv /private/wordpress-antigo-2026-11-05/* /web/
+ls /web
+exit
