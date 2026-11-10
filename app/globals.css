@@ -572,6 +572,31 @@ footer{background:#10143f;color:#fff;padding:70px max(6vw,24px) 25px}.footer-top
   .home-layers-copy{transform:translate3d(0,-50%,0)!important}
 }
 .why-sol-link{display:inline-block;margin-top:8px;color:var(--blue);font-size:15px;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+/* Cookies */
+.footer-legal{display:flex;flex-wrap:wrap;gap:18px}
+.footer-legal button{padding:0;border:0;background:none;color:inherit;font:inherit;cursor:pointer}
+.footer-legal a:hover,.footer-legal button:hover{color:#fff}
+.cookie-consent{position:fixed;z-index:60;left:22px;bottom:22px;width:min(460px,calc(100vw - 44px));padding:24px;border-radius:14px;background:#fff;color:var(--ink);box-shadow:0 22px 60px rgba(10,15,57,.28)}
+.cookie-consent h2{margin:0 0 10px;color:var(--blue);font-size:20px;letter-spacing:-.02em}
+.cookie-consent p{margin:0;color:var(--muted);font-size:14px;line-height:1.55}
+.cookie-consent p a{color:var(--blue);font-weight:700;text-decoration:underline}
+.cookie-consent-options{display:grid;gap:12px;margin-top:16px}
+.cookie-consent-options label{display:grid;grid-template-columns:18px 1fr;gap:10px;align-items:start;font-size:13px;line-height:1.45;color:var(--muted)}
+.cookie-consent-options input{margin-top:2px;accent-color:var(--blue)}
+.cookie-consent-options b{display:block;color:var(--ink);font-size:14px}
+.cookie-consent-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:18px}
+.cookie-consent-actions .button{width:auto;padding:12px 18px;font-size:14px}
+.cookie-consent-secondary{background:var(--off);color:var(--blue)}
+.cookie-consent-link{padding:0 4px;border:0;background:none;color:var(--blue);font-weight:700;text-decoration:underline;cursor:pointer}
+@media(max-width:780px){.cookie-consent{left:12px;right:12px;bottom:12px;width:auto;padding:20px}.cookie-consent-actions .button{flex:1 1 auto}}
+.legal-updated{color:var(--muted);font-size:14px}
+.legal ul{margin:0 0 18px;padding-left:22px;line-height:1.7}
+.legal li{margin-bottom:6px}
+.legal code{font-size:.9em;background:var(--off);padding:1px 5px;border-radius:4px}
+.legal-inline-button{padding:0;border:0;background:none;color:var(--blue);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer}
+.legal h2{font-size:clamp(24px,2.4vw,30px);line-height:1.2;margin:48px 0 14px;color:var(--ink)}
+.legal li{color:var(--muted)}
+.legal strong{color:var(--ink)}
 /* Visible keyboard focus */
 :focus-visible{outline:2px solid var(--blue);outline-offset:3px}
 .hero :focus-visible,.page-hero :focus-visible,.product-hero :focus-visible,footer :focus-visible,.cta :focus-visible,.structure-section :focus-visible,.home-layers :focus-visible{outline-color:var(--yellow)}

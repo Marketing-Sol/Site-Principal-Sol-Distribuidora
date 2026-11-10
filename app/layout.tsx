@@ -44,6 +44,43 @@ const ORGANIZATION_JSON_LD = {
   areaServed: "BR",
 };
 
+const GTM_ID = "GTM-K4ZPB6FJ";
+
+// Google Consent Mode v2: analytics and ads storage stay denied until the
+// visitor accepts them in the cookie banner (choice kept in localStorage under
+// "sol-cookie-consent"). This must run before the Tag Manager snippet.
+const CONSENT_DEFAULTS = `
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {
+  ad_storage: 'denied',
+  ad_user_data: 'denied',
+  ad_personalization: 'denied',
+  analytics_storage: 'denied',
+  functionality_storage: 'granted',
+  security_storage: 'granted',
+  wait_for_update: 500
+});
+gtag('set', 'ads_data_redaction', true);
+try {
+  var stored = JSON.parse(localStorage.getItem('sol-cookie-consent') || 'null');
+  if (stored) {
+    gtag('consent', 'update', {
+      analytics_storage: stored.analytics ? 'granted' : 'denied',
+      ad_storage: stored.ads ? 'granted' : 'denied',
+      ad_user_data: stored.ads ? 'granted' : 'denied',
+      ad_personalization: stored.ads ? 'granted' : 'denied'
+    });
+  }
+} catch (error) {}
+`;
+
+const GTM_SNIPPET = `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${GTM_ID}');`;
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -52,7 +89,11 @@ export default function RootLayout({
       <head>
         <link rel="preload" href="/fonts/Panton-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/fonts/Panton-ExtraBold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        {!IS_PREVIEW && <script dangerouslySetInnerHTML={{ __html: CONSENT_DEFAULTS }} />}
+        {!IS_PREVIEW && <script dangerouslySetInnerHTML={{ __html: GTM_SNIPPET }} />}
       </head>
+      {/* The GTM <noscript> iframe is left out on purpose: without JavaScript
+          there is no way to ask for consent, so nothing should be tracked. */}
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_JSON_LD) }} />
         {children}

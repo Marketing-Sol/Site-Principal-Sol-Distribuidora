@@ -6,6 +6,7 @@ import NextImage, { getImageProps } from "next/image";
 import { CATEGORY_META, PAGE_IDS, PRODUCTS, type Product } from "./data";
 import { PRODUCT_SPECS, productSpecKey, type ProductSpec } from "./product-specs";
 import { BLUETTI_COMPARISON, PRODUCT_IMAGES, type BluettiComparisonModel } from "./catalog-meta";
+import { handleTrackedClick, productParams, track, trackSearchLater } from "./tracking";
 
 const WHATSAPP = "https://api.whatsapp.com/send?phone=5541998220358&text=Ol%C3%A1%2C%20quero%20falar%20com%20um%20especialista%20da%20Sol.";
 
@@ -157,12 +158,111 @@ function Footer() {
       <div><b>Navegue</b><Link href="/produtos">Soluções</Link><Link href="/sobre-nos">A Sol</Link><Link href="/sustentabilidade">Sustentabilidade</Link><Link href="/contato">Contato</Link></div>
       <div><b>Fale com a Sol</b><a href="tel:+554132775080">(41) 3277-5080</a><a href="mailto:atendimento@distribuidorasol.com.br">atendimento@distribuidorasol.com.br</a><span>Curitiba · PR</span></div>
     </div>
-    <div className="footer-bottom"><span>© {new Date().getFullYear()} Sol Distribuidora · CNPJ 00.338.610/0002-80</span><Link href="/politica-de-privacidade">Política de Privacidade</Link></div>
+    <div className="footer-bottom"><span>© {new Date().getFullYear()} Sol Distribuidora · CNPJ 00.338.610/0002-80</span><span className="footer-legal"><Link href="/politica-de-privacidade">Política de Privacidade</Link><button type="button" onClick={openCookiePreferences}>Preferências de cookies</button></span></div>
   </footer>;
 }
 
+const COOKIE_CONSENT_KEY = "sol-cookie-consent";
+const OPEN_COOKIE_PREFERENCES = "sol:open-cookie-preferences";
+
+type CookieConsentChoice = { analytics: boolean; ads: boolean; date: string };
+
+function readCookieConsent(): CookieConsentChoice | null {
+  try {
+    return JSON.parse(window.localStorage.getItem(COOKIE_CONSENT_KEY) ?? "null");
+  } catch {
+    return null;
+  }
+}
+
+// Saves the choice and tells Google Consent Mode (set up in layout.tsx).
+// Cookies already written by Google tags stay until they expire; when a
+// category is turned off, remove them too.
+function clearCookies(pattern: RegExp) {
+  const host = window.location.hostname;
+  const domains = ["", host, "." + host.replace(/^www./, "")];
+  for (const entry of document.cookie.split(";")) {
+    const name = entry.split("=")[0].trim();
+    if (!pattern.test(name)) continue;
+    for (const domain of domains) document.cookie = `${name}=; Max-Age=0; path=/${domain ? "; domain=" + domain : ""}`;
+  }
+}
+
+function saveCookieConsent(analytics: boolean, ads: boolean) {
+  const choice: CookieConsentChoice = { analytics, ads, date: new Date().toISOString() };
+  try {
+    window.localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(choice));
+  } catch {
+    // Without storage the banner simply shows again on the next visit.
+  }
+  if (!analytics) clearCookies(/^_ga/);
+  if (!ads) clearCookies(/^(_gcl|_gac)/);
+  const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
+  gtag?.("consent", "update", {
+    analytics_storage: analytics ? "granted" : "denied",
+    ad_storage: ads ? "granted" : "denied",
+    ad_user_data: ads ? "granted" : "denied",
+    ad_personalization: ads ? "granted" : "denied",
+  });
+  track("cookie_consent", { consent_analytics: analytics, consent_ads: ads });
+}
+
+function openCookiePreferences() {
+  window.dispatchEvent(new Event(OPEN_COOKIE_PREFERENCES));
+}
+
+function CookieConsent() {
+  const [open, setOpen] = useState(false);
+  const [customizing, setCustomizing] = useState(false);
+  const [analytics, setAnalytics] = useState(false);
+  const [ads, setAds] = useState(false);
+
+  useEffect(() => {
+    // Deferred so the banner never renders during hydration.
+    const timer = window.setTimeout(() => { if (!readCookieConsent()) setOpen(true); }, 400);
+    const reopen = () => {
+      const current = readCookieConsent();
+      setAnalytics(current?.analytics ?? false);
+      setAds(current?.ads ?? false);
+      setCustomizing(true);
+      setOpen(true);
+    };
+    window.addEventListener(OPEN_COOKIE_PREFERENCES, reopen);
+    return () => { window.clearTimeout(timer); window.removeEventListener(OPEN_COOKIE_PREFERENCES, reopen); };
+  }, []);
+
+  if (!open) return null;
+  const decide = (allowAnalytics: boolean, allowAds: boolean) => {
+    saveCookieConsent(allowAnalytics, allowAds);
+    setOpen(false);
+    setCustomizing(false);
+  };
+
+  return <section className="cookie-consent" role="dialog" aria-modal="false" aria-labelledby="cookie-consent-title">
+    <h2 id="cookie-consent-title">Sua privacidade</h2>
+    <p>Usamos cookies necessários para o site funcionar. Com a sua permissão, também usamos cookies de análise e de publicidade do Google para entender o uso do site e mostrar anúncios relevantes. Saiba mais na <Link href="/politica-de-privacidade">Política de Privacidade</Link>.</p>
+    {customizing && <div className="cookie-consent-options">
+      <label><input type="checkbox" checked disabled /><span><b>Necessários</b>Guardam a sua escolha sobre cookies. Sempre ativos.</span></label>
+      <label><input type="checkbox" checked={analytics} onChange={(event) => setAnalytics(event.target.checked)} /><span><b>Análise</b>Google Analytics: estatísticas de visitas e navegação.</span></label>
+      <label><input type="checkbox" checked={ads} onChange={(event) => setAds(event.target.checked)} /><span><b>Publicidade</b>Google Ads: medição de campanhas e anúncios personalizados.</span></label>
+    </div>}
+    <div className="cookie-consent-actions">
+      {customizing
+        ? <button type="button" className="button blue" onClick={() => decide(analytics, ads)}>Salvar preferências</button>
+        : <button type="button" className="button blue" onClick={() => decide(true, true)}>Aceitar todos</button>}
+      <button type="button" className="button cookie-consent-secondary" onClick={() => decide(false, false)}>Recusar opcionais</button>
+      {!customizing && <button type="button" className="cookie-consent-link" onClick={() => setCustomizing(true)}>Personalizar</button>}
+    </div>
+  </section>;
+}
+
 function Shell({ children }: { children: React.ReactNode }) {
-  return <><Header /><main>{children}</main><Footer /><a className="whatsapp" href={WHATSAPP} target="_blank" rel="noreferrer" aria-label="Fale com a Sol pelo WhatsApp"><WhatsAppIcon /></a></>;
+  useEffect(() => {
+    // Capture phase: the click is recorded before a link takes the visitor away.
+    document.addEventListener("click", handleTrackedClick, true);
+    return () => document.removeEventListener("click", handleTrackedClick, true);
+  }, []);
+  return <><Header /><main>{children}</main><Footer /><CookieConsent /><a className="whatsapp" href={WHATSAPP} target="_blank" rel="noreferrer" aria-label="Fale com a Sol pelo WhatsApp"><WhatsAppIcon /></a></>;
 }
 
 function SectionTitle({ eyebrow, title, text }: { eyebrow: string; title: React.ReactNode; text?: string }) {
@@ -467,7 +567,7 @@ function BrandCarousel({ brand, products }: { brand: Product["brand"]; products:
   return <section className="brand-carousel" aria-labelledby={headingId}>
     <div className="brand-carousel-heading">
       <h2 id={headingId}>{brand}</h2>
-      {hasFilter && <label className="brand-filter"><span>Tipo de produto</span><select value={activeNiche} onChange={(event) => setSelectedNiche(event.target.value)} aria-label={`Filtrar produtos ${brand} por tipo`}><option>Todos</option>{niches.map((niche) => <option key={niche}>{niche}</option>)}</select></label>}
+      {hasFilter && <label className="brand-filter"><span>Tipo de produto</span><select value={activeNiche} onChange={(event) => { setSelectedNiche(event.target.value); track("filter_products", { item_brand: brand, filter_value: event.target.value }); }} aria-label={`Filtrar produtos ${brand} por tipo`}><option>Todos</option>{niches.map((niche) => <option key={niche}>{niche}</option>)}</select></label>}
     </div>
     <div className="product-carousel-track" role="region" aria-label={`Produtos ${brand}`} tabIndex={0}>
       {visibleProducts.map((product) => <ProductCard key={product.id} product={product} />)}
@@ -573,6 +673,9 @@ function BluettiComparison({ initialSlug }: { initialSlug: string }) {
   const [secondSlug, setSecondSlug] = useState("");
   const first = BLUETTI_COMPARISON.find((station) => station.slug === firstSlug) ?? BLUETTI_COMPARISON[0];
   const second = BLUETTI_COMPARISON.find((station) => station.slug === secondSlug);
+  useEffect(() => {
+    if (second) track("compare_products", { item_brand: "Bluetti", compare_items: `${first.model} x ${second.model}` });
+  }, [first.model, second]);
 
   return <section className="bluetti-comparison" aria-labelledby="bluetti-comparison-title">
     <div className="bluetti-comparison-intro">
@@ -602,8 +705,11 @@ function searchCatalog(search: string) {
 function CatalogSearchTools({ count, search, setSearch, placeholder }: { count: number; search: string; setSearch: (value: string) => void; placeholder: string }) {
   const [open, setOpen] = useState(false);
   const term = search.trim();
-  const suggestions = term ? searchCatalog(term).slice(0, 8) : [];
+  const results = term ? searchCatalog(term) : [];
+  const suggestions = results.slice(0, 8);
   const showSuggestions = open && !!term;
+  const searchTimer = useRef<number | undefined>(undefined);
+  useEffect(() => trackSearchLater(searchTimer, term, results.length, "busca_catalogo"), [term, results.length]);
   return <div className="catalog-tools"><div><strong>{count}</strong><span> produtos nesta página</span></div><div className="catalog-search-wrap"><label><span>Buscar em todo o catálogo por marca ou modelo</span><input type="search" role="combobox" value={search} onChange={(event) => { setSearch(event.target.value); setOpen(true); }} onFocus={() => setOpen(true)} onBlur={() => window.setTimeout(() => setOpen(false), 120)} onKeyDown={(event) => { if (event.key === "Escape") setOpen(false); }} placeholder={placeholder} aria-autocomplete="list" aria-controls="catalog-suggestions" aria-expanded={showSuggestions} /></label>{showSuggestions && <div id="catalog-suggestions" className="related-suggestions" role="listbox" onMouseDown={(event) => event.preventDefault()}>{suggestions.length ? suggestions.map((item) => <ProductLink productSlug={item.slug} key={item.id} role="option" aria-selected="false" onClick={() => setOpen(false)}><b data-product-name-style={item.segment !== "energia" && item.segment !== "solar" ? "code" : undefined}>{item.model}</b><span>{item.brand}</span><small>{segmentLabel(item.segment)}</small></ProductLink>) : <span className="related-no-results">Nenhum produto encontrado.</span>}</div>}</div></div>;
 }
 
@@ -1383,9 +1489,13 @@ function ProductDetail({ product }: { product: Product }) {
     .slice(0, 4)
     .map(({ item }) => item)
     .sort((first, second) => relatedProducts.indexOf(first) - relatedProducts.indexOf(second));
-  const searchSuggestions = relatedSearch.trim()
-    ? PRODUCTS.filter((item) => clean(`${item.brand} ${item.model} ${segmentLabel(item.segment)}`).includes(clean(relatedSearch))).slice(0, 6)
+  const searchResults = relatedSearch.trim()
+    ? PRODUCTS.filter((item) => clean(`${item.brand} ${item.model} ${segmentLabel(item.segment)}`).includes(clean(relatedSearch)))
     : [];
+  const searchSuggestions = searchResults.slice(0, 6);
+  const relatedSearchTimer = useRef<number | undefined>(undefined);
+  useEffect(() => trackSearchLater(relatedSearchTimer, relatedSearch, searchResults.length, "busca_produto"), [relatedSearch, searchResults.length]);
+  useEffect(() => { track("view_item", productParams(product)); }, [product]);
   const brandCatalogHref: Record<Product["brand"], string> = { Freedom: "/freedom-baterias-estacionarias", Heliar: "/heliar-baterias-automotivas", eCON: "/econ-baterias-automotivas", "eCON VRLA": "/econ-vrla-baterias-estacionarias", Bluetti: "/bluetti-estacoes-de-energia" };
   return <Shell>
     <section className="product-hero" data-product-name-style={isBattery ? "code" : undefined}>
@@ -1466,6 +1576,13 @@ function Contact() {
     return () => window.removeEventListener("pageshow", reset);
   }, []);
 
+  const formStarted = useRef(false);
+  function handleFormStart() {
+    if (formStarted.current) return;
+    formStarted.current = true;
+    track("form_start", { form_name: "contato" });
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
@@ -1478,6 +1595,7 @@ function Contact() {
       mensagem: String(fields.get("mensagem") ?? "").trim(),
       website: String(fields.get("website") ?? "").trim(),
       consentimento: fields.get("consentimento") === "on",
+      aceiteMarketing: fields.get("aceiteMarketing") === "on",
     };
 
     setIsSubmitting(true);
@@ -1491,7 +1609,9 @@ function Contact() {
       });
       if (!response.ok) {
         const { error } = await response.json().catch(() => ({ error: "" })) as { error?: string };
-        setSubmissionError(error || "Não foi possível enviar seus dados agora. Tente novamente em instantes.");
+        const message = error || "Não foi possível enviar seus dados agora. Tente novamente em instantes.";
+        track("form_error", { form_name: "contato", error_message: message });
+        setSubmissionError(message);
         setIsSubmitting(false);
         return;
       }
@@ -1504,8 +1624,12 @@ function Contact() {
         payload.mensagem,
       ].join("\n");
 
-      window.location.assign(`https://wa.me/5541998220358?text=${encodeURIComponent(whatsappMessage)}`);
+      // The lead is recorded before the visitor leaves for WhatsApp; only the
+      // fact of the submission goes to analytics, never the contact details.
+      track("generate_lead", { form_name: "contato", marketing_optin: payload.aceiteMarketing },
+        () => window.location.assign(`https://wa.me/5541998220358?text=${encodeURIComponent(whatsappMessage)}`));
     } catch {
+      track("form_error", { form_name: "contato", error_message: "falha de conexão" });
       setSubmissionError("Não foi possível enviar seus dados agora. Tente novamente em instantes.");
       setIsSubmitting(false);
     }
@@ -1514,13 +1638,100 @@ function Contact() {
   return <Shell>
     <section className="page-hero compact"><span className="eyebrow light">Contato</span><h1>Como podemos ajudar?</h1><p>Converse com a nossa equipe comercial e encontre a solução ideal para a sua revenda ou empresa.</p></section>
     <section className="contact section"><div className="contact-info"><span className="eyebrow">Fale com a Sol</span><h2>Atendimento próximo,<br /><em>resposta objetiva.</em></h2><a href="tel:+554132775080"><Icon name="phone" /><span><small>Telefone</small>(41) 3277-5080</span></a><a href="mailto:atendimento@distribuidorasol.com.br"><Icon name="mail" /><span><small>E-mail</small>atendimento@distribuidorasol.com.br</span></a><div><Icon name="pin" /><span><small>Endereço</small>Rua das Carmelitas, 1581<br />Curitiba · PR · CEP 81650-060</span></div></div>
-      <form className="contact-form" onSubmit={handleSubmit}><div><label>Nome completo<input name="nome" autoComplete="name" required /></label><label>Empresa<input name="empresa" autoComplete="organization" /></label></div><div><label>Telefone<input name="telefone" type="tel" inputMode="tel" autoComplete="tel" required /></label><label>E-mail<input name="email" type="email" autoComplete="email" required /></label></div><label>Como podemos ajudar?<textarea name="mensagem" rows={5} required /></label><label className="contact-trap" aria-hidden="true">Site<input name="website" tabIndex={-1} autoComplete="off" /></label><label className="consent"><input name="consentimento" type="checkbox" required /> Li e aceito a <Link href="/politica-de-privacidade">Política de Privacidade</Link>.</label>{submissionError && <p className="contact-form-error" role="alert">{submissionError}</p>}<button className="button blue" type="submit" disabled={isSubmitting}>{isSubmitting ? "Enviando..." : "Enviar mensagem"} <Icon name="arrow" /></button></form>
+      <form className="contact-form" onSubmit={handleSubmit} onFocus={handleFormStart}><div><label>Nome completo<input name="nome" autoComplete="name" required /></label><label>Empresa<input name="empresa" autoComplete="organization" /></label></div><div><label>Telefone<input name="telefone" type="tel" inputMode="tel" autoComplete="tel" required /></label><label>E-mail<input name="email" type="email" autoComplete="email" required /></label></div><label>Como podemos ajudar?<textarea name="mensagem" rows={5} required /></label><label className="contact-trap" aria-hidden="true">Site<input name="website" tabIndex={-1} autoComplete="off" /></label><label className="consent"><input name="consentimento" type="checkbox" required /> Li e aceito a <Link href="/politica-de-privacidade">Política de Privacidade</Link>.</label><label className="consent"><input name="aceiteMarketing" type="checkbox" /> Aceito receber novidades e ofertas da Sol por e-mail e WhatsApp (opcional).</label>{submissionError && <p className="contact-form-error" role="alert">{submissionError}</p>}<button className="button blue" type="submit" disabled={isSubmitting}>{isSubmitting ? "Enviando..." : "Enviar mensagem"} <Icon name="arrow" /></button></form>
     </section>
   </Shell>;
 }
 
 function Privacy() {
-  return <Shell><section className="page-hero compact"><span className="eyebrow light">Privacidade</span><h1>Política de Privacidade</h1><p>Transparência também faz parte das nossas relações digitais.</p></section><article className="legal section"><h2>Como tratamos seus dados</h2><p>A Sol Distribuidora utiliza os dados informados em seus canais de contato exclusivamente para responder solicitações, preparar atendimentos comerciais e manter o relacionamento com clientes e parceiros.</p><h3>Dados coletados</h3><p>Podemos receber nome, empresa, telefone, e-mail e informações enviadas voluntariamente em formulários ou conversas.</p><h3>Finalidade e segurança</h3><p>Os dados são usados para atendimento, cotações e comunicações relacionadas aos serviços solicitados. Aplicamos medidas razoáveis de segurança e não comercializamos informações pessoais.</p><h3>Formulário de contato e compartilhamento</h3><p>As informações enviadas pelo formulário de contato trafegam de forma criptografada (HTTPS) e são registradas em uma planilha do Google, com acesso restrito à equipe da Sol Distribuidora. Após o envio, a conversa continua no WhatsApp: a mensagem é aberta já preenchida apenas com o texto escrito no formulário (sem nome, telefone ou e-mail), e o envio só acontece quando você a confirma no aplicativo. Google e WhatsApp tratam esses dados conforme suas próprias políticas de privacidade.</p><h3>Seus direitos</h3><p>Você pode solicitar acesso, correção ou exclusão de seus dados pelo e-mail <a href="mailto:atendimento@distribuidorasol.com.br">atendimento@distribuidorasol.com.br</a>.</p></article></Shell>;
+  return <Shell>
+    <section className="page-hero compact"><span className="eyebrow light">Privacidade</span><h1>Política de Privacidade</h1><p>Como a Sol Distribuidora trata os dados pessoais recebidos pelo site e pelos seus canais de atendimento.</p></section>
+    <article className="legal section">
+      <p className="legal-updated">Última atualização: 20 de outubro de 2026.</p>
+      <p>Esta Política explica quais dados pessoais coletamos, para que os usamos, com quem os compartilhamos, por quanto tempo os guardamos e como você pode exercer os seus direitos, conforme a Lei Geral de Proteção de Dados Pessoais (Lei nº 13.709/2018, “LGPD”) e o Marco Civil da Internet (Lei nº 12.965/2014). Ela se aplica ao site <a href="https://www.distribuidorasol.com.br">www.distribuidorasol.com.br</a> e aos canais de contato divulgados nele.</p>
+
+      <h2>1. Quem é o controlador dos dados</h2>
+      <p>Sol Distribuidora, inscrita no CNPJ sob o nº 00.338.610/0002-80, com endereço na Rua das Carmelitas, 1581, Curitiba (PR), CEP 81650-060. Telefone: <a href="tel:+554132775080">(41) 3277-5080</a>.</p>
+      <p><strong>Encarregado pelo tratamento de dados pessoais (DPO):</strong> para dúvidas, solicitações ou reclamações sobre os seus dados, escreva para <a href="mailto:marketing@distribuidorasol.com.br">marketing@distribuidorasol.com.br</a>.</p>
+
+      <h2>2. Dados que coletamos</h2>
+      <h3>Dados que você nos informa</h3>
+      <ul>
+        <li><strong>Formulário de contato:</strong> nome, empresa, telefone, e-mail, a mensagem enviada, o registro de aceite desta Política e, se você marcar a opção, o aceite para receber comunicações comerciais.</li>
+        <li><strong>Atendimento:</strong> as informações que você envia por WhatsApp, telefone ou e-mail ao falar com a nossa equipe.</li>
+      </ul>
+      <h3>Dados coletados automaticamente</h3>
+      <ul>
+        <li><strong>Registros de acesso:</strong> endereço IP, data e hora de acesso, páginas visitadas, navegador e dispositivo, registrados pelo servidor de hospedagem.</li>
+        <li><strong>Cookies e tecnologias semelhantes:</strong> somente com o seu consentimento, conforme a seção 5.</li>
+      </ul>
+      <p>Não solicitamos dados pessoais sensíveis (como origem racial, saúde, religião ou biometria). Pedimos que você não os inclua nas mensagens.</p>
+
+      <h2>3. Para que usamos os dados e com qual base legal</h2>
+      <ul>
+        <li><strong>Responder contatos, cotações e pedidos de informação</strong> e dar continuidade ao atendimento comercial — procedimentos preliminares relacionados a contrato e legítimo interesse (art. 7º, V e IX, da LGPD).</li>
+        <li><strong>Enviar novidades, ofertas e comunicações comerciais</strong> por e-mail e WhatsApp — consentimento (art. 7º, I), somente se você marcar a opção correspondente. Você pode cancelar a qualquer momento.</li>
+        <li><strong>Medir o uso do site e o desempenho de campanhas</strong> (Google Analytics e Google Ads) e <strong>exibir anúncios</strong>, inclusive personalizados — consentimento (art. 7º, I), dado no aviso de cookies.</li>
+        <li><strong>Guardar registros de acesso e manter a segurança do site</strong>, prevenindo fraudes e usos indevidos — cumprimento de obrigação legal (art. 7º, II, e art. 15 do Marco Civil da Internet) e legítimo interesse (art. 7º, IX).</li>
+        <li><strong>Exercer direitos e cumprir obrigações</strong> em processos judiciais, administrativos ou arbitrais e atender a requisições de autoridades — art. 7º, II e VI.</li>
+      </ul>
+      <p>Não vendemos dados pessoais e não os usamos para decisões tomadas unicamente de forma automatizada.</p>
+
+      <h2>4. Com quem compartilhamos</h2>
+      <p>Compartilhamos dados apenas com os fornecedores necessários para as finalidades acima, que os tratam conforme as nossas instruções e as suas próprias políticas:</p>
+      <ul>
+        <li><strong>Google</strong> — armazenamento dos contatos do formulário (Google Sheets e Google Apps Script) e, com o seu consentimento, Google Tag Manager, Google Analytics e Google Ads. Veja <a href="https://policies.google.com/privacy?hl=pt-BR" target="_blank" rel="noreferrer">a Política de Privacidade do Google</a> e <a href="https://policies.google.com/technologies/partner-sites?hl=pt-BR" target="_blank" rel="noreferrer">como o Google usa informações de sites que usam os seus serviços</a>.</li>
+        <li><strong>WhatsApp (Meta)</strong> — quando você continua o atendimento pelo WhatsApp, a conversa é aberta já preenchida apenas com a mensagem que você escreveu no formulário (sem nome, telefone ou e-mail), e o envio só acontece quando você a confirma no aplicativo. Veja <a href="https://www.whatsapp.com/legal/privacy-policy?lang=pt_BR" target="_blank" rel="noreferrer">a Política de Privacidade do WhatsApp</a>.</li>
+        <li><strong>Davet</strong> — hospedagem do site e dos registros de acesso.</li>
+        <li><strong>Autoridades públicas</strong> — quando houver obrigação legal, ordem judicial ou requisição de autoridade competente.</li>
+      </ul>
+
+      <h2>5. Cookies e ferramentas do Google</h2>
+      <p>Cookies são pequenos arquivos guardados no seu navegador. No primeiro acesso, mostramos um aviso para você escolher quais aceitar. Até a sua escolha, as ferramentas de análise e de publicidade ficam desativadas (Modo de Consentimento do Google).</p>
+      <ul>
+        <li><strong>Necessários:</strong> guardam a sua escolha sobre cookies no próprio navegador. Estão sempre ativos e não identificam você.</li>
+        <li><strong>Análise (Google Analytics):</strong> estatísticas de visitas, páginas mais acessadas e origem do tráfego, por exemplo os cookies <code>_ga</code> e <code>_ga_*</code>.</li>
+        <li><strong>Publicidade (Google Ads):</strong> medição de conversões, públicos de remarketing e anúncios personalizados, por exemplo os cookies <code>_gcl_au</code> e os definidos pelo Google em seus domínios.</li>
+      </ul>
+      <p>Você pode mudar a sua escolha a qualquer momento em <button type="button" className="legal-inline-button" onClick={openCookiePreferences}>Preferências de cookies</button>, também disponível no rodapé do site. Também é possível apagar ou bloquear cookies nas configurações do navegador, gerenciar anúncios em <a href="https://myadcenter.google.com/" target="_blank" rel="noreferrer">Minha Central de Anúncios do Google</a> e instalar o <a href="https://tools.google.com/dlpage/gaoptout?hl=pt-BR" target="_blank" rel="noreferrer">complemento de desativação do Google Analytics</a>.</p>
+
+      <h2>6. Transferência internacional</h2>
+      <p>Google e Meta podem armazenar e processar dados em servidores fora do Brasil. Essas transferências seguem o art. 33 da LGPD, com base nas garantias contratuais e de segurança adotadas por esses fornecedores.</p>
+
+      <h2>7. Por quanto tempo guardamos</h2>
+      <ul>
+        <li><strong>Contatos e atendimentos:</strong> até 2 (dois) anos após o último contato com você.</li>
+        <li><strong>Comunicações comerciais:</strong> enquanto o seu consentimento estiver ativo; ao cancelar, deixamos de enviar.</li>
+        <li><strong>Registros de acesso:</strong> por 6 (seis) meses, conforme o art. 15 do Marco Civil da Internet.</li>
+        <li><strong>Cookies de análise e publicidade:</strong> pelos prazos definidos pelo Google, de até 2 anos, ou até você apagá-los ou revogar o consentimento.</li>
+      </ul>
+      <p>Depois desses prazos, os dados são eliminados ou anonimizados, salvo quando a lei exigir ou permitir a guarda por mais tempo, por exemplo para o exercício de direitos em processos.</p>
+
+      <h2>8. Segurança</h2>
+      <p>O site usa conexão criptografada (HTTPS). Os dados do formulário são validados antes do registro e ficam em uma planilha com acesso restrito à equipe responsável. Adotamos medidas técnicas e administrativas razoáveis para proteger os dados contra acessos não autorizados e situações acidentais ou ilícitas. Em caso de incidente de segurança que possa gerar risco ou dano relevante, comunicaremos os titulares afetados e a Autoridade Nacional de Proteção de Dados (ANPD), nos termos da lei.</p>
+
+      <h2>9. Seus direitos</h2>
+      <p>Conforme o art. 18 da LGPD, você pode solicitar a qualquer momento:</p>
+      <ul>
+        <li>confirmação de que tratamos os seus dados e acesso a eles;</li>
+        <li>correção de dados incompletos, inexatos ou desatualizados;</li>
+        <li>anonimização, bloqueio ou eliminação de dados desnecessários, excessivos ou tratados em desconformidade com a lei;</li>
+        <li>portabilidade dos dados a outro fornecedor;</li>
+        <li>eliminação dos dados tratados com base no seu consentimento;</li>
+        <li>informação sobre com quem compartilhamos os seus dados;</li>
+        <li>informação sobre a possibilidade de não fornecer consentimento e as consequências da negativa;</li>
+        <li>revogação do consentimento;</li>
+        <li>oposição a tratamento realizado com base em outras hipóteses legais, quando houver descumprimento da lei.</li>
+      </ul>
+      <p>Para exercer esses direitos, escreva para <a href="mailto:marketing@distribuidorasol.com.br">marketing@distribuidorasol.com.br</a>. Podemos pedir informações para confirmar a sua identidade. Respondemos em até 15 (quinze) dias. Você também pode apresentar reclamação à <a href="https://www.gov.br/anpd/pt-br" target="_blank" rel="noreferrer">ANPD</a>.</p>
+
+      <h2>10. Crianças e adolescentes</h2>
+      <p>O site é destinado a empresas, revendas e profissionais e não é direcionado a menores de 18 anos. Não coletamos intencionalmente dados de crianças e adolescentes.</p>
+
+      <h2>11. Alterações desta Política</h2>
+      <p>Esta Política pode ser atualizada para refletir mudanças no site, nos nossos serviços ou na legislação. A data da última atualização fica no topo desta página. Quando a mudança for relevante, avisaremos no site.</p>
+    </article>
+  </Shell>;
 }
 
 export function NotFoundPage() {

@@ -124,7 +124,7 @@ export async function POST(request: Request) {
     const response = await fetch(leadsEndpoint(), {
       method: "POST",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({ ...payload, consentimento: true, token: leadsToken() }),
+      body: JSON.stringify({ ...payload, consentimento: true, aceiteMarketing: body.aceiteMarketing === true, token: leadsToken() }),
       redirect: "follow",
       signal: AbortSignal.timeout(FORWARD_TIMEOUT_MS),
     });
