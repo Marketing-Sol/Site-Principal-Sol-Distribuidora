@@ -1,15 +1,25 @@
 {
   "exportFormatVersion": 2,
-  "exportTime": "2026-11-10 12:00:00",
+  "exportTime": "2026-11-10 13:30:00",
   "containerVersion": {
-    "path": "accounts/0/containers/0/versions/0",
-    "accountId": "0",
-    "containerId": "0",
+    "path": "accounts/6320143228/containers/233090592/versions/0",
+    "accountId": "6320143228",
+    "containerId": "233090592",
     "containerVersionId": "0",
+    "container": {
+      "path": "accounts/6320143228/containers/233090592",
+      "accountId": "6320143228",
+      "containerId": "233090592",
+      "name": "www.distribuidorasol.com.br",
+      "publicId": "GTM-K4ZPB6FJ",
+      "usageContext": [
+        "WEB"
+      ]
+    },
     "tag": [
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "tagId": "21",
         "name": "GA4 - Google tag (G-63NHQJF2HE)",
         "type": "googtag",
@@ -26,8 +36,8 @@
         "tagFiringOption": "ONCE_PER_EVENT"
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "tagId": "22",
         "name": "GA4 - Eventos do site",
         "type": "gaawe",
@@ -320,6 +330,21 @@
                     "value": "{{DLV - consent_ads}}"
                   }
                 ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameter",
+                    "value": "lead_type"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameterValue",
+                    "value": "{{Tipo de lead (formulário)}}"
+                  }
+                ]
               }
             ]
           }
@@ -330,8 +355,8 @@
         "tagFiringOption": "ONCE_PER_EVENT"
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "tagId": "23",
         "name": "GA4 - Rolagem da página",
         "type": "gaawe",
@@ -377,12 +402,151 @@
           "20"
         ],
         "tagFiringOption": "ONCE_PER_EVENT"
+      },
+      {
+        "accountId": "6320143228",
+        "containerId": "233090592",
+        "tagId": "102",
+        "name": "GA4 - Lead pelo WhatsApp (generate_lead)",
+        "type": "gaawe",
+        "parameter": [
+          {
+            "type": "BOOLEAN",
+            "key": "sendEcommerceData",
+            "value": "false"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "eventName",
+            "value": "generate_lead"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "measurementIdOverride",
+            "value": "G-63NHQJF2HE"
+          },
+          {
+            "type": "LIST",
+            "key": "eventSettingsTable",
+            "list": [
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameter",
+                    "value": "lead_type"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameterValue",
+                    "value": "whatsapp"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameter",
+                    "value": "form_name"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameterValue",
+                    "value": "whatsapp"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameter",
+                    "value": "click_location"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameterValue",
+                    "value": "{{DLV - click_location}}"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameter",
+                    "value": "link_text"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameterValue",
+                    "value": "{{DLV - link_text}}"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameter",
+                    "value": "item_id"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameterValue",
+                    "value": "{{DLV - item_id}}"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameter",
+                    "value": "item_name"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameterValue",
+                    "value": "{{DLV - item_name}}"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameter",
+                    "value": "item_brand"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameterValue",
+                    "value": "{{DLV - item_brand}}"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "firingTriggerId": [
+          "101"
+        ],
+        "tagFiringOption": "ONCE_PER_EVENT"
       }
     ],
     "trigger": [
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "triggerId": "19",
         "name": "Evento - Interações do site",
         "type": "CUSTOM_EVENT",
@@ -405,8 +569,8 @@
         ]
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "triggerId": "20",
         "name": "Rolagem - 25, 50, 75 e 90%",
         "type": "SCROLL_DEPTH",
@@ -437,12 +601,36 @@
             "value": "WINDOW_LOAD"
           }
         ]
+      },
+      {
+        "accountId": "6320143228",
+        "containerId": "233090592",
+        "triggerId": "101",
+        "name": "Evento - Clique no WhatsApp",
+        "type": "CUSTOM_EVENT",
+        "customEventFilter": [
+          {
+            "type": "EQUALS",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "whatsapp_click"
+              }
+            ]
+          }
+        ]
       }
     ],
     "variable": [
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "variableId": "1",
         "name": "DLV - link_url",
         "type": "v",
@@ -465,8 +653,8 @@
         ]
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "variableId": "2",
         "name": "DLV - link_text",
         "type": "v",
@@ -489,8 +677,8 @@
         ]
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "variableId": "3",
         "name": "DLV - link_type",
         "type": "v",
@@ -513,8 +701,8 @@
         ]
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "variableId": "4",
         "name": "DLV - click_location",
         "type": "v",
@@ -537,8 +725,8 @@
         ]
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "variableId": "5",
         "name": "DLV - item_id",
         "type": "v",
@@ -561,8 +749,8 @@
         ]
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "variableId": "6",
         "name": "DLV - item_name",
         "type": "v",
@@ -585,8 +773,8 @@
         ]
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "variableId": "7",
         "name": "DLV - item_brand",
         "type": "v",
@@ -609,8 +797,8 @@
         ]
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "variableId": "8",
         "name": "DLV - item_category",
         "type": "v",
@@ -633,8 +821,8 @@
         ]
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "variableId": "9",
         "name": "DLV - form_name",
         "type": "v",
@@ -657,8 +845,8 @@
         ]
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "variableId": "10",
         "name": "DLV - error_message",
         "type": "v",
@@ -681,8 +869,8 @@
         ]
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "variableId": "11",
         "name": "DLV - marketing_optin",
         "type": "v",
@@ -705,8 +893,8 @@
         ]
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "variableId": "12",
         "name": "DLV - search_term",
         "type": "v",
@@ -729,8 +917,8 @@
         ]
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "variableId": "13",
         "name": "DLV - results_count",
         "type": "v",
@@ -753,8 +941,8 @@
         ]
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "variableId": "14",
         "name": "DLV - filter_value",
         "type": "v",
@@ -777,8 +965,8 @@
         ]
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "variableId": "15",
         "name": "DLV - compare_items",
         "type": "v",
@@ -801,8 +989,8 @@
         ]
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "variableId": "16",
         "name": "DLV - file_name",
         "type": "v",
@@ -825,8 +1013,8 @@
         ]
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "variableId": "17",
         "name": "DLV - consent_analytics",
         "type": "v",
@@ -849,8 +1037,8 @@
         ]
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "variableId": "18",
         "name": "DLV - consent_ads",
         "type": "v",
@@ -871,54 +1059,94 @@
             "value": "consent_ads"
           }
         ]
+      },
+      {
+        "accountId": "6320143228",
+        "containerId": "233090592",
+        "variableId": "19",
+        "name": "Tipo de lead (formulário)",
+        "type": "smm",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "input",
+            "value": "{{Event}}"
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "setDefaultValue",
+            "value": "false"
+          },
+          {
+            "type": "LIST",
+            "key": "map",
+            "list": [
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "key",
+                    "value": "generate_lead"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "value",
+                    "value": "formulario"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     ],
     "builtInVariable": [
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "type": "EVENT",
         "name": "Event"
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "type": "PAGE_URL",
         "name": "Page URL"
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "type": "PAGE_PATH",
         "name": "Page Path"
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "type": "PAGE_HOSTNAME",
         "name": "Page Hostname"
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "type": "REFERRER",
         "name": "Referrer"
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "type": "SCROLL_DEPTH_THRESHOLD",
         "name": "Scroll Depth Threshold"
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "type": "SCROLL_DEPTH_UNITS",
         "name": "Scroll Depth Units"
       },
       {
-        "accountId": "0",
-        "containerId": "0",
+        "accountId": "6320143228",
+        "containerId": "233090592",
         "type": "SCROLL_DEPTH_DIRECTION",
         "name": "Scroll Direction"
       }
