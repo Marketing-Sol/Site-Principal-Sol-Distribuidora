@@ -125,7 +125,7 @@ $curl = curl_init($endpoint);
 curl_setopt_array($curl, [
     CURLOPT_POST => true,
     CURLOPT_HTTPHEADER => ['Content-Type: text/plain;charset=utf-8'],
-    CURLOPT_POSTFIELDS => json_encode($payload + ['consentimento' => true, 'token' => $token], JSON_UNESCAPED_UNICODE),
+    CURLOPT_POSTFIELDS => json_encode($payload + ['consentimento' => true, 'aceiteMarketing' => ($body['aceiteMarketing'] ?? null) === true, 'token' => $token], JSON_UNESCAPED_UNICODE),
     CURLOPT_RETURNTRANSFER => true,
     // Apps Script answers with a redirect to the result; follow it as a GET.
     CURLOPT_FOLLOWLOCATION => true,
