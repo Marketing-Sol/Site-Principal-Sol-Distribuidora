@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ComponentProps } from "react";
+import { preload } from "react-dom";
 import Link from "next/link";
 import NextImage, { getImageProps } from "next/image";
 import { CATEGORY_META, PAGE_IDS, PRODUCTS, type Product } from "./data";
@@ -98,7 +99,7 @@ function WhatsAppIcon() {
 }
 
 function Brand({ variant = "blue" }: { variant?: "blue" | "white" }) {
-  return <Link href="/" className="brand" aria-label="Sol Distribuidora — página inicial"><img src={`/sol-logo-${variant}-crop.png`} alt="Sol Distribuidora" /></Link>;
+  return <Link href="/" className="brand" aria-label="Sol Distribuidora — página inicial"><img src={`/sol-logo-${variant}-crop.webp`} alt="Sol Distribuidora" /></Link>;
 }
 
 function Header() {
@@ -274,8 +275,15 @@ function SectionTitle({ eyebrow, title, text }: { eyebrow: string; title: React.
   return <div className="section-title"><span className="eyebrow">{eyebrow}</span><h2>{title}</h2>{text && <p>{text}</p>}</div>;
 }
 
+const HERO_DESKTOP_SRCSET = "/sol-hero-1280.webp 1280w, /sol-hero-1920.webp 1920w, /sol-hero.webp 2680w";
+const HERO_MOBILE_SRC = "/sol-hero-mobile-home.webp";
+
 function HeroPhoto({ className = "" }: { className?: string }) {
   const alt = "Fachada da Sol Distribuidora";
+  // The hero is the largest element on the home page: ask for it in the <head>,
+  // before the stylesheet is parsed, and only the version this screen will show.
+  preload(HERO_MOBILE_SRC, { as: "image", fetchPriority: "high", media: "(max-width: 780px)" });
+  preload("/sol-hero.webp", { as: "image", fetchPriority: "high", imageSrcSet: HERO_DESKTOP_SRCSET, imageSizes: "100vw", media: "(min-width: 781px)" });
   const { props: desktopImageProps } = getImageProps({
     src: "/sol-hero.webp",
     alt,
@@ -286,7 +294,7 @@ function HeroPhoto({ className = "" }: { className?: string }) {
     unoptimized: true,
   });
   const { props: mobileImageProps } = getImageProps({
-    src: "/sol-hero-mobile-home.webp",
+    src: HERO_MOBILE_SRC,
     alt,
     width: 1100,
     height: 2380,
@@ -299,7 +307,7 @@ function HeroPhoto({ className = "" }: { className?: string }) {
     <picture>
       <source media="(max-width: 780px)" srcSet={mobileImageProps.src} sizes={mobileImageProps.sizes} />
       {/* getImageProps preserves art direction and supplies stable image metadata. */}
-      <img {...desktopImageProps} alt={alt} />
+      <img {...desktopImageProps} srcSet={HERO_DESKTOP_SRCSET} alt={alt} />
     </picture>
   </div>;
 }
@@ -455,7 +463,7 @@ function Home() {
 
         <section className="partnership section">
           <span className="partnership-mobile-eyebrow eyebrow">Parceria de verdade</span>
-          <div className="partnership-art"><NextImage src="/sol-drive-02.jpg" alt="Fachada da Sol Distribuidora e frota própria" fill sizes="(max-width: 780px) 100vw, 50vw" unoptimized /><div className="photo-caption"><NextImage src="/sol-symbol-white-crop.png" alt="" width={695} height={166} sizes="92px" unoptimized /><span>Estrutura e logística própria</span></div></div>
+          <div className="partnership-art"><NextImage src="/sol-drive-02.jpg" alt="Fachada da Sol Distribuidora e frota própria" fill sizes="(max-width: 780px) 100vw, 50vw" unoptimized /><div className="photo-caption"><NextImage src="/sol-symbol-white-crop.webp" alt="" width={695} height={166} sizes="92px" unoptimized /><span>Estrutura e logística própria</span></div></div>
           <div className="partnership-copy"><SectionTitle eyebrow="Parceria de verdade" title={<>Mais do que distribuir.<br /><em>Impulsionamos os seus resultados.</em></>} />
             <p>Da escolha do produto ao pós-venda, nossa equipe está ao lado da sua empresa com conhecimento técnico, agilidade e transparência.</p>
             <ul><li><Icon name="check" /> Consultoria comercial especializada</li><li><Icon name="check" /> Suporte depois da compra</li><li><Icon name="check" /> Estrutura e logística própria</li></ul>

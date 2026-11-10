@@ -136,6 +136,10 @@ ${SECURITY_HEADERS.map(([name, value]) => `  Header always set ${name} "${value.
   <If "%{REQUEST_URI} =~ m#^/assets/#">
     Header set Cache-Control "public, max-age=31536000, immutable"
   </If>
+  # Fonts keep their names between releases: long cache, without "immutable".
+  <If "%{REQUEST_URI} =~ m#^/fonts/.+\\.woff2$#">
+    Header set Cache-Control "public, max-age=31536000"
+  </If>
   <If "%{REQUEST_URI} =~ m#\\.html$# || %{REQUEST_URI} !~ m#\\.[a-z0-9]+$#">
     Header set Cache-Control "no-cache"
   </If>
